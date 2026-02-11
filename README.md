@@ -14,3 +14,17 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+# How to Run the Project   
+1. Install Dependencies
+cd /Users/kotrel/Documents/MyProject/test-SM101npm install
+2. Run Development Server
+npm run dev
+3. Open in Browser
+http://localhost:5173
+
+Command	Description :
+1.npm run dev	to Start development server
+2.npm run build	to Build for production
+3.npm run preview	to Preview production build
