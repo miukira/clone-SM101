@@ -1,37 +1,46 @@
-import Header from './components/Header'
-import Banner from './components/Banner'
-import Marquee from './components/Marquee'
-import GameGrid from './components/GameGrid'
-import Footer from './components/Footer'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import PromoPage from './pages/PromoPage'
+import ContactPage from './pages/ContactPage'
 import ChatWidget from './components/ChatWidget'
 import PopupModal from './components/PopupModal'
 import BottomNav from './components/BottomNav'
-import { useState } from 'react'
+import MenuSidebar from './components/MenuSidebar'
+import { useState, createContext } from 'react'
+
+// Create context for menu state
+export const MenuContext = createContext()
 
 function App() {
-  const [showPopup, setShowPopup] = useState(false)
+  const [showPopup, setShowPopup] = useState(true)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const openMenu = () => setIsMenuOpen(true)
+  const closeMenu = () => setIsMenuOpen(false)
 
   return (
-    <div className="min-h-screen bg-[#0a1420]">
-      {showPopup && <PopupModal onClose={() => setShowPopup(false)} />}
-      
-      <Header />
-      
-      {/* Main Content with padding */}
-      <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-2 md:py-4 space-y-2 md:space-y-4">
-        <Banner />
-        <Marquee />
-        <GameGrid />
-      </div>
-      
-      {/* Footer - Show on all screens with bottom padding for mobile nav */}
-      <div className="pb-20 md:pb-0">
-        <Footer />
-      </div>
-      
-      <ChatWidget />
-      <BottomNav />
-    </div>
+    <BrowserRouter>
+      <MenuContext.Provider value={{ isMenuOpen, openMenu, closeMenu }}>
+        <div className="min-h-screen bg-[#0a1420]">
+          {showPopup && <PopupModal onClose={() => setShowPopup(false)} />}
+          
+          {/* Menu Sidebar */}
+          <MenuSidebar isOpen={isMenuOpen} onClose={closeMenu} />
+          
+          {/* Main Content with edge padding - all sides */}
+          <div className="px-3 sm:px-4 md:px-6 lg:px-10 xl:px-16 py-3 sm:py-4 md:py-5 lg:py-6">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/promo" element={<PromoPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+            </Routes>
+          </div>
+          
+          <ChatWidget />
+          <BottomNav />
+        </div>
+      </MenuContext.Provider>
+    </BrowserRouter>
   )
 }
 
