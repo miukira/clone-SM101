@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+<title>404 Not Found</title>
+<style>html, body { font-family: sans-serif; margin: 0; height: 100%; min-height: 100%;}h1 { font-weight: normal; font-size: 24px; color: #505050;}</style>
+</head>
+<body>
+<div style="display: table; height:100%; width:100%; background: #222;">
+<div style="height:100%; display: table-cell; text-align:center; vertical-align: middle;">
+<a href="https://imgbb.com/"><img src="https://simgbb.com/images/favicon.png" width="300"/></a><h1 style="color: #FFF;">404 Not Found</h1>
+</div>
+</div>
+</body>
+</html>
