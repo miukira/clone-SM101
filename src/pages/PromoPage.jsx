@@ -105,7 +105,7 @@ export default function PromoPage() {
   return (
     <div className="min-h-screen bg-[#0d1829] rounded-lg md:rounded-xl overflow-hidden">
       {/* Header Navigation - hidden on mobile (bottom nav exists), visible on desktop */}
-      <div className="hidden md:block sticky top-0 z-40 bg-[#0d1829] border-b border-slate-800/50 rounded-t-lg md:rounded-t-xl">
+      <div className="hidden md:block fixed top-0 left-0 right-0 z-40 bg-[#0d1829] border-b border-slate-800/50">
         <div className="flex items-center justify-center gap-8 md:gap-16 py-6 md:py-8 px-4">
           <Link 
             to="/"
@@ -138,8 +138,8 @@ export default function PromoPage() {
         </div>
       </div>
 
-      {/* Spacer */}
-      <div className="h-6 md:h-10"></div>
+      {/* Spacer for fixed header */}
+      <div className="h-6 md:h-[90px]"></div>
 
       {/* Title */}
       <div className="py-4 md:py-6 px-4">

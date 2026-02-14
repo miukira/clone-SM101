@@ -8,6 +8,8 @@ export default function HomePage() {
   return (
     <div className="bg-[#0d1829] rounded-lg md:rounded-xl overflow-hidden">
       <Header />
+      {/* Spacer for fixed header */}
+      <div className="h-[112px] md:h-[180px]"></div>
       
       {/* Main Content with padding and spacing between sections */}
       <div className="w-full px-2 sm:px-3 md:px-4 lg:px-6 pt-3 md:pt-4">
