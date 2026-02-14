@@ -10,7 +10,7 @@ export default function Header() {
   const { openMenu } = useContext(MenuContext)
 
   return (
-    <header className="bg-[#0a1420] sticky top-0 z-50">
+    <header className="bg-[#0a1420] fixed top-0 left-0 right-0 z-50">
       {/* Mobile Header */}
       <div className="md:hidden">
         {/* Top Row: Logo + Actions */}
@@ -122,15 +122,14 @@ export default function Header() {
             </Link>
             <Link 
               to="/contact"
-              className={`flex-1 max-w-[180px] flex items-center justify-center gap-2 py-3 lg:py-4 px-3 lg:px-6 rounded-lg text-sm lg:text-lg font-medium transition-colors ${
+              className={`flex-1 max-w-[220px] flex items-center justify-center gap-2 py-3 lg:py-4 px-3 lg:px-6 rounded-lg text-sm lg:text-lg font-medium whitespace-nowrap transition-colors ${
                 currentPath === '/contact' 
                   ? 'bg-slate-700 text-white' 
                   : 'text-white/80 hover:text-white hover:bg-white/10'
               }`}
             >
               <FaComments className="text-lg lg:text-2xl" />
-              <span className="hidden lg:inline">Hubungi Kami</span>
-              <span className="lg:hidden">Hubungi</span>
+              <span>Hubungi Kami</span>
             </Link>
             <button 
               onClick={openMenu}

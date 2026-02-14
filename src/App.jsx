@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import PromoPage from './pages/PromoPage'
 import ContactPage from './pages/ContactPage'
+import RegisterPage from './pages/RegisterPage'
 import ChatWidget from './components/ChatWidget'
 import PopupModal from './components/PopupModal'
 import BottomNav from './components/BottomNav'
@@ -27,12 +28,13 @@ function App() {
           {/* Menu Sidebar */}
           <MenuSidebar isOpen={isMenuOpen} onClose={closeMenu} />
           
-          {/* Main Content with edge padding - all sides */}
-          <div className="px-3 sm:px-4 md:px-6 lg:px-10 xl:px-16 py-3 sm:py-4 md:py-5 lg:py-6">
+          {/* Main Content */}
+          <div>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/promo" element={<PromoPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/register" element={<RegisterPage />} />
             </Routes>
           </div>
           

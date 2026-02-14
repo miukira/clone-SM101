@@ -54,7 +54,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-[#0d1829] rounded-lg md:rounded-xl overflow-hidden">
       {/* Header Navigation - hidden on mobile (bottom nav exists), visible on desktop */}
-      <div className="hidden md:block sticky top-0 z-40 bg-[#0d1829] rounded-t-lg md:rounded-t-xl">
+      <div className="hidden md:block fixed top-0 left-0 right-0 z-40 bg-[#0d1829]">
         <div className="flex items-center justify-center gap-4 sm:gap-8 md:gap-16 py-4 md:py-6 px-4">
           <Link 
             to="/"
@@ -86,6 +86,9 @@ export default function ContactPage() {
           </button>
         </div>
       </div>
+
+      {/* Spacer for fixed header */}
+      <div className="hidden md:block h-[80px]"></div>
 
       {/* Logo and Welcome Message Header */}
       <div className="bg-[#0d1829] border-b border-slate-700/50">
