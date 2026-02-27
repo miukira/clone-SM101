@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="screenGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2a2a2a"/>
+      <stop offset="100%" style="stop-color:#0a0a0a"/>
+    </linearGradient>
+    <filter id="metalShine">
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Machine Body -->
+  <rect x="6" y="8" width="52" height="48" rx="6" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Top Display -->
+  <rect x="10" y="12" width="44" height="8" rx="2" fill="#C0C0C0" opacity="0.3"/>
+  <text x="32" y="18" text-anchor="middle" font-family="Arial" font-size="6" font-weight="bold" fill="#C0C0C0">★ SLOTS ★</text>
+  
+  <!-- Reels Frame -->
+  <rect x="12" y="22" width="40" height="22" rx="3" fill="url(#screenGlow)" stroke="#C0C0C0" stroke-width="1"/>
+  
+  <!-- Reel Separators -->
+  <line x1="24" y1="24" x2="24" y2="42" stroke="#404040" stroke-width="1"/>
+  <line x1="40" y1="24" x2="40" y2="42" stroke="#404040" stroke-width="1"/>
+  
+  <!-- Reel Symbols -->
+  <text x="18" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#C0C0C0" filter="url(#metalShine)">7</text>
+  <text x="32" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#E8E8E8" filter="url(#metalShine)">7</text>
+  <text x="46" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#C0C0C0" filter="url(#metalShine)">7</text>
+  
+  <!-- Spin Button -->
+  <circle cx="32" cy="51" r="4" fill="url(#chromeAccent)" stroke="#808080" stroke-width="1"/>
+  <circle cx="32" cy="51" r="2" fill="#E8E8E8"/>
+  
+  <!-- Side Decorations -->
+  <circle cx="10" cy="51" r="2" fill="#C0C0C0" opacity="0.5"/>
+  <circle cx="54" cy="51" r="2" fill="#C0C0C0" opacity="0.5"/>
+</svg>

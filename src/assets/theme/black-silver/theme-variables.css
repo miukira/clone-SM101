@@ -1,0 +1,148 @@
+/* ============================================
+   Black & Silver Chrome Theme Variables
+   ============================================
+   A sleek minimalist theme with monochromatic 
+   colors for a clean, professional look.
+   ============================================ */
+
+:root {
+  /* ===== Primary Colors ===== */
+  --theme-black: #000000;
+  --theme-black-soft: #0a0a0a;
+  --theme-black-lighter: #1a1a1a;
+  
+  /* ===== Silver/Chrome Palette ===== */
+  --theme-silver-bright: #E8E8E8;
+  --theme-silver: #C0C0C0;
+  --theme-silver-mid: #A0A0A0;
+  --theme-silver-dark: #808080;
+  --theme-silver-darker: #606060;
+  --theme-silver-muted: #404040;
+  
+  /* ===== Gradients ===== */
+  --gradient-chrome: linear-gradient(
+    180deg,
+    var(--theme-silver-bright) 0%,
+    var(--theme-silver) 25%,
+    var(--theme-silver-mid) 50%,
+    var(--theme-silver) 75%,
+    var(--theme-silver-dark) 100%
+  );
+  
+  --gradient-background: linear-gradient(
+    180deg,
+    var(--theme-black-soft) 0%,
+    #0f0f0f 30%,
+    #080808 70%,
+    var(--theme-black) 100%
+  );
+  
+  --gradient-border-shine: linear-gradient(
+    135deg,
+    #FFFFFF 0%,
+    var(--theme-silver) 50%,
+    var(--theme-silver-darker) 100%
+  );
+  
+  --gradient-divider: linear-gradient(
+    90deg,
+    var(--theme-black) 0%,
+    var(--theme-silver-muted) 20%,
+    var(--theme-silver-dark) 40%,
+    var(--theme-silver) 50%,
+    var(--theme-silver-dark) 60%,
+    var(--theme-silver-muted) 80%,
+    var(--theme-black) 100%
+  );
+  
+  /* ===== UI Elements ===== */
+  --bg-primary: var(--theme-black);
+  --bg-secondary: var(--theme-black-soft);
+  --bg-card: var(--theme-black-lighter);
+  
+  --text-primary: var(--theme-silver);
+  --text-secondary: var(--theme-silver-dark);
+  --text-muted: var(--theme-silver-muted);
+  --text-highlight: var(--theme-silver-bright);
+  
+  --border-color: var(--theme-silver-dark);
+  --border-color-light: var(--theme-silver-muted);
+  --border-color-bright: var(--theme-silver);
+  
+  /* ===== Shadows ===== */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 10px rgba(192, 192, 192, 0.2);
+  --shadow-glow-strong: 0 0 20px rgba(192, 192, 192, 0.3);
+  
+  /* ===== Button Styles ===== */
+  --btn-bg: var(--theme-black-soft);
+  --btn-border: var(--theme-silver-dark);
+  --btn-text: var(--theme-silver);
+  --btn-hover-bg: var(--theme-black-lighter);
+  --btn-hover-border: var(--theme-silver);
+  --btn-active-bg: #050505;
+  
+  /* ===== Form Inputs ===== */
+  --input-bg: var(--theme-black);
+  --input-border: var(--theme-silver-muted);
+  --input-text: var(--theme-silver);
+  --input-placeholder: var(--theme-silver-dark);
+  --input-focus-border: var(--theme-silver);
+  --input-focus-glow: 0 0 8px rgba(192, 192, 192, 0.15);
+  
+  /* ===== Component Specific ===== */
+  --card-bg: var(--theme-black-soft);
+  --card-border: var(--theme-silver-muted);
+  --card-shadow: var(--shadow-md);
+  
+  --nav-bg: var(--theme-black);
+  --nav-border: var(--theme-silver-dark);
+  --nav-item-hover: var(--theme-black-lighter);
+  --nav-item-active: var(--theme-silver-muted);
+  
+  --badge-bg: var(--theme-black-soft);
+  --badge-border: var(--theme-silver);
+  --badge-text: var(--theme-silver);
+  
+  /* ===== Transitions ===== */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+  
+  /* ===== Border Radius ===== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+}
+
+/* ===== Dark Mode (already dark by default) ===== */
+[data-theme="black-silver"] {
+  color-scheme: dark;
+}
+
+/* ===== Utility Classes ===== */
+.theme-text-primary { color: var(--text-primary); }
+.theme-text-secondary { color: var(--text-secondary); }
+.theme-text-muted { color: var(--text-muted); }
+.theme-text-highlight { color: var(--text-highlight); }
+
+.theme-bg-primary { background-color: var(--bg-primary); }
+.theme-bg-secondary { background-color: var(--bg-secondary); }
+.theme-bg-card { background-color: var(--bg-card); }
+
+.theme-border { border-color: var(--border-color); }
+.theme-border-light { border-color: var(--border-color-light); }
+.theme-border-bright { border-color: var(--border-color-bright); }
+
+.theme-gradient-chrome { background: var(--gradient-chrome); }
+.theme-gradient-bg { background: var(--gradient-background); }
+.theme-gradient-divider { background: var(--gradient-divider); }
+
+.theme-shadow-sm { box-shadow: var(--shadow-sm); }
+.theme-shadow-md { box-shadow: var(--shadow-md); }
+.theme-shadow-lg { box-shadow: var(--shadow-lg); }
+.theme-shadow-glow { box-shadow: var(--shadow-glow); }

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 120" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#151515"/>
+      <stop offset="50%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000"/>
+      <stop offset="20%" style="stop-color:#404040"/>
+      <stop offset="50%" style="stop-color:#C0C0C0"/>
+      <stop offset="80%" style="stop-color:#404040"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Header Background -->
+  <rect x="0" y="0" width="1920" height="120" fill="url(#headerGrad)"/>
+  
+  <!-- Bottom Chrome Line -->
+  <rect x="0" y="116" width="1920" height="2" fill="url(#chromeLine)"/>
+  <rect x="0" y="118" width="1920" height="2" fill="#000000"/>
+  
+  <!-- Subtle top highlight -->
+  <line x1="0" y1="1" x2="1920" y2="1" stroke="#1a1a1a" stroke-width="1"/>
+</svg>

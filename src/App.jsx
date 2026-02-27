@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage'
 import PromoPage from './pages/PromoPage'
 import ContactPage from './pages/ContactPage'
 import RegisterPage from './pages/RegisterPage'
+import PreviewPage from './assets2/PreviewPage'
 import ChatWidget from './components/ChatWidget'
 import PopupModal from './components/PopupModal'
 import BottomNav from './components/BottomNav'
@@ -13,7 +14,7 @@ import { useState, createContext } from 'react'
 export const MenuContext = createContext()
 
 function App() {
-  const [showPopup, setShowPopup] = useState(true)
+  const [showPopup, setShowPopup] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const openMenu = () => setIsMenuOpen(true)
@@ -35,6 +36,7 @@ function App() {
               <Route path="/promo" element={<PromoPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/providers" element={<PreviewPage />} />
             </Routes>
           </div>
           

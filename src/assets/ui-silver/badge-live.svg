@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 24">
+  <defs>
+    <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#909090"/>
+      <stop offset="100%" style="stop-color:#606060"/>
+    </linearGradient>
+    <filter id="pulse">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Badge Background -->
+  <rect x="2" y="2" width="56" height="20" rx="10" fill="#0a0a0a" stroke="url(#badgeGrad)" stroke-width="1.5"/>
+  
+  <!-- Live Indicator Dot -->
+  <g filter="url(#pulse)">
+    <circle cx="14" cy="12" r="4" fill="#C0C0C0">
+      <animate attributeName="opacity" values="1;0.4;1" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="14" cy="12" r="2" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="38" y="16" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#C0C0C0">LIVE</text>
+</svg>

@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="screenGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#303030"/>
+      <stop offset="100%" style="stop-color:#0a0a0a"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Arcade Cabinet Body -->
+  <path d="M12 8 L52 8 L54 56 L10 56 Z" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Screen -->
+  <rect x="16" y="12" width="32" height="22" rx="2" fill="url(#screenGlow)" stroke="#808080" stroke-width="1"/>
+  
+  <!-- Screen Content - Pacman style -->
+  <g filter="url(#glow)">
+    <circle cx="26" cy="23" r="5" fill="#C0C0C0"/>
+    <polygon points="26,23 31,20 31,26" fill="#0a0a0a"/>
+    
+    <!-- Dots -->
+    <circle cx="36" cy="23" r="1.5" fill="#808080"/>
+    <circle cx="42" cy="23" r="1.5" fill="#808080"/>
+    
+    <!-- Ghost -->
+    <path d="M38 28 L38 32 L36 30 L34 32 L34 28 Q36 26 38 28" fill="#A0A0A0"/>
+  </g>
+  
+  <!-- Control Panel -->
+  <rect x="14" y="36" width="36" height="14" rx="2" fill="#0a0a0a" stroke="#606060" stroke-width="1"/>
+  
+  <!-- Joystick -->
+  <circle cx="24" cy="43" r="4" fill="#202020" stroke="#808080" stroke-width="1"/>
+  <circle cx="24" cy="42" r="2" fill="url(#chromeAccent)"/>
+  <line x1="24" y1="42" x2="24" y2="38" stroke="#C0C0C0" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Buttons -->
+  <circle cx="36" cy="41" r="3" fill="#C0C0C0" stroke="#808080" stroke-width="0.5"/>
+  <circle cx="44" cy="41" r="3" fill="#A0A0A0" stroke="#606060" stroke-width="0.5"/>
+  <circle cx="40" cy="46" r="2.5" fill="#808080" stroke="#505050" stroke-width="0.5"/>
+  
+  <!-- Coin Slot -->
+  <rect x="28" y="52" width="8" height="2" rx="0.5" fill="#303030" stroke="#606060" stroke-width="0.5"/>
+</svg>

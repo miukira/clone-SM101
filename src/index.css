@@ -103,3 +103,2357 @@ body {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
+
+/* Shimmer animation for provider cards */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+/* ============================================ */
+/*   PROVIDER CARD - BLACK & SILVER CHROME      */
+/*   Minimalist · Cold · Premium                */
+/* ============================================ */
+
+/* ==================================================== */
+/*   ZEUS MULTI-LAYER ANIMATION SYSTEM                  */
+/*   Body (base) + Lightning (overlay) + Glow           */
+/* ==================================================== */
+
+/* ---- Zeus Body Idle - Breathing & Gentle Sway ---- */
+.zeus-body-idle {
+  animation: zeusBodyIdle 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes zeusBodyIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  15% {
+    transform: translateY(-3px) rotate(0.4deg) scale(1.005);
+  }
+  30% {
+    transform: translateY(-6px) rotate(0deg) scale(1.008);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-0.5deg) scale(1.003);
+  }
+  70% {
+    transform: translateY(-7px) rotate(0.3deg) scale(1.006);
+  }
+  85% {
+    transform: translateY(-2px) rotate(-0.2deg) scale(1.002);
+  }
+}
+
+/* ---- Zeus Body Hover - Power Up & Action ---- */
+.zeus-body-hover {
+  animation: zeusPowerUp 0.5s ease-out forwards, zeusBodyAction 2.5s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes zeusPowerUp {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+  30% {
+    transform: scale(1.08) rotate(-1.5deg) translateY(-8px);
+  }
+  60% {
+    transform: scale(1.03) rotate(1deg) translateY(-3px);
+  }
+  100% {
+    transform: scale(1.05) rotate(0deg) translateY(-4px);
+  }
+}
+
+@keyframes zeusBodyAction {
+  0%, 100% {
+    transform: scale(1.05) rotate(0deg) translateY(-4px) translateX(0px);
+  }
+  12% {
+    transform: scale(1.06) rotate(1.2deg) translateY(-7px) translateX(2px);
+  }
+  25% {
+    transform: scale(1.04) rotate(-0.8deg) translateY(-10px) translateX(-1px);
+  }
+  37% {
+    transform: scale(1.07) rotate(0.5deg) translateY(-5px) translateX(1.5px);
+  }
+  50% {
+    transform: scale(1.05) rotate(-1.5deg) translateY(-8px) translateX(-2px);
+  }
+  62% {
+    transform: scale(1.06) rotate(0.8deg) translateY(-6px) translateX(1px);
+  }
+  75% {
+    transform: scale(1.04) rotate(-0.3deg) translateY(-9px) translateX(-0.5px);
+  }
+  87% {
+    transform: scale(1.06) rotate(0.6deg) translateY(-5px) translateX(0.5px);
+  }
+}
+
+/* ---- Lightning Idle - Subtle pulse ---- */
+.zeus-lightning-idle {
+  animation: lightningIdlePulse 3s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+@keyframes lightningIdlePulse {
+  0%, 100% {
+    opacity: 0.5;
+    filter: brightness(1) saturate(1);
+  }
+  30% {
+    opacity: 0.8;
+    filter: brightness(1.3) saturate(1.2);
+  }
+  60% {
+    opacity: 0.4;
+    filter: brightness(0.9) saturate(0.9);
+  }
+}
+
+/* ---- Lightning Active (hover) - Electric flash ---- */
+.zeus-lightning-active {
+  animation: lightningFlash 1.5s ease-in-out infinite;
+}
+
+@keyframes lightningFlash {
+  0%, 100% {
+    opacity: 0.7;
+    filter: brightness(1.2) saturate(1.3);
+    transform: scale(1) translate(0, 0);
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(2) saturate(1.8);
+    transform: scale(1.02) translate(1px, -1px);
+  }
+  20% {
+    opacity: 0.5;
+    filter: brightness(1) saturate(1);
+    transform: scale(0.99) translate(-1px, 0px);
+  }
+  35% {
+    opacity: 1;
+    filter: brightness(2.5) saturate(2);
+    transform: scale(1.03) translate(0px, -2px);
+  }
+  50% {
+    opacity: 0.6;
+    filter: brightness(1.1) saturate(1.1);
+    transform: scale(1) translate(0, 0);
+  }
+  65% {
+    opacity: 0.9;
+    filter: brightness(1.8) saturate(1.5);
+    transform: scale(1.01) translate(1px, -1px);
+  }
+  80% {
+    opacity: 1;
+    filter: brightness(2.2) saturate(1.7);
+    transform: scale(1.02) translate(-1px, -1px);
+  }
+}
+
+/* ---- Lightning Glow (blur layer) idle ---- */
+.zeus-lightning-glow-idle {
+  animation: lightningGlowIdle 4s ease-in-out infinite;
+  opacity: 0.2;
+}
+
+@keyframes lightningGlowIdle {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.03);
+  }
+}
+
+/* ---- Lightning Glow Active (hover) - Strong electric aura ---- */
+.zeus-lightning-glow-active {
+  animation: lightningGlowActive 1.2s ease-in-out infinite;
+}
+
+@keyframes lightningGlowActive {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  15% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  30% {
+    opacity: 0.2;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+  70% {
+    opacity: 0.4;
+    transform: scale(1.01);
+  }
+  85% {
+    opacity: 0.7;
+    transform: scale(1.04);
+  }
+}
+
+/* ---- Electric Pulse behind character ---- */
+.provider-electric-pulse {
+  animation: electricPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes electricPulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scaleY(1) scaleX(1);
+  }
+  30% {
+    opacity: 0.7;
+    transform: scaleY(1.15) scaleX(1.05);
+  }
+  60% {
+    opacity: 0.3;
+    transform: scaleY(0.95) scaleX(1);
+  }
+}
+
+/* ---- Chrome Shimmer Sweep ---- */
+.provider-shimmer-chrome {
+  animation: chromeShimmer 3s ease-in-out infinite;
+}
+
+@keyframes chromeShimmer {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(500%) skewX(-20deg);
+  }
+}
+
+/* ---- Fire icon subtle bounce ---- */
+.provider-fire-icon {
+  animation: fireFlicker 1.8s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes fireFlicker {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  25% {
+    transform: scale(1.1) translateY(-1.5px);
+  }
+  50% {
+    transform: scale(0.96) translateY(0);
+  }
+  75% {
+    transform: scale(1.06) translateY(-1px);
+  }
+}
+
+/* ---- Chrome Button Pulse ---- */
+.provider-btn-chrome {
+  animation: chromeBtnPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes chromeBtnPulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 2px 16px rgba(192, 192, 192, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* ---- Shine Sweep across entire card (continuous) ---- */
+.provider-shine-sweep {
+  animation: shineSweep 4s ease-in-out infinite;
+}
+
+@keyframes shineSweep {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  40% {
+    transform: translateX(400%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(400%) skewX(-20deg);
+  }
+}
+
+/* ---- Button Shine Gleam ---- */
+.provider-btn-shine {
+  animation: btnShine 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes btnShine {
+  0% {
+    transform: translateX(-200%) skewX(-20deg);
+  }
+  30% {
+    transform: translateX(350%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(350%) skewX(-20deg);
+  }
+}
+
+/* ---- Text Shine Effect on PLAY ---- */
+.provider-text-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.provider-text-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  animation: textShine 3.5s ease-in-out infinite;
+}
+
+@keyframes textShine {
+  0% {
+    left: -100%;
+  }
+  35% {
+    left: 150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* ==================================================== */
+/*   PG SOFT - MARIACHI SKELETON ANIMATION SYSTEM        */
+/*   Guitar strumming + Dance sway                      */
+/* ==================================================== */
+
+/* ---- Mariachi Body Idle - Guitar strumming sway ---- */
+.mariachi-body-idle {
+  animation: mariachiStrum 3s ease-in-out infinite, mariachiSway 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes mariachiStrum {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  20% {
+    transform: rotate(1.2deg) scale(1.008);
+  }
+  40% {
+    transform: rotate(-0.8deg) scale(1.003);
+  }
+  60% {
+    transform: rotate(0.6deg) scale(1.005);
+  }
+  80% {
+    transform: rotate(-0.5deg) scale(1.002);
+  }
+}
+
+@keyframes mariachiSway {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(2px) translateY(-2px);
+  }
+  50% {
+    transform: translateX(-1px) translateY(-4px);
+  }
+  75% {
+    transform: translateX(1px) translateY(-1px);
+  }
+}
+
+/* ---- Mariachi Body Hover - Dance Mode ---- */
+.mariachi-body-hover {
+  animation: mariachiDanceStart 0.5s ease-out forwards, mariachiDance 1.8s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes mariachiDanceStart {
+  0% {
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+  40% {
+    transform: scale(1.1) rotate(-3deg) translateY(-10px);
+  }
+  70% {
+    transform: scale(1.02) rotate(2deg) translateY(-4px);
+  }
+  100% {
+    transform: scale(1.05) rotate(0deg) translateY(-5px);
+  }
+}
+
+@keyframes mariachiDance {
+  0%, 100% {
+    transform: scale(1.05) rotate(0deg) translateY(-5px) translateX(0px);
+  }
+  10% {
+    transform: scale(1.06) rotate(3deg) translateY(-8px) translateX(3px);
+  }
+  20% {
+    transform: scale(1.04) rotate(-2deg) translateY(-12px) translateX(-2px);
+  }
+  30% {
+    transform: scale(1.07) rotate(2.5deg) translateY(-6px) translateX(2px);
+  }
+  40% {
+    transform: scale(1.03) rotate(-3deg) translateY(-10px) translateX(-3px);
+  }
+  50% {
+    transform: scale(1.06) rotate(1.5deg) translateY(-7px) translateX(1px);
+  }
+  60% {
+    transform: scale(1.04) rotate(-2.5deg) translateY(-11px) translateX(-2px);
+  }
+  70% {
+    transform: scale(1.07) rotate(3deg) translateY(-5px) translateX(3px);
+  }
+  80% {
+    transform: scale(1.03) rotate(-1.5deg) translateY(-9px) translateX(-1px);
+  }
+  90% {
+    transform: scale(1.06) rotate(2deg) translateY(-6px) translateX(2px);
+  }
+}
+
+/* ---- Guitar icon bounce ---- */
+.mariachi-guitar-icon {
+  animation: guitarBounce 2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes guitarBounce {
+  0%, 100% {
+    transform: scale(1) rotate(0deg) translateY(0);
+  }
+  15% {
+    transform: scale(1.05) rotate(-5deg) translateY(-2px);
+  }
+  30% {
+    transform: scale(0.98) rotate(3deg) translateY(0);
+  }
+  50% {
+    transform: scale(1.08) rotate(-3deg) translateY(-3px);
+  }
+  70% {
+    transform: scale(0.97) rotate(4deg) translateY(0);
+  }
+  85% {
+    transform: scale(1.04) rotate(-2deg) translateY(-1px);
+  }
+}
+
+/* ---- Mariachi glow pulse (behind character) ---- */
+.mariachi-glow-pulse {
+  animation: mariachiGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes mariachiGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scaleY(1) scaleX(1);
+  }
+  30% {
+    opacity: 0.7;
+    transform: scaleY(1.15) scaleX(1.05);
+  }
+  60% {
+    opacity: 0.3;
+    transform: scaleY(0.95) scaleX(1);
+  }
+}
+
+/* ==================================================================
+   CLEOPATRA / NOLIMIT CITY ANIMATIONS
+   ================================================================== */
+
+/* ---- Cleopatra Body Idle - Elegant subtle sway ---- */
+.cleopatra-body-idle {
+  animation: cleopatraIdle 4.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes cleopatraIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.4deg) scale(1.003);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.005);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.002);
+  }
+}
+
+/* ---- Cleopatra Body Hover - Royal emergence ---- */
+.cleopatra-body-hover {
+  animation: cleopatraReveal 0.5s ease-out forwards, cleopatraFloat 3s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes cleopatraReveal {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.06);
+  }
+}
+
+@keyframes cleopatraFloat {
+  0%, 100% {
+    transform: translateY(-8px) rotate(0deg) scale(1.06);
+  }
+  25% {
+    transform: translateY(-12px) rotate(1deg) scale(1.07);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-0.8deg) scale(1.05);
+  }
+  75% {
+    transform: translateY(-10px) rotate(0.5deg) scale(1.065);
+  }
+}
+
+/* ---- Cleopatra Glow Pulse (golden behind character) ---- */
+.cleopatra-glow-pulse {
+  animation: cleopatraGlow 3s ease-in-out infinite;
+}
+
+@keyframes cleopatraGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+/* ---- Crown float animation ---- */
+.cleopatra-crown-float {
+  display: inline-block;
+  animation: crownFloat 3s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-3px) rotate(3deg);
+  }
+  66% {
+    transform: translateY(-1px) rotate(-2deg);
+  }
+}
+
+/* ==================================================================
+   CHINESE EMPRESS / SPADEGAMING ANIMATIONS
+   ================================================================== */
+
+/* ---- Empress Body Idle - Graceful subtle sway ---- */
+.empress-body-idle {
+  animation: empressIdle 5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes empressIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-1px) rotate(0.3deg) scale(1.002);
+  }
+  50% {
+    transform: translateY(-2px) rotate(-0.2deg) scale(1.004);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.15deg) scale(1.001);
+  }
+}
+
+/* ---- Empress Body Hover - Royal presence ---- */
+.empress-body-hover {
+  animation: empressReveal 0.5s ease-out forwards, empressFloat 3.5s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes empressReveal {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-6px) scale(1.05);
+  }
+}
+
+@keyframes empressFloat {
+  0%, 100% {
+    transform: translateY(-6px) rotate(0deg) scale(1.05);
+  }
+  25% {
+    transform: translateY(-9px) rotate(0.6deg) scale(1.055);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.4deg) scale(1.045);
+  }
+  75% {
+    transform: translateY(-8px) rotate(0.3deg) scale(1.052);
+  }
+}
+
+/* ---- Empress Glow Pulse (red behind character) ---- */
+.empress-glow-pulse {
+  animation: empressGlow 3s ease-in-out infinite;
+}
+
+@keyframes empressGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.08);
+  }
+}
+
+/* ==================================================================
+   SPARTAN WARRIOR / JOKER ANIMATIONS
+   ================================================================== */
+
+/* ---- Spartan Body Idle - Battle ready stance ---- */
+.spartan-body-idle {
+  animation: spartanIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes spartanIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  20% {
+    transform: translateY(-2px) rotate(0.5deg) scale(1.003);
+  }
+  40% {
+    transform: translateY(-4px) rotate(-0.3deg) scale(1.006);
+  }
+  60% {
+    transform: translateY(-2px) rotate(0.4deg) scale(1.004);
+  }
+  80% {
+    transform: translateY(-3px) rotate(-0.2deg) scale(1.002);
+  }
+}
+
+/* ---- Spartan Body Hover - Battle charge ---- */
+.spartan-body-hover {
+  animation: spartanCharge 0.5s ease-out forwards, spartanBattle 2.5s ease-in-out 0.5s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes spartanCharge {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-8px) scale(1.08) rotate(-2deg);
+  }
+  60% {
+    transform: translateY(-4px) scale(1.04) rotate(1deg);
+  }
+  100% {
+    transform: translateY(-6px) scale(1.06) rotate(0deg);
+  }
+}
+
+@keyframes spartanBattle {
+  0%, 100% {
+    transform: translateY(-6px) rotate(0deg) scale(1.06) translateX(0px);
+  }
+  12% {
+    transform: translateY(-10px) rotate(1.5deg) scale(1.07) translateX(2px);
+  }
+  25% {
+    transform: translateY(-4px) rotate(-1deg) scale(1.05) translateX(-1px);
+  }
+  37% {
+    transform: translateY(-8px) rotate(2deg) scale(1.065) translateX(3px);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-1.5deg) scale(1.055) translateX(-2px);
+  }
+  62% {
+    transform: translateY(-9px) rotate(1deg) scale(1.07) translateX(1px);
+  }
+  75% {
+    transform: translateY(-6px) rotate(-0.5deg) scale(1.06) translateX(-1px);
+  }
+  87% {
+    transform: translateY(-7px) rotate(0.8deg) scale(1.058) translateX(2px);
+  }
+}
+
+/* ---- Spartan Glow Pulse (golden/red behind character) ---- */
+.spartan-glow-pulse {
+  animation: spartanGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes spartanGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.7;
+    transform: scale(1.12);
+  }
+  60% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================================================================
+   PANDA WARRIOR / CQ9 ANIMATIONS
+   ================================================================== */
+
+/* ---- Panda Body Idle - Warrior stance ---- */
+.panda-body-idle {
+  animation: pandaIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pandaIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.3deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+}
+
+/* ---- Panda Hover - Battle ready ---- */
+.panda-body-hover {
+  animation: pandaBattle 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pandaBattle {
+  0%, 100% {
+    transform: translateY(-5px) scale(1.05) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-8px) scale(1.06) rotate(1deg);
+  }
+  40% {
+    transform: translateY(-4px) scale(1.04) rotate(-0.5deg);
+  }
+  60% {
+    transform: translateY(-7px) scale(1.055) rotate(0.8deg);
+  }
+  80% {
+    transform: translateY(-5px) scale(1.05) rotate(-0.3deg);
+  }
+}
+
+/* ---- Panda Glow Pulse (golden behind character) ---- */
+.panda-glow-pulse {
+  animation: pandaGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pandaGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================================================================
+   GANGSTER / HABANERO ANIMATIONS
+   ================================================================== */
+
+/* ---- Gangster Body Idle - Cool stance ---- */
+.gangster-body-idle {
+  animation: gangsterIdle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes gangsterIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+  60% {
+    transform: translateY(-4px) rotate(-0.2deg) scale(1.015);
+  }
+}
+
+/* ---- Gangster Hover - Aiming stance ---- */
+.gangster-body-hover {
+  animation: gangsterAim 1.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes gangsterAim {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.06) rotate(0.8deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-5px) scale(1.055) rotate(0.4deg);
+  }
+}
+
+/* ---- Gangster Glow Pulse ---- */
+.gangster-glow-pulse {
+  animation: gangsterGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes gangsterGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.04);
+  }
+}
+
+/* ==================================================================
+   SOLDIER / YGGDRASIL ANIMATIONS
+   ================================================================== */
+
+/* ---- Soldier Body Idle - Combat stance ---- */
+.soldier-body-idle {
+  animation: soldierIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes soldierIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-0.2deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.01);
+  }
+}
+
+/* ---- Soldier Hover - Tactical stance ---- */
+.soldier-body-hover {
+  animation: soldierTactical 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes soldierTactical {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.05) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-7px) scale(1.06) rotate(0.6deg);
+  }
+  40% {
+    transform: translateY(-3px) scale(1.04) rotate(-0.4deg);
+  }
+  60% {
+    transform: translateY(-6px) scale(1.055) rotate(0.5deg);
+  }
+  80% {
+    transform: translateY(-4px) scale(1.05) rotate(-0.2deg);
+  }
+}
+
+/* ---- Soldier Glow Pulse ---- */
+.soldier-glow-pulse {
+  animation: soldierGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes soldierGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================================================================
+   COWGIRL / WORLDMATCH ANIMATIONS
+   ================================================================== */
+
+/* ---- Cowgirl Body Idle - Relaxed stance ---- */
+.cowgirl-body-idle {
+  animation: cowgirlIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes cowgirlIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-2px) rotate(0.4deg) scale(1.01);
+  }
+  60% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.015);
+  }
+}
+
+/* ---- Cowgirl Hover - Confident pose ---- */
+.cowgirl-body-hover {
+  animation: cowgirlPose 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes cowgirlPose {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.04) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.05) rotate(0.6deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.035) rotate(-0.4deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.045) rotate(0.3deg);
+  }
+}
+
+/* ---- Cowgirl Glow Pulse ---- */
+.cowgirl-glow-pulse {
+  animation: cowgirlGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes cowgirlGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.04);
+  }
+}
+
+/* ==================================================================
+   VIKING / SBOSLOT ANIMATIONS
+   ================================================================== */
+
+/* ---- Viking Body Idle - Warrior stance ---- */
+.viking-body-idle {
+  animation: vikingIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes vikingIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-0.2deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.01);
+  }
+}
+
+/* ---- Viking Hover - Battle stance ---- */
+.viking-body-hover {
+  animation: vikingBattle 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes vikingBattle {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.05) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-7px) scale(1.06) rotate(0.8deg);
+  }
+  40% {
+    transform: translateY(-3px) scale(1.04) rotate(-0.5deg);
+  }
+  60% {
+    transform: translateY(-6px) scale(1.055) rotate(0.6deg);
+  }
+  80% {
+    transform: translateY(-4px) scale(1.05) rotate(-0.3deg);
+  }
+}
+
+/* ---- Viking Glow Pulse ---- */
+.viking-glow-pulse {
+  animation: vikingGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes vikingGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.55;
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.05);
+  }
+}
+
+/* ==================================================================
+   KING / FUNKY GAMES ANIMATIONS
+   ================================================================== */
+
+/* ---- King Body Idle - Royal stance ---- */
+.king-body-idle {
+  animation: kingIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes kingIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.01);
+  }
+  60% {
+    transform: translateY(-3px) rotate(-0.15deg) scale(1.015);
+  }
+}
+
+/* ---- King Hover - Majestic pose ---- */
+.king-body-hover {
+  animation: kingMajestic 2.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes kingMajestic {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.04) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.05) rotate(0.4deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.035) rotate(-0.3deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.045) rotate(0.2deg);
+  }
+}
+
+/* ---- King Glow Pulse ---- */
+.king-glow-pulse {
+  animation: kingGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes kingGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.04);
+  }
+}
+
+/* ==================================================================
+   FIRE ROCK / MICROGAMING ANIMATIONS
+   ================================================================== */
+
+/* ---- Fire Rock Body Idle - Rocking motion ---- */
+.firerock-body-idle {
+  animation: firerockIdle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes firerockIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-4px) rotate(-2deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-2px) rotate(0deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-4px) rotate(2deg) scale(1.01);
+  }
+}
+
+/* ---- Fire Rock Hover - Headbanging ---- */
+.firerock-body-hover {
+  animation: firerockRock 0.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes firerockRock {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(-3deg);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.06) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.05) rotate(3deg);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.06) rotate(0deg);
+  }
+}
+
+/* ---- Fire Rock Glow Pulse ---- */
+.firerock-glow-pulse {
+  animation: firerockGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes firerockGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+    filter: hue-rotate(15deg);
+  }
+}
+
+/* ==================================================================
+   ALADDIN / NETENT ANIMATIONS
+   ================================================================== */
+
+/* ---- Aladdin Body Idle - Mystical float ---- */
+.aladdin-body-idle {
+  animation: aladdinIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes aladdinIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) rotate(0.3deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.2deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.1deg) scale(1.005);
+  }
+}
+
+/* ---- Aladdin Hover - Magic lamp glow ---- */
+.aladdin-body-hover {
+  animation: aladdinMagic 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes aladdinMagic {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-7px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Aladdin Glow Pulse ---- */
+.aladdin-glow-pulse {
+  animation: aladdinGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes aladdinGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+/* ==================================================================
+   BOXER / AFB777 ANIMATIONS
+   ================================================================== */
+
+/* ---- Boxer Body Idle - Ready stance ---- */
+.boxer-body-idle {
+  animation: boxerIdle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes boxerIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.005);
+  }
+}
+
+/* ---- Boxer Hover - Fighting stance ---- */
+.boxer-body-hover {
+  animation: boxerFight 0.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes boxerFight {
+  0%, 100% {
+    transform: translateY(-2px) scale(1.05) rotate(-1deg);
+  }
+  25% {
+    transform: translateY(-4px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-3px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Boxer Glow Pulse ---- */
+.boxer-glow-pulse {
+  animation: boxerGlow 2s ease-in-out infinite;
+}
+
+@keyframes boxerGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+/* ==================================================================
+   SULTAN / JILI ANIMATIONS
+   ================================================================== */
+
+/* ---- Sultan Body Idle - Royal stance ---- */
+.sultan-body-idle {
+  animation: sultanIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes sultanIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.01);
+  }
+  60% {
+    transform: translateY(-3px) rotate(-0.15deg) scale(1.015);
+  }
+}
+
+/* ---- Sultan Hover - Majestic presence ---- */
+.sultan-body-hover {
+  animation: sultanMajestic 2.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes sultanMajestic {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.04) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.05) rotate(0.3deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.035) rotate(-0.2deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.045) rotate(0.15deg);
+  }
+}
+
+/* ---- Sultan Glow Pulse ---- */
+.sultan-glow-pulse {
+  animation: sultanGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes sultanGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   GENIE / RICH88 ANIMATIONS
+   ================================================================== */
+
+/* ---- Genie Body Idle - Floating magic ---- */
+.genie-body-idle {
+  animation: genieIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes genieIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-5px) rotate(1deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-0.5deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-4px) rotate(0.5deg) scale(1.01);
+  }
+}
+
+/* ---- Genie Hover - Magic burst ---- */
+.genie-body-hover {
+  animation: genieMagic 1.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes genieMagic {
+  0%, 100% {
+    transform: translateY(-6px) scale(1.06) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) scale(1.08) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-8px) scale(1.07) rotate(1deg);
+  }
+}
+
+/* ---- Genie Glow Pulse ---- */
+.genie-glow-pulse {
+  animation: genieGlow 2s ease-in-out infinite;
+}
+
+@keyframes genieGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.1);
+  }
+}
+
+/* ==================================================================
+   POSEIDON / ADVANTPLAY ANIMATIONS
+   ================================================================== */
+
+/* ---- Poseidon Body Idle - Ocean power ---- */
+.poseidon-body-idle {
+  animation: poseidonIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes poseidonIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.3deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.01);
+  }
+}
+
+/* ---- Poseidon Hover - Trident power ---- */
+.poseidon-body-hover {
+  animation: poseidonPower 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes poseidonPower {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-7px) scale(1.07) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.06) rotate(0.5deg);
+  }
+}
+
+/* ---- Poseidon Glow Pulse ---- */
+.poseidon-glow-pulse {
+  animation: poseidonGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes poseidonGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+/* ==================================================================
+   PIRATE / KINGMAKER ANIMATIONS
+   ================================================================== */
+
+/* ---- Pirate Body Idle - Sea swagger ---- */
+.pirate-body-idle {
+  animation: pirateIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pirateIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-4px) rotate(-0.3deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.005);
+  }
+}
+
+/* ---- Pirate Hover - Swagger pose ---- */
+.pirate-body-hover {
+  animation: pirateSwagger 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pirateSwagger {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Pirate Glow Pulse ---- */
+.pirate-glow-pulse {
+  animation: pirateGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pirateGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   MONOPOLY / PLAYSTAR SLOTS ANIMATIONS
+   ================================================================== */
+
+/* ---- Monopoly Body Idle - Money counting ---- */
+.monopoly-body-idle {
+  animation: monopolyIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes monopolyIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.2deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.1deg) scale(1.005);
+  }
+}
+
+/* ---- Monopoly Hover - Celebrating ---- */
+.monopoly-body-hover {
+  animation: monopolyCelebrate 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes monopolyCelebrate {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Monopoly Glow Pulse ---- */
+.monopoly-glow-pulse {
+  animation: monopolyGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes monopolyGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   DRAGON / DRAGOON SOFT ANIMATIONS
+   ================================================================== */
+
+/* ---- Dragon Body Idle - Breathing fire ---- */
+.dragon-body-idle {
+  animation: dragonIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes dragonIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.3deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-2px) rotate(0.2deg) scale(1.005);
+  }
+}
+
+/* ---- Dragon Hover - Attack mode ---- */
+.dragon-body-hover {
+  animation: dragonAttack 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes dragonAttack {
+  0%, 100% {
+    transform: translateY(-4px) scale(1.06) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.07) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.05) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-5px) scale(1.065) rotate(0.5deg);
+  }
+}
+
+/* ---- Dragon Glow Pulse ---- */
+.dragon-glow-pulse {
+  animation: dragonGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes dragonGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+/* ==================================================================
+   SCIENTIST / FASTSPIN ANIMATIONS
+   ================================================================== */
+
+/* ---- Scientist Body Idle - Mad genius ---- */
+.scientist-body-idle {
+  animation: scientistIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes scientistIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.005);
+  }
+}
+
+/* ---- Scientist Hover - Experiment mode ---- */
+.scientist-body-hover {
+  animation: scientistExperiment 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes scientistExperiment {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Scientist Glow Pulse ---- */
+.scientist-glow-pulse {
+  animation: scientistGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes scientistGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   PHARAOH / PLAYSTAR ANIMATIONS
+   ================================================================== */
+
+/* ---- Pharaoh Body Idle - Royal stance ---- */
+.pharaoh-body-idle {
+  animation: pharaohIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pharaohIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.2deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.1deg) scale(1.005);
+  }
+}
+
+/* ---- Pharaoh Hover - Divine presence ---- */
+.pharaoh-body-hover {
+  animation: pharaohDivine 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes pharaohDivine {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.06) rotate(0.5deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04) rotate(-0.3deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.055) rotate(0.3deg);
+  }
+}
+
+/* ---- Pharaoh Glow Pulse ---- */
+.pharaoh-glow-pulse {
+  animation: pharaohGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes pharaohGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   WARRIOR / YGR ANIMATIONS
+   ================================================================== */
+
+/* ---- Warrior Body Idle - Battle stance ---- */
+.warrior-body-idle {
+  animation: warriorIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes warriorIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.5deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.015);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.005);
+  }
+}
+
+/* ---- Warrior Hover - Ready to fight ---- */
+.warrior-body-hover {
+  animation: warriorBattle 2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes warriorBattle {
+  0%, 100% {
+    transform: translateY(-3px) scale(1.05) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) scale(1.06) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.055) rotate(0.5deg);
+  }
+}
+
+/* ---- Warrior Glow Pulse ---- */
+.warrior-glow-pulse {
+  animation: warriorGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes warriorGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.06);
+  }
+}
+
+/* ==================================================================
+   FOOTBALLER / SBOBET ANIMATIONS
+   ================================================================== */
+
+/* ---- Footballer Body Idle - Ready stance ---- */
+.footballer-body-idle {
+  animation: footballerIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes footballerIdle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) rotate(0.3deg) scale(1.008);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.3deg) scale(1.012);
+  }
+  75% {
+    transform: translateY(-1px) rotate(0.2deg) scale(1.004);
+  }
+}
+
+/* ---- Footballer Hover - Celebration ---- */
+.footballer-body-hover {
+  animation: footballerCelebrate 0.4s ease-out forwards, footballerDance 2s ease-in-out 0.4s infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes footballerCelebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-5px) scale(1.06);
+  }
+}
+
+@keyframes footballerDance {
+  0%, 100% {
+    transform: translateY(-5px) scale(1.06) rotate(0deg);
+  }
+  15% {
+    transform: translateY(-8px) scale(1.07) rotate(1deg);
+  }
+  30% {
+    transform: translateY(-4px) scale(1.055) rotate(-1deg);
+  }
+  45% {
+    transform: translateY(-7px) scale(1.065) rotate(0.5deg);
+  }
+  60% {
+    transform: translateY(-5px) scale(1.06) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-6px) scale(1.058) rotate(0.8deg);
+  }
+  90% {
+    transform: translateY(-4px) scale(1.055) rotate(-0.3deg);
+  }
+}
+
+/* ---- Footballer Glow Pulse ---- */
+.footballer-glow-pulse {
+  animation: footballerGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes footballerGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+  60% {
+    opacity: 0.3;
+    transform: scale(1.05);
+  }
+}
+
+/* ========================================== */
+/* ====== CASINO MODEL ANIMATIONS ========== */
+/* ========================================== */
+
+/* ---- Casino Model Body Idle - Gentle sway ---- */
+.casinomodel-body-idle {
+  animation: casinomodelIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Casino Model Body Hover - Elegant rise ---- */
+.casinomodel-body-hover {
+  animation: casinomodelCelebrate 0.4s ease-out forwards, casinomodelDance 2.5s ease-in-out 0.4s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Casino Model Idle ---- */
+@keyframes casinomodelIdle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  25% {
+    transform: translateY(-2px) scale(1.005);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.01);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.005);
+  }
+}
+
+/* ---- Casino Model Hover - Elegant Rise ---- */
+@keyframes casinomodelCelebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-8px) scale(1.08);
+  }
+}
+
+@keyframes casinomodelDance {
+  0%, 100% {
+    transform: translateY(-8px) scale(1.08) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-10px) scale(1.085) rotate(0.8deg);
+  }
+  40% {
+    transform: translateY(-6px) scale(1.075) rotate(-0.5deg);
+  }
+  60% {
+    transform: translateY(-9px) scale(1.082) rotate(0.3deg);
+  }
+  80% {
+    transform: translateY(-7px) scale(1.078) rotate(-0.3deg);
+  }
+}
+
+@keyframes casinomodelGlow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  30% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+  60% {
+    opacity: 0.25;
+    transform: scale(1.04);
+  }
+}
+
+/* ========== TOGEL MODEL ANIMATIONS ========== */
+
+/* ---- Togel Model Body Idle - Subtle float ---- */
+.togelmodel-body-idle {
+  animation: togelmodelIdle 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Togel Model Body Hover - Lucky bounce ---- */
+.togelmodel-body-hover {
+  animation: togelmodelRise 0.3s ease-out forwards, togelmodelBounce 2s ease-in-out 0.3s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Togel Model Idle ---- */
+@keyframes togelmodelIdle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.01);
+  }
+}
+
+/* ---- Togel Model Hover - Rise ---- */
+@keyframes togelmodelRise {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-12px) scale(1.1);
+  }
+}
+
+/* ---- Togel Model Hover - Lucky Bounce ---- */
+@keyframes togelmodelBounce {
+  0%, 100% {
+    transform: translateY(-12px) scale(1.1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-16px) scale(1.12) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.08) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-14px) scale(1.11) rotate(0.5deg);
+  }
+}
+
+@keyframes togelmodelGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+/* ========== FISHING CHARACTER ANIMATIONS ========== */
+
+/* ---- Fishing Char Body Idle - Swimming motion ---- */
+.fishingchar-body-idle {
+  animation: fishingcharIdle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Fishing Char Body Hover - Attack pose ---- */
+.fishingchar-body-hover {
+  animation: fishingcharRise 0.3s ease-out forwards, fishingcharSwim 2s ease-in-out 0.3s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Fishing Char Idle ---- */
+@keyframes fishingcharIdle {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) translateX(2px) rotate(1deg) scale(1.01);
+  }
+  50% {
+    transform: translateY(-5px) translateX(0px) rotate(0deg) scale(1.02);
+  }
+  75% {
+    transform: translateY(-3px) translateX(-2px) rotate(-1deg) scale(1.01);
+  }
+}
+
+/* ---- Fishing Char Hover - Rise ---- */
+@keyframes fishingcharRise {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-15px) scale(1.12);
+  }
+}
+
+/* ---- Fishing Char Hover - Swimming Attack ---- */
+@keyframes fishingcharSwim {
+  0%, 100% {
+    transform: translateY(-15px) translateX(0px) rotate(0deg) scale(1.12);
+  }
+  25% {
+    transform: translateY(-18px) translateX(5px) rotate(2deg) scale(1.14);
+  }
+  50% {
+    transform: translateY(-12px) translateX(0px) rotate(0deg) scale(1.1);
+  }
+  75% {
+    transform: translateY(-17px) translateX(-5px) rotate(-2deg) scale(1.13);
+  }
+}
+
+@keyframes fishingcharGlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
+}
+
+/* ---- Radial gradient helper ---- */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-from), var(--tw-gradient-to));
+}
+
+/* ---- Arcade Character Body Idle - Gentle float ---- */
+.arcadechar-body-idle {
+  animation: arcadecharIdle 3.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Arcade Character Body Hover - Exciting bounce ---- */
+.arcadechar-body-hover {
+  animation: arcadecharCelebrate 0.4s ease-out forwards, arcadecharDance 2.5s ease-in-out 0.4s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Arcade Character Idle ---- */
+@keyframes arcadecharIdle {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) scale(1.005);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.01);
+  }
+  75% {
+    transform: translateY(-3px) scale(1.005);
+  }
+}
+
+/* ---- Arcade Character Hover - Exciting Rise ---- */
+@keyframes arcadecharCelebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
+@keyframes arcadecharDance {
+  0%, 100% {
+    transform: translateY(-10px) scale(1.1) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-12px) scale(1.105) rotate(1deg);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.095) rotate(-0.5deg);
+  }
+  60% {
+    transform: translateY(-11px) scale(1.102) rotate(0.5deg);
+  }
+  80% {
+    transform: translateY(-9px) scale(1.098) rotate(-0.5deg);
+  }
+}
+
+/* ---- Poker Character Body Idle - Card shuffle feel ---- */
+.pokerchar-body-idle {
+  animation: pokercharIdle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Poker Character Body Hover - Winning celebration ---- */
+.pokerchar-body-hover {
+  animation: pokercharCelebrate 0.4s ease-out forwards, pokercharDance 2s ease-in-out 0.4s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Poker Character Idle ---- */
+@keyframes pokercharIdle {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) scale(1.01) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.02) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.01) rotate(1deg);
+  }
+}
+
+/* ---- Poker Character Hover - Winning ---- */
+@keyframes pokercharCelebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-12px) scale(1.12);
+  }
+}
+
+@keyframes pokercharDance {
+  0%, 100% {
+    transform: translateY(-12px) scale(1.12) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-14px) scale(1.13) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.11) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-13px) scale(1.12) rotate(-2deg);
+  }
+}
+
+/* ---- Cock Fighting Character Body Idle - Aggressive stance ---- */
+.cockchar-body-idle {
+  animation: cockcharIdle 2.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Cock Fighting Character Body Hover - Attack mode ---- */
+.cockchar-body-hover {
+  animation: cockcharCelebrate 0.3s ease-out forwards, cockcharDance 1.5s ease-in-out 0.3s infinite;
+  transform-origin: bottom center;
+}
+
+/* ---- Cock Character Idle ---- */
+@keyframes cockcharIdle {
+  0%, 100% {
+    transform: translateY(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-3px) scale(1.02) rotate(-0.5deg);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.03) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-3px) scale(1.02) rotate(0.5deg);
+  }
+}
+
+/* ---- Cock Character Hover - Fighting ---- */
+@keyframes cockcharCelebrate {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-15px) scale(1.15);
+  }
+}
+
+@keyframes cockcharDance {
+  0%, 100% {
+    transform: translateY(-15px) scale(1.15) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-18px) scale(1.17) rotate(2deg);
+  }
+  40% {
+    transform: translateY(-12px) scale(1.13) rotate(-1deg);
+  }
+  60% {
+    transform: translateY(-16px) scale(1.16) rotate(1deg);
+  }
+  80% {
+    transform: translateY(-14px) scale(1.14) rotate(-1deg);
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
