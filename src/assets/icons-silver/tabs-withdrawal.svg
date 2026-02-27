@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="tabGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#0a0a0a"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <filter id="iconGlow">
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Tab Background -->
+  <rect x="2" y="2" width="44" height="44" rx="8" fill="url(#tabGrad)" stroke="url(#chromeAccent)" stroke-width="1.5"/>
+  
+  <!-- Withdrawal Icon (Wallet with arrow up) -->
+  <g fill="none" stroke="#C0C0C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#iconGlow)">
+    <!-- Wallet -->
+    <rect x="10" y="18" width="22" height="16" rx="2"/>
+    <path d="M10 24 L32 24"/>
+    <circle cx="27" cy="28" r="2" fill="#C0C0C0"/>
+    
+    <!-- Arrow Up -->
+    <path d="M38 20 L38 10 M34 14 L38 10 L42 14"/>
+  </g>
+  
+  <!-- Label -->
+  <text x="24" y="42" text-anchor="middle" font-family="Arial" font-size="4" fill="#808080">WITHDRAW</text>
+</svg>

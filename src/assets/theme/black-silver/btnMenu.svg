@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="chromeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="25%" style="stop-color:#C0C0C0"/>
+      <stop offset="50%" style="stop-color:#A8A8A8"/>
+      <stop offset="75%" style="stop-color:#C0C0C0"/>
+      <stop offset="100%" style="stop-color:#909090"/>
+    </linearGradient>
+    <linearGradient id="borderShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="50%" style="stop-color:#C0C0C0"/>
+      <stop offset="100%" style="stop-color:#606060"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <rect x="2" y="2" width="44" height="44" rx="10" ry="10" fill="#0a0a0a" stroke="url(#borderShine)" stroke-width="1.5"/>
+  <rect x="4" y="4" width="40" height="40" rx="8" ry="8" fill="url(#chromeGrad)" opacity="0.12"/>
+  
+  <!-- Hamburger Menu Icon -->
+  <g stroke="#C0C0C0" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)">
+    <line x1="12" y1="16" x2="36" y2="16"/>
+    <line x1="12" y1="24" x2="36" y2="24"/>
+    <line x1="12" y1="32" x2="36" y2="32"/>
+  </g>
+</svg>

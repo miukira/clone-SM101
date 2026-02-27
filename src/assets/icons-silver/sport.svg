@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="ballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="40%" style="stop-color:#E0E0E0"/>
+      <stop offset="100%" style="stop-color:#909090"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="32" cy="32" r="28" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Soccer Ball -->
+  <g filter="url(#shadow)">
+    <circle cx="32" cy="32" r="18" fill="url(#ballGrad)" stroke="#A0A0A0" stroke-width="1"/>
+    
+    <!-- Pentagon Pattern -->
+    <polygon points="32,18 38,24 36,32 28,32 26,24" fill="#1a1a1a" stroke="#606060" stroke-width="0.5"/>
+    <polygon points="44,28 46,36 40,42 34,38 36,30" fill="#1a1a1a" stroke="#606060" stroke-width="0.5"/>
+    <polygon points="20,28 28,30 30,38 24,42 18,36" fill="#1a1a1a" stroke="#606060" stroke-width="0.5"/>
+    <polygon points="26,44 32,46 38,44 36,38 28,38" fill="#1a1a1a" stroke="#606060" stroke-width="0.5"/>
+    
+    <!-- Highlight -->
+    <ellipse cx="26" cy="24" rx="4" ry="3" fill="#FFFFFF" opacity="0.4"/>
+  </g>
+  
+  <!-- Small decorative elements -->
+  <circle cx="12" cy="50" r="2" fill="#C0C0C0" opacity="0.3"/>
+  <circle cx="52" cy="50" r="2" fill="#C0C0C0" opacity="0.3"/>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="ballGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF"/>
+      <stop offset="30%" style="stop-color:#E0E0E0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#606060"/>
+    </linearGradient>
+    <filter id="ballShadow">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="4" y="4" width="56" height="56" rx="10" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Lottery Balls -->
+  <g filter="url(#ballShadow)">
+    <!-- Ball 1 -->
+    <circle cx="18" cy="20" r="8" fill="url(#ballGrad)" stroke="#808080" stroke-width="1"/>
+    <text x="18" y="23" text-anchor="middle" font-size="8" font-weight="bold" fill="#1a1a1a">4</text>
+    
+    <!-- Ball 2 -->
+    <circle cx="36" cy="18" r="8" fill="url(#ballGrad)" stroke="#A0A0A0" stroke-width="1"/>
+    <text x="36" y="21" text-anchor="middle" font-size="8" font-weight="bold" fill="#1a1a1a">7</text>
+    
+    <!-- Ball 3 -->
+    <circle cx="50" cy="24" r="8" fill="url(#ballGrad)" stroke="#808080" stroke-width="1"/>
+    <text x="50" y="27" text-anchor="middle" font-size="8" font-weight="bold" fill="#1a1a1a">2</text>
+    
+    <!-- Ball 4 -->
+    <circle cx="14" cy="40" r="8" fill="url(#ballGrad)" stroke="#909090" stroke-width="1"/>
+    <text x="14" y="43" text-anchor="middle" font-size="8" font-weight="bold" fill="#1a1a1a">8</text>
+    
+    <!-- Ball 5 -->
+    <circle cx="32" cy="38" r="10" fill="url(#ballGrad)" stroke="#C0C0C0" stroke-width="1.5"/>
+    <text x="32" y="42" text-anchor="middle" font-size="10" font-weight="bold" fill="#1a1a1a">9</text>
+    
+    <!-- Ball 6 -->
+    <circle cx="50" cy="44" r="8" fill="url(#ballGrad)" stroke="#808080" stroke-width="1"/>
+    <text x="50" y="47" text-anchor="middle" font-size="8" font-weight="bold" fill="#1a1a1a">1</text>
+  </g>
+  
+  <!-- Bottom Label -->
+  <text x="32" y="58" text-anchor="middle" font-family="Arial" font-size="6" fill="#808080">TOGEL</text>
+</svg>

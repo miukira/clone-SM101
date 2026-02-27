@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 8" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="dividerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000"/>
+      <stop offset="20%" style="stop-color:#404040"/>
+      <stop offset="40%" style="stop-color:#808080"/>
+      <stop offset="50%" style="stop-color:#C0C0C0"/>
+      <stop offset="60%" style="stop-color:#808080"/>
+      <stop offset="80%" style="stop-color:#404040"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="shineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000" stop-opacity="0"/>
+      <stop offset="50%" style="stop-color:#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="100%" style="stop-color:#000000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Main Line -->
+  <rect x="0" y="3" width="400" height="2" fill="url(#dividerGrad)"/>
+  
+  <!-- Shine Effect -->
+  <rect x="0" y="3" width="400" height="1" fill="url(#shineGrad)"/>
+  
+  <!-- Center Diamond -->
+  <polygon points="200,0 204,4 200,8 196,4" fill="#C0C0C0"/>
+</svg>

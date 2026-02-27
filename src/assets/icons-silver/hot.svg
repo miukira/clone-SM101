@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#505050"/>
+      <stop offset="30%" style="stop-color:#808080"/>
+      <stop offset="60%" style="stop-color:#C0C0C0"/>
+      <stop offset="100%" style="stop-color:#FFFFFF"/>
+    </linearGradient>
+    <filter id="flameGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="32" cy="32" r="28" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Fire/Flame Icon -->
+  <g filter="url(#flameGlow)">
+    <!-- Main Flame -->
+    <path d="M32 10 
+             Q40 22 38 30 
+             Q44 24 42 34 
+             Q48 28 46 40 
+             Q50 38 48 48 
+             Q44 54 32 54 
+             Q20 54 16 48 
+             Q14 38 18 40 
+             Q16 28 22 34 
+             Q20 24 26 30 
+             Q24 22 32 10 Z" 
+          fill="url(#flameGrad)" 
+          stroke="#E0E0E0" 
+          stroke-width="1"/>
+    
+    <!-- Inner Flame -->
+    <path d="M32 26 
+             Q36 32 35 38 
+             Q38 36 37 44 
+             Q34 50 32 50 
+             Q30 50 27 44 
+             Q26 36 29 38 
+             Q28 32 32 26 Z" 
+          fill="#1a1a1a" 
+          opacity="0.6"/>
+    
+    <!-- Flame Core -->
+    <ellipse cx="32" cy="44" rx="4" ry="6" fill="#E8E8E8" opacity="0.8"/>
+  </g>
+  
+  <!-- HOT Text -->
+  <text x="32" y="60" text-anchor="middle" font-family="Arial" font-size="5" font-weight="bold" fill="#808080">HOT</text>
+</svg>

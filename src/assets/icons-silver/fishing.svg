@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="chromeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#000000"/>
+    </linearGradient>
+    <linearGradient id="chromeAccent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="30%" style="stop-color:#C0C0C0"/>
+      <stop offset="70%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </linearGradient>
+    <linearGradient id="fishGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#D0D0D0"/>
+      <stop offset="50%" style="stop-color:#A0A0A0"/>
+      <stop offset="100%" style="stop-color:#707070"/>
+    </linearGradient>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#303030"/>
+      <stop offset="100%" style="stop-color:#1a1a1a"/>
+    </linearGradient>
+    <filter id="fishShadow">
+      <feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect x="4" y="4" width="56" height="56" rx="10" fill="url(#chromeBg)" stroke="url(#chromeAccent)" stroke-width="2"/>
+  
+  <!-- Water Area -->
+  <path d="M8 35 Q16 32 24 35 Q32 38 40 35 Q48 32 56 35 L56 52 Q48 55 40 52 Q32 49 24 52 Q16 55 8 52 Z" fill="url(#waterGrad)" opacity="0.5"/>
+  
+  <!-- Fish -->
+  <g filter="url(#fishShadow)" transform="translate(14, 38)">
+    <ellipse cx="16" cy="8" rx="14" ry="7" fill="url(#fishGrad)"/>
+    <polygon points="30,8 38,2 38,14" fill="url(#chromeAccent)"/>
+    <circle cx="8" cy="6" r="2" fill="#1a1a1a"/>
+    <circle cx="8" cy="6" r="1" fill="#606060"/>
+    <path d="M12 10 Q16 12 20 10" stroke="#606060" stroke-width="1" fill="none"/>
+    <path d="M16 4 Q20 1 24 4" stroke="#808080" stroke-width="0.5" fill="none"/>
+    <path d="M16 12 Q20 15 24 12" stroke="#808080" stroke-width="0.5" fill="none"/>
+  </g>
+  
+  <!-- Fishing Rod -->
+  <line x1="10" y1="8" x2="42" y2="8" stroke="url(#chromeAccent)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="42" y1="8" x2="48" y2="14" stroke="url(#chromeAccent)" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Fishing Line -->
+  <path d="M48 14 Q52 24 44 34" stroke="#C0C0C0" stroke-width="0.5" fill="none" stroke-dasharray="2,2"/>
+  
+  <!-- Hook -->
+  <path d="M44 34 Q46 38 44 40 Q42 42 40 40" stroke="#E0E0E0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Reel -->
+  <circle cx="20" cy="8" r="4" fill="#0a0a0a" stroke="url(#chromeAccent)" stroke-width="1"/>
+  <circle cx="20" cy="8" r="2" fill="#606060"/>
+</svg>
