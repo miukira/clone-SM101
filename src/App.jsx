@@ -1,49 +1,47 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import PromoPage from './pages/PromoPage'
-import ContactPage from './pages/ContactPage'
-import RegisterPage from './pages/RegisterPage'
-import PreviewPage from './assets2/PreviewPage'
-import ChatWidget from './components/ChatWidget'
-import PopupModal from './components/PopupModal'
-import BottomNav from './components/BottomNav'
-import MenuSidebar from './components/MenuSidebar'
-import { useState, createContext } from 'react'
+import HomePageChrome from './pages/HomePageChrome'
+import PromoPageChrome from './pages/PromoPageChrome'
+import ReferralPageChrome from './pages/ReferralPageChrome'
+import MemberDashboardChrome from './pages/MemberDashboardChrome'
+import TogelBettingPage from './pages/TogelBettingPage'
+import { ThemeProvider } from './context/ThemeContext'
+import { AuthProvider } from './context/AuthContext'
+import SeasonalEffects from './components/SeasonalEffects'
+import ThemeCustomizer from './components/ThemeCustomizer'
+import ThemedBackground from './components/ThemedBackground'
+import { createContext } from 'react'
 
-// Create context for menu state
+// Create context for menu state (kept for compatibility)
 export const MenuContext = createContext()
 
 function App() {
-  const [showPopup, setShowPopup] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const openMenu = () => setIsMenuOpen(true)
-  const closeMenu = () => setIsMenuOpen(false)
-
   return (
     <BrowserRouter>
-      <MenuContext.Provider value={{ isMenuOpen, openMenu, closeMenu }}>
-        <div className="min-h-screen bg-[#0a1420]">
-          {showPopup && <PopupModal onClose={() => setShowPopup(false)} />}
+      <AuthProvider>
+        <ThemeProvider>
+          {/* Global Theme Components */}
+          <ThemedBackground />
+          <SeasonalEffects />
+          <ThemeCustomizer />
           
-          {/* Menu Sidebar */}
-          <MenuSidebar isOpen={isMenuOpen} onClose={closeMenu} />
-          
-          {/* Main Content */}
-          <div>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/promo" element={<PromoPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/providers" element={<PreviewPage />} />
-            </Routes>
-          </div>
-          
-          <ChatWidget />
-          <BottomNav />
-        </div>
-      </MenuContext.Provider>
+          <Routes>
+            {/* Main Routes - Chrome Theme */}
+            <Route path="/" element={<HomePageChrome />} />
+            <Route path="/providers/:category" element={<HomePageChrome />} />
+            <Route path="/promo" element={<PromoPageChrome />} />
+            <Route path="/referral" element={<ReferralPageChrome />} />
+            <Route path="/member" element={<MemberDashboardChrome />} />
+            <Route path="/member/:section" element={<MemberDashboardChrome />} />
+            
+            {/* Togel Betting */}
+            <Route path="/togel" element={<TogelBettingPage />} />
+            <Route path="/togel/:market" element={<TogelBettingPage />} />
+            
+            {/* Fallback - redirect to home */}
+            <Route path="*" element={<HomePageChrome />} />
+          </Routes>
+        </ThemeProvider>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

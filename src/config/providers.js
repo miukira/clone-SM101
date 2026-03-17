@@ -174,6 +174,7 @@ import cockLogo1 from '../assets2/colog1.png'         // GA28
 export const providers = [
   {
     id: 'pragmatic-play',
+    provider_id: 1001,
     name: 'Pragmatic Play',
     characterImg: zeusBody,
     characterImgAlt: 'Zeus',
@@ -193,6 +194,7 @@ export const providers = [
   },
   {
     id: 'pg-soft',
+    provider_id: 1002,
     name: 'PG Soft',
     characterImg: mariachiSkeleton,
     characterImgAlt: 'Mariachi Skeleton',
@@ -212,6 +214,7 @@ export const providers = [
   },
   {
     id: 'nolimit-city',
+    provider_id: 1003,
     name: 'Nolimit City',
     characterImg: cleopatraChar,
     characterImgAlt: 'Cleopatra',
@@ -231,6 +234,7 @@ export const providers = [
   },
   {
     id: 'lucky-monaco',
+    provider_id: 1004,
     name: 'Lucky Monaco',
     characterImg: empressChar,
     characterImgAlt: 'Chinese Empress',
@@ -250,6 +254,7 @@ export const providers = [
   },
   {
     id: 'joker',
+    provider_id: 1005,
     name: 'Joker Gaming',
     characterImg: spartanChar,
     characterImgAlt: 'Spartan Warrior',
@@ -269,6 +274,7 @@ export const providers = [
   },
   {
     id: 'cq9',
+    provider_id: 1006,
     name: 'JDB',
     characterImg: pandaChar,
     characterImgAlt: 'Panda Warrior',
@@ -288,6 +294,7 @@ export const providers = [
   },
   {
     id: 'habanero',
+    provider_id: 1007,
     name: 'Habanero',
     characterImg: gangsterChar,
     characterImgAlt: 'Gangster',
@@ -307,6 +314,7 @@ export const providers = [
   },
   {
     id: 'yggdrasil',
+    provider_id: 1008,
     name: 'Yggdrasil',
     characterImg: soldierChar,
     characterImgAlt: 'Soldier',
@@ -326,6 +334,7 @@ export const providers = [
   },
   {
     id: 'worldmatch',
+    provider_id: 1009,
     name: 'WorldMatch',
     characterImg: cowgirlChar,
     characterImgAlt: 'Cowgirl',
@@ -345,6 +354,7 @@ export const providers = [
   },
   {
     id: 'sboslot',
+    provider_id: 1010,
     name: 'SBOSLOT',
     characterImg: vikingChar,
     characterImgAlt: 'Viking Warrior',
@@ -364,6 +374,7 @@ export const providers = [
   },
   {
     id: 'funkygames',
+    provider_id: 1011,
     name: 'Funky Games',
     characterImg: kingChar,
     characterImgAlt: 'King',
@@ -383,6 +394,7 @@ export const providers = [
   },
   {
     id: 'microgaming',
+    provider_id: 1012,
     name: 'Microgaming',
     characterImg: skeletonGuitaristChar,
     characterImgAlt: 'Fire Skeleton Guitarist',
@@ -402,6 +414,7 @@ export const providers = [
   },
   {
     id: 'netent',
+    provider_id: 1013,
     name: 'NetEnt',
     characterImg: aladdinChar,
     characterImgAlt: 'Aladdin',
@@ -421,6 +434,7 @@ export const providers = [
   },
   {
     id: 'afb777',
+    provider_id: 1014,
     name: 'AFB777 Gaming',
     characterImg: boxerChar,
     characterImgAlt: 'Boxer',
@@ -440,6 +454,7 @@ export const providers = [
   },
   {
     id: 'jili',
+    provider_id: 1015,
     name: 'JILI',
     characterImg: sultanChar,
     characterImgAlt: 'Sultan',
@@ -459,6 +474,7 @@ export const providers = [
   },
   {
     id: 'rich88',
+    provider_id: 1016,
     name: 'RICH88',
     characterImg: genieChar,
     characterImgAlt: 'Genie',
@@ -478,6 +494,7 @@ export const providers = [
   },
   {
     id: 'advantplay',
+    provider_id: 1017,
     name: 'AdvantPlay',
     characterImg: poseidonChar,
     characterImgAlt: 'Poseidon',
@@ -497,6 +514,7 @@ export const providers = [
   },
   {
     id: 'kingmaker',
+    provider_id: 1018,
     name: 'Kingmaker',
     characterImg: pirateChar,
     characterImgAlt: 'Pirate',
@@ -516,6 +534,7 @@ export const providers = [
   },
   {
     id: 'ygr',
+    provider_id: 1019,
     name: 'YGR Gaming',
     characterImg: warriorChar,
     characterImgAlt: 'Warrior',
@@ -535,6 +554,7 @@ export const providers = [
   },
   {
     id: 'playstar',
+    provider_id: 1020,
     name: 'PlayStar',
     characterImg: pharaohChar,
     characterImgAlt: 'Pharaoh',
@@ -554,6 +574,7 @@ export const providers = [
   },
   {
     id: 'fastspin',
+    provider_id: 1021,
     name: 'FastSpin',
     characterImg: scientistChar,
     characterImgAlt: 'Mad Scientist',
@@ -573,6 +594,7 @@ export const providers = [
   },
   {
     id: 'dragoonsoft',
+    provider_id: 1022,
     name: 'Dragoon Soft',
     characterImg: dragonChar,
     characterImgAlt: 'Dragon',
@@ -592,6 +614,7 @@ export const providers = [
   },
   {
     id: 'nagagames',
+    provider_id: 1023,
     name: 'Naga Games',
     characterImg: monopolyChar,
     characterImgAlt: 'Monopoly Man',
@@ -615,6 +638,7 @@ export const providers = [
 export const sportsProviders = [
   {
     id: 'sbobet',
+    provider_id: 4001,
     name: 'SBOBET',
     characterImg: footballerChar,
     characterImgAlt: 'Lamine Yamal',
@@ -633,6 +657,7 @@ export const sportsProviders = [
   },
   {
     id: 'saba-sports',
+    provider_id: 4002,
     name: 'SABA Sports',
     characterImg: mbappeChar,
     characterImgAlt: 'Mbappe',
@@ -651,6 +676,7 @@ export const sportsProviders = [
   },
   {
     id: 'afb777-sports',
+    provider_id: 4003,
     name: 'AFB777 Gaming',
     characterImg: haalandChar,
     characterImgAlt: 'Haaland',
@@ -669,6 +695,7 @@ export const sportsProviders = [
   },
   {
     id: 'bti',
+    provider_id: 4004,
     name: 'BTi',
     characterImg: messiChar,
     characterImgAlt: 'Messi',
@@ -687,6 +714,7 @@ export const sportsProviders = [
   },
   {
     id: 'betpanda',
+    provider_id: 4005,
     name: 'Betpanda',
     characterImg: ronaldoChar,
     characterImgAlt: 'Ronaldo',
@@ -710,6 +738,7 @@ export const sportsProviders = [
 export const casinoProviders = [
   {
     id: '568win',
+    provider_id: 3001,
     name: '568Win',
     characterImg: casinoModel1,
     characterImgAlt: 'Casino Model',
@@ -728,6 +757,7 @@ export const casinoProviders = [
   },
   {
     id: 'wm-casino',
+    provider_id: 3002,
     name: 'WM Casino',
     characterImg: casinoModel2,
     characterImgAlt: 'Casino Model',
@@ -746,6 +776,7 @@ export const casinoProviders = [
   },
   {
     id: 'ion-casino',
+    provider_id: 3003,
     name: 'ION Casino',
     characterImg: casinoModel3,
     characterImgAlt: 'Casino Model',
@@ -764,6 +795,7 @@ export const casinoProviders = [
   },
   {
     id: 'sa-gaming',
+    provider_id: 3004,
     name: 'SA Gaming',
     characterImg: casinoModel4,
     characterImgAlt: 'Casino Model',
@@ -782,6 +814,7 @@ export const casinoProviders = [
   },
   {
     id: 'evolution-gaming',
+    provider_id: 3005,
     name: 'Evolution Gaming',
     characterImg: casinoModel5,
     characterImgAlt: 'Casino Model',
@@ -800,6 +833,7 @@ export const casinoProviders = [
   },
   {
     id: 'allbet',
+    provider_id: 3006,
     name: 'Allbet',
     characterImg: casinoModel6,
     characterImgAlt: 'Casino Model',
@@ -818,6 +852,7 @@ export const casinoProviders = [
   },
   {
     id: 'green-dragon',
+    provider_id: 3007,
     name: 'Green Dragon',
     characterImg: casinoModel7,
     characterImgAlt: 'Casino Model',
@@ -836,6 +871,7 @@ export const casinoProviders = [
   },
   {
     id: 'pragmatic-casino',
+    provider_id: 3008,
     name: 'Pragmatic Play',
     characterImg: casinoModel8,
     characterImgAlt: 'Casino Model',
@@ -854,6 +890,7 @@ export const casinoProviders = [
   },
   {
     id: 'yb-live',
+    provider_id: 3009,
     name: 'YB Live',
     characterImg: casinoModel9,
     characterImgAlt: 'Casino Model',
@@ -872,6 +909,7 @@ export const casinoProviders = [
   },
   {
     id: 'afb777-casino',
+    provider_id: 3010,
     name: 'AFB777 Gaming',
     characterImg: casinoModel10,
     characterImgAlt: 'Casino Model',
@@ -890,6 +928,7 @@ export const casinoProviders = [
   },
   {
     id: 'playtech',
+    provider_id: 3011,
     name: 'Playtech',
     characterImg: casinoModel11,
     characterImgAlt: 'Casino Model',
@@ -908,6 +947,7 @@ export const casinoProviders = [
   },
   {
     id: 'asia-gaming',
+    provider_id: 3012,
     name: 'Asia Gaming',
     characterImg: casinoModel12,
     characterImgAlt: 'Casino Model',
@@ -926,6 +966,7 @@ export const casinoProviders = [
   },
   {
     id: 'wcasino',
+    provider_id: 3013,
     name: 'WCasino Online',
     characterImg: casinoModel13,
     characterImgAlt: 'Casino Model',
@@ -944,6 +985,7 @@ export const casinoProviders = [
   },
   {
     id: 'gameplay-interactive',
+    provider_id: 3014,
     name: 'Gameplay Interactive',
     characterImg: casinoModel14,
     characterImgAlt: 'Casino Model',
@@ -967,6 +1009,7 @@ export const casinoProviders = [
 export const togelProviders = [
   {
     id: 'hongkong-lotto',
+    provider_id: 5001,
     name: 'Hong Kong Lotto',
     characterImg: togelModel1,
     characterImgAlt: 'Togel Model',
@@ -985,6 +1028,7 @@ export const togelProviders = [
   },
   {
     id: 'sydney-lotto',
+    provider_id: 5002,
     name: 'Sydney Lotto',
     characterImg: togelModel2,
     characterImgAlt: 'Togel Model',
@@ -1003,6 +1047,7 @@ export const togelProviders = [
   },
   {
     id: 'singapore-togel',
+    provider_id: 5003,
     name: 'Singapore',
     characterImg: togelModel3,
     characterImgAlt: 'Singapore Model',
@@ -1021,6 +1066,7 @@ export const togelProviders = [
   },
   {
     id: 'kamboja-togel',
+    provider_id: 5004,
     name: 'Kamboja',
     characterImg: togelModel4,
     characterImgAlt: 'Kamboja Model',
@@ -1039,6 +1085,7 @@ export const togelProviders = [
   },
   {
     id: 'taiwan-togel',
+    provider_id: 5005,
     name: 'Taiwan',
     characterImg: togelModel5,
     characterImgAlt: 'Taiwan Model',
@@ -1057,6 +1104,7 @@ export const togelProviders = [
   },
   {
     id: 'hongkong-togel',
+    provider_id: 5006,
     name: 'Hongkong',
     characterImg: togelModel6,
     characterImgAlt: 'Hongkong Model',
@@ -1075,6 +1123,7 @@ export const togelProviders = [
   },
   {
     id: 'sidney-togel',
+    provider_id: 5007,
     name: 'Sidney',
     characterImg: togelModel7,
     characterImgAlt: 'Sidney Model',
@@ -1106,6 +1155,7 @@ export const TOTAL_TOGEL_SLOTS = 8
 export const fishingProviders = [
   {
     id: 'microgaming-fishing',
+    provider_id: 2001,
     name: 'Microgaming',
     characterImg: fishingChar1,
     characterImgAlt: 'Shark Warrior',
@@ -1124,6 +1174,7 @@ export const fishingProviders = [
   },
   {
     id: 'jdb-fishing-1',
+    provider_id: 2002,
     name: 'JDB',
     characterImg: fishingChar2,
     characterImgAlt: 'Pirate Shark',
@@ -1142,6 +1193,7 @@ export const fishingProviders = [
   },
   {
     id: 'jili-fishing',
+    provider_id: 2003,
     name: 'JILI',
     characterImg: fishingChar3,
     characterImgAlt: 'Treasure Shark',
@@ -1160,6 +1212,7 @@ export const fishingProviders = [
   },
   {
     id: 'funky-fishing',
+    provider_id: 2004,
     name: 'Funky Games',
     characterImg: fishingChar4,
     characterImgAlt: 'Pirate Rider',
@@ -1178,6 +1231,7 @@ export const fishingProviders = [
   },
   {
     id: 'dragoon-fishing',
+    provider_id: 2005,
     name: 'Dragoon Soft',
     characterImg: fishingChar5,
     characterImgAlt: 'Captain Shark',
@@ -1196,6 +1250,7 @@ export const fishingProviders = [
   },
   {
     id: 'cq9-fishing',
+    provider_id: 2006,
     name: 'JDB',
     characterImg: fishingChar6,
     characterImgAlt: 'Pirate Shark',
@@ -1214,6 +1269,7 @@ export const fishingProviders = [
   },
   {
     id: 'fachai-fishing',
+    provider_id: 2007,
     name: 'FA Chai',
     characterImg: fishingChar7,
     characterImgAlt: 'Pirate Shark Captain',
@@ -1238,6 +1294,7 @@ export const TOTAL_FISHING_SLOTS = 12
 export const arcadeProviders = [
   {
     id: 'aviatrix-arcade',
+    provider_id: 6001,
     name: 'Aviatrix',
     characterImg: arcadeChar1,
     characterImgAlt: 'Aviatrix Plane',
@@ -1256,6 +1313,7 @@ export const arcadeProviders = [
   },
   {
     id: 'kingmidas-arcade',
+    provider_id: 6002,
     name: 'King Midas',
     characterImg: arcadeChar2,
     characterImgAlt: 'King Midas',
@@ -1274,6 +1332,7 @@ export const arcadeProviders = [
   },
   {
     id: 'sbobet-arcade',
+    provider_id: 6003,
     name: 'SBOBET',
     characterImg: arcadeChar3,
     characterImgAlt: 'Hamster Coin',
@@ -1292,6 +1351,7 @@ export const arcadeProviders = [
   },
   {
     id: 'spribe-arcade',
+    provider_id: 6004,
     name: 'Spribe',
     characterImg: arcadeChar4,
     characterImgAlt: 'Pilot Hamster',
@@ -1316,6 +1376,7 @@ export const TOTAL_ARCADE_SLOTS = 8
 export const pokerProviders = [
   {
     id: 'millionaire-poker',
+    provider_id: 7001,
     name: 'Millionaire Poker',
     characterImg: pokerChar1,
     characterImgAlt: 'Poker Cards',
@@ -1340,6 +1401,7 @@ export const TOTAL_POKER_SLOTS = 8
 export const cockfightProviders = [
   {
     id: 'ga28-cockfight',
+    provider_id: 8001,
     name: 'GA28',
     characterImg: cockChar1,
     characterImgAlt: 'Fighting Roosters',

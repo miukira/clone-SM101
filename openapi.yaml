@@ -1,0 +1,1609 @@
+openapi: 3.0.3
+info:
+  title: Go Member API
+  description: |
+    API documentation for Go Member - A casino/gaming platform management system.
+
+    ## Authentication
+    Authentication uses Bearer Token type JWT stored in localStorage named **token** which is obtained when the user logs in.
+
+    ### Token Expiration
+    - Tokens expire after 10 minutes of inactivity
+    - Tokens are extended by 10 minutes when used in a request
+
+    ## Common Error Responses
+    ### Bad Request (400)
+    ```json
+    {
+      "message": "error description"
+    }
+    ```
+
+    ### Internal Server Error (500)
+    ```json
+    {
+      "message": "internal server error",
+      "reference": "reference-code"
+    }
+    ```
+
+    ### Success (200)
+    ```json
+    {
+      "message": "success"
+    }
+    ```
+  version: 1.0.0
+  contact:
+    name: Go Member API Support
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: User
+    description: User management endpoints
+  - name: Website
+    description: Website configuration endpoints
+  - name: Game
+    description: Game provider endpoints
+  - name: Lottery
+    description: Lottery betting endpoints
+
+paths:
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: User login
+      description: Authenticate user with username and password. Returns token that should be stored in localStorage.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: user1
+                password:
+                  type: string
+                  format: password
+                  example: "123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: user1
+                  balance:
+                    type: integer
+                    format: int64
+                    example: 100000
+                  currency:
+                    type: string
+                    example: IDR
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: invalid password
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /register:
+    post:
+      tags:
+        - Auth
+      summary: User registration
+      description: Register a new user. Returns token that should be stored in localStorage.
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - handphone
+                - bank_name
+                - bank_account
+                - bank_number
+              properties:
+                username:
+                  type: string
+                  example: user1
+                password:
+                  type: string
+                  format: password
+                  example: "123"
+                handphone:
+                  type: string
+                  example: "081999333444"
+                bank_name:
+                  type: string
+                  example: bca
+                bank_account:
+                  type: string
+                  example: user1
+                bank_number:
+                  type: string
+                  example: "0101000777708808"
+                referral:
+                  type: string
+                  example: userref
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: user1
+                  balance:
+                    type: integer
+                    format: int64
+                    example: 0
+                  currency:
+                    type: string
+                    example: IDR
+                  token:
+                    type: string
+        '400':
+          description: Username already taken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: username has taken
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /check-username:
+    get:
+      tags:
+        - User
+      summary: Check username availability
+      description: Validate if a username is available for registration
+      operationId: checkUsername
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Username availability status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                    example: true
+
+  /check-phone-number:
+    get:
+      tags:
+        - User
+      summary: Check phone number availability
+      description: Validate if a phone number is available for registration
+      operationId: checkPhoneNumber
+      parameters:
+        - name: number
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Phone number availability status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                    example: true
+
+  /check-bank-number:
+    get:
+      tags:
+        - User
+      summary: Check bank number availability
+      description: Validate if a bank number is available for registration
+      operationId: checkBankNumber
+      parameters:
+        - name: number
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bank number availability status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                    example: true
+
+  /profile:
+    get:
+      tags:
+        - User
+      summary: Get user profile
+      description: Retrieve user profile information
+      operationId: getProfile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: user1
+                  balance:
+                    type: integer
+                    format: int64
+                    example: 50000
+                  bank_name:
+                    type: string
+                    example: user1
+                  bank_account:
+                    type: string
+                    example: user1
+                  bank_number:
+                    type: string
+                    example: user1
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /balance:
+    get:
+      tags:
+        - User
+      summary: Get user balance
+      description: Retrieve current user balance
+      operationId: getBalance
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: integer
+                    format: int64
+                    example: 50000
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /balance-mutation:
+    get:
+      tags:
+        - User
+      summary: Get balance mutations
+      description: Retrieve user balance mutation history
+      operationId: getBalanceMutation
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Balance mutation history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BalanceMutation'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /change-password:
+    post:
+      tags:
+        - User
+      summary: Change user password
+      description: Change user password with current password verification
+      operationId: changePassword
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+                - new_password
+              properties:
+                password:
+                  type: string
+                  format: password
+                  example: "123"
+                new_password:
+                  type: string
+                  format: password
+                  example: "1234"
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: success
+        '400':
+          description: Wrong password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: wrong password
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /deposit:
+    post:
+      tags:
+        - User
+      summary: Create deposit request
+      description: Create a new deposit request. Returns payment details or QRIS code.
+      operationId: createDeposit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bank_id
+                - amount
+              properties:
+                bank_id:
+                  type: integer
+                  example: 1
+                amount:
+                  type: integer
+                  format: int64
+                  example: 50000
+                promo_code:
+                  type: string
+                  example: 24xTO
+      responses:
+        '200':
+          description: Deposit request created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/DepositEwallet'
+                  - $ref: '#/components/schemas/DepositQris'
+        '400':
+          description: Has pending deposit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: have pending deposit
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /withdraw:
+    post:
+      tags:
+        - User
+      summary: Create withdraw request
+      description: Create a new withdraw request
+      operationId: createWithdraw
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount
+              properties:
+                amount:
+                  type: integer
+                  format: int64
+                  example: 50000
+      responses:
+        '200':
+          description: Withdraw request created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawResponse'
+        '400':
+          description: Has pending withdraw
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: have pending withdraw
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /user-referral:
+    get:
+      tags:
+        - User
+      summary: Get user referral data
+      description: Retrieve referral code and downline information
+      operationId: getUserReferral
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: fromdate
+          in: query
+          schema:
+            type: string
+            format: date
+            example: "2026-01-01"
+        - name: todate
+          in: query
+          schema:
+            type: string
+            format: date
+            example: "2026-01-31"
+      responses:
+        '200':
+          description: Referral data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralData'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /user-promo:
+    get:
+      tags:
+        - User
+      summary: Get user promo codes
+      description: Retrieve list of available promo codes for deposit
+      operationId: getUserPromo
+      responses:
+        '200':
+          description: List of promo codes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PromoCode'
+
+  /info:
+    get:
+      tags:
+        - Website
+      summary: Get website info
+      description: Retrieve website information including notifications, lottery results, and withdraw list
+      operationId: getInfo
+      responses:
+        '200':
+          description: Website info data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteInfo'
+
+  /website:
+    get:
+      tags:
+        - Website
+      summary: Get website configuration
+      description: Retrieve full website configuration data
+      operationId: getWebsite
+      parameters:
+        - name: domain
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Domain untuk konfigurasi website spesifik
+      responses:
+        '200':
+          description: Website configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebsiteConfig'
+
+  /bank-list:
+    get:
+      tags:
+        - Website
+      summary: Get bank list
+      description: Retrieve list of available banks for deposit
+      operationId: getBankList
+      responses:
+        '200':
+          description: List of banks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bank'
+
+  /referral:
+    get:
+      tags:
+        - Website
+      summary: Get referral info
+      description: Retrieve referral image and description
+      operationId: getReferral
+      responses:
+        '200':
+          description: Referral information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralInfo'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /promo:
+    get:
+      tags:
+        - Website
+      summary: Get promo list
+      description: Retrieve list of available promotions
+      operationId: getPromo
+      responses:
+        '200':
+          description: List of promotions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Promotion'
+
+  /game-list:
+    get:
+      tags:
+        - Game
+      summary: Get game list
+      description: Retrieve list of games from a specific provider
+      operationId: getGameList
+      parameters:
+        - name: provider_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of games
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '400':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: provider not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /play:
+    get:
+      tags:
+        - Game
+      summary: Play game
+      description: Get game URL to play a specific game
+      operationId: playGame
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: provider_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Game URL returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  game_url:
+                    type: string
+                    format: uri
+                    example: https://game.domainprovider.com/play.do?token=128e2eg2uegeueg2eug
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                providerNotFound:
+                  value:
+                    message: provider not found
+                gameNotFound:
+                  value:
+                    message: game not found
+                pleaseLogin:
+                  value:
+                    message: please login
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /slot:
+    get:
+      tags:
+        - Game
+      summary: Get slot providers
+      description: Retrieve list of active slot game providers
+      operationId: getSlotProviders
+      responses:
+        '200':
+          description: List of slot providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /fish:
+    get:
+      tags:
+        - Game
+      summary: Get fish game providers
+      description: Retrieve list of active fish game providers
+      operationId: getFishProviders
+      responses:
+        '200':
+          description: List of fish game providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /casino:
+    get:
+      tags:
+        - Game
+      summary: Get casino providers
+      description: Retrieve list of active live casino providers
+      operationId: getCasinoProviders
+      responses:
+        '200':
+          description: List of casino providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /sportsbook:
+    get:
+      tags:
+        - Game
+      summary: Get sportsbook providers
+      description: Retrieve list of active sportsbook providers
+      operationId: getSportsbookProviders
+      responses:
+        '200':
+          description: List of sportsbook providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /togel:
+    get:
+      tags:
+        - Game
+      summary: Get togel providers
+      description: Retrieve list of active togel/lottery providers
+      operationId: getTogelProviders
+      responses:
+        '200':
+          description: List of togel providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /arcade:
+    get:
+      tags:
+        - Game
+      summary: Get arcade providers
+      description: Retrieve list of active arcade game providers
+      operationId: getArcadeProviders
+      responses:
+        '200':
+          description: List of arcade providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /poker:
+    get:
+      tags:
+        - Game
+      summary: Get poker providers
+      description: Retrieve list of active poker providers
+      operationId: getPokerProviders
+      responses:
+        '200':
+          description: List of poker providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /cockfight:
+    get:
+      tags:
+        - Game
+      summary: Get cockfight providers
+      description: Retrieve list of active cockfight providers
+      operationId: getCockfightProviders
+      responses:
+        '200':
+          description: List of cockfight providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /bet:
+    post:
+      tags:
+        - Lottery
+      summary: Place lottery bets
+      description: Place lottery betting requests
+      operationId: placeBet
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BetRequest'
+      responses:
+        '200':
+          description: Bet placed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: success
+        '400':
+          description: Market closed or bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: market closed
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /bet-history:
+    get:
+      tags:
+        - Lottery
+      summary: Get bet history
+      description: Retrieve user's lottery betting history
+      operationId: getBetHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+            example: singapore
+      responses:
+        '200':
+          description: Bet history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BetHistory'
+        '400':
+          description: Market not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: market not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /market-info:
+    get:
+      tags:
+        - Lottery
+      summary: Get market information
+      description: Retrieve lottery market status and configuration
+      operationId: getMarketInfo
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+          example: singapore
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+          example: 4d
+      responses:
+        '200':
+          description: Market information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarketInfo'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                marketNotFound:
+                  value:
+                    message: market not found
+                typeNotFound:
+                  value:
+                    message: type not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from login/register. Stored in localStorage as "token".
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message description
+
+    InternalError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: internal server error
+        reference:
+          type: string
+          description: Reference code for error tracking
+          example: 25173537g-318371g-171714-1461g
+
+    BalanceMutation:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 8
+        type:
+          type: string
+          enum: [bonus roling, bonus cashback, bonus referral, withdraw, lottery, game, deposit]
+          example: bonus roling
+        reference:
+          type: string
+          example: bonus_2371351735
+        amount:
+          type: integer
+          format: int64
+          example: 50000
+        balance_type:
+          type: string
+          enum: [credit, debit]
+          example: credit
+        created_at:
+          type: string
+          format: date-time
+          example: 2026-01-05 13:00:57
+
+    DepositEwallet:
+      type: object
+      properties:
+        deposit_id:
+          type: integer
+          example: 123456
+        amount:
+          type: integer
+          format: int64
+          example: 50000
+        type:
+          type: string
+          enum: [e-wallet]
+          example: e-wallet
+        name:
+          type: string
+          example: gopay
+        account:
+          type: string
+          example: user1
+        number:
+          type: string
+          example: "081577784445"
+
+    DepositQris:
+      type: object
+      properties:
+        deposit_id:
+          type: integer
+          example: 123457
+        amount:
+          type: integer
+          format: int64
+          example: 50000
+        type:
+          type: string
+          enum: [qris]
+          example: qris
+        raw:
+          type: string
+          description: QRIS raw data string
+          example: dbqwudeue723562ge2362eg2ue627eg2eey27eg
+
+    WithdrawResponse:
+      type: object
+      properties:
+        withdraw_id:
+          type: integer
+          example: 123456
+        amount:
+          type: integer
+          format: int64
+          example: 50000
+        type:
+          type: string
+          enum: [e-wallet]
+          example: e-wallet
+        name:
+          type: string
+          example: gopay
+        account:
+          type: string
+          example: user1
+        number:
+          type: string
+          example: "081577784445"
+
+    ReferralData:
+      type: object
+      properties:
+        referral:
+          type: object
+          properties:
+            image:
+              type: string
+              format: uri
+              example: https://gambarmantap.com/referral.png
+            description:
+              type: string
+              example: dapatkan bonus referral 10% dari kekalahan downline, dibayar setiap tanggal 1 tiap bulan.
+        downline:
+          type: array
+          items:
+            type: object
+            properties:
+              username:
+                type: string
+                example: user3
+              first_depo_date:
+                type: string
+                format: date-time
+                example: 2026-01-05 17:00:00
+              first_depo_amount:
+                type: integer
+                format: int64
+                example: 100000
+              turnover:
+                type: integer
+                format: int64
+                example: 1000000
+              winlose:
+                type: integer
+                format: int64
+                example: -500000
+              comision:
+                type: integer
+                format: int64
+                example: 50000
+
+    PromoCode:
+      type: object
+      properties:
+        name:
+          type: string
+          example: New Member
+        code:
+          type: string
+          example: newmember
+
+    WebsiteInfo:
+      type: object
+      properties:
+        notification:
+          type: array
+          items:
+            type: string
+          example: ["info 1", "info 2", "info 3"]
+        lottery_result:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              market:
+                type: string
+                example: singapore
+              date:
+                type: string
+                example: 2026-01-01 17:30
+              result:
+                type: string
+                example: "1234"
+        withdraw_list:
+          type: array
+          items:
+            type: object
+            properties:
+              username:
+                type: string
+                example: user1
+              amount:
+                type: string
+                example: 1.000.000
+
+    WebsiteConfig:
+      type: object
+      properties:
+        title:
+          type: string
+          example: website1
+        about:
+          type: string
+          example: casino website
+        logo:
+          type: string
+          format: uri
+          example: https://cdn1.casinocdn.com/logo.png
+        favicon:
+          type: string
+          format: uri
+          example: https://cdn1.casinocdn.com/icon.ico
+        external_script:
+          type: array
+          items:
+            type: string
+          example:
+            - "<script>console.log('hello. script1');</script>"
+            - "<script>console.log('hello. script2');</script>"
+        google_verification:
+          type: string
+          format: uri
+          example: https://cdn1.casinocdn.com/icon.ico
+        meta_tag:
+          type: array
+          items:
+            type: string
+          example:
+            - "<meta name='description' content='An example of a meta description, typically around 150-160 characters long.'>"
+            - "<meta name='author' content='John Doe'>"
+        contact:
+          $ref: '#/components/schemas/Contact'
+        banner:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                example: djdgdjg-238782-dhwuh-eywiey
+              image:
+                type: string
+                format: uri
+                example: https://gambarku.com/gambar1.jpg
+        rtp:
+          $ref: '#/components/schemas/LinkResource'
+        popup:
+          $ref: '#/components/schemas/PopupConfig'
+        theme:
+          $ref: '#/components/schemas/ThemeConfig'
+        maintenance:
+          $ref: '#/components/schemas/MaintenanceConfig'
+
+    MaintenanceConfig:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: false
+          description: True jika sistem dalam maintenance
+        message:
+          type: string
+          example: Sistem sedang dalam perbaikan
+          description: Pesan yang ditampilkan saat maintenance
+        expected_end:
+          type: string
+          format: date-time
+          example: "2026-03-18T00:00:00Z"
+          description: Estimasi waktu selesai maintenance
+
+    Contact:
+      type: object
+      properties:
+        whatsapp:
+          $ref: '#/components/schemas/LinkResource'
+        telegram:
+          $ref: '#/components/schemas/LinkResource'
+        testimoni:
+          $ref: '#/components/schemas/LinkResource'
+
+    LinkResource:
+      type: object
+      properties:
+        icon:
+          type: string
+          format: uri
+          example: https://gambarku.com/whatsapp.png
+        link:
+          type: string
+          format: uri
+          example: https://wa.me/000011112222
+
+    PopupConfig:
+      type: object
+      properties:
+        deposit_success:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+        deposit_fails:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+        withdraw_success:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+        withdraw_fails:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+        bonus:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+        welcome:
+          type: string
+          format: uri
+          example: https://gambarku.com/gambar2.jpg
+
+    Bank:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          type: string
+          enum: [e-wallet, bank-transfer, qris]
+          example: e-wallet
+        name:
+          type: string
+          example: gopay
+        account:
+          type: string
+          example: user1
+        number:
+          type: string
+          example: "081577784445"
+        min_deposit:
+          type: integer
+          format: int64
+          example: 20000
+
+    ReferralInfo:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+          example: https://gambarmantap.com/referral.png
+        description:
+          type: string
+          example: dapatkan bonus referral 10% dari kekalahan downline, dibayar setiap tanggal 1 tiap bulan.
+
+    Promotion:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: New Member
+        image:
+          type: string
+          format: uri
+          example: https://gambarpromo.com/newmember.png
+        description:
+          type: string
+          example: dapatkan cashback 25% dari nominal deposit anda jika anda adalah member baru
+
+    Game:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Gate Of Olympus
+        image:
+          type: string
+          format: uri
+          nullable: true
+          example: https://game.providerdomain.com/image/1.png
+
+    Provider:
+      type: object
+      properties:
+        provider_id:
+          type: integer
+          example: 1001
+        name:
+          type: string
+          example: pragmatic-play
+
+    BetRequest:
+      type: object
+      required:
+        - market
+        - type
+        - prize
+        - discount
+        - number
+        - amount
+        - pay
+        - position
+      properties:
+        market:
+          type: string
+          example: singapore
+        type:
+          type: string
+          enum: [4D, 3D, 2D]
+          example: 4D
+        prize:
+          type: integer
+          example: 9000
+        discount:
+          type: boolean
+          example: false
+        number:
+          type: string
+          description: Comma-separated numbers
+          example: "0,1,2,3"
+        amount:
+          type: integer
+          format: int64
+          example: 100
+        pay:
+          type: integer
+          format: int64
+          example: 100
+        position:
+          type: string
+          enum: [full, depan, tengah, belakang]
+          example: full
+
+    BetHistory:
+      type: object
+      properties:
+        market:
+          type: string
+          example: singapore
+        type:
+          type: string
+          enum: [4D, 3D, 2D]
+          example: 4D
+        prize:
+          type: integer
+          example: 9000
+        discount:
+          type: boolean
+          example: false
+        number:
+          type: string
+          example: "0,1,2,3"
+        amount:
+          type: integer
+          format: int64
+          example: 100
+        pay:
+          type: integer
+          format: int64
+          example: 100
+        position:
+          type: string
+          enum: [full, depan, tengah, belakang]
+          example: full
+        status:
+          type: string
+          enum: [pending, settled, won, lost]
+          example: settled
+        created_at:
+          type: string
+          format: date-time
+          example: 2026-01-05 13:00:00
+
+    MarketInfo:
+      type: object
+      properties:
+        market:
+          type: string
+          example: singapore
+        status:
+          type: string
+          enum: [open, closed]
+          example: open
+        prize:
+          type: object
+          properties:
+            '4d':
+              type: integer
+              example: 9000
+            '3d':
+              type: integer
+              example: 900
+            '2d':
+              type: integer
+              example: 90
+        min_bet:
+          type: integer
+          example: 100
+        bet_shortcut:
+          type: array
+          items:
+            type: integer
+          example: [100, 200, 500, 1000]
+        discount_percentage:
+          type: integer
+          example: 40
+
+    ThemeConfig:
+      type: object
+      properties:
+        season:
+          type: string
+          example: idul-fitri
+        background_color:
+          type: string
+          format: color
+          example: "#FFFFFF"
+        background_image:
+          type: string
+          format: uri
+          example: https://gambarku.com/bg.jpg
+        border_color:
+          type: string
+          format: color
+          example: "#000000"

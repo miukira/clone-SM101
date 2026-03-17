@@ -33,6 +33,8 @@ export default function ProviderCard({
   badge = null,
   overlayImg = null,
   animationPrefix = 'provider',
+  onPlayClick = null, // New: callback when Play Now clicked
+  provider_id = null, // New: provider ID from API
 }) {
   const [isHovered, setIsHovered] = useState(false)
 
@@ -207,7 +209,12 @@ export default function ProviderCard({
 
             {/* ===== PLAY NOW BUTTON - RIGHT SIDE ===== */}
             <div className="absolute bottom-3 left-[46%] right-0 z-[4] flex justify-center">
-              <button className="
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onPlayClick) onPlayClick({ provider_id, characterImg, logoImg, logoAlt })
+                }}
+                className="
                 relative overflow-hidden
                 w-[140px] py-[10px] px-5
                 bg-gradient-to-b from-[#e0e0e0] via-[#c0c0c0] to-[#909090]
