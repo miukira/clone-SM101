@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { FaHome, FaDollarSign, FaComments, FaBars } from 'react-icons/fa'
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { MenuContext } from '../App'
 import Footer from '../components/Footer'
+import { getPromo } from '../services/api'
 
-// Import existing banner images as placeholders
+// Import existing banner images as fallback
 import bonusDeposit from '../assets/banners/popup-deposit-imlek.webp'
 import welcomeBonus from '../assets/banners/welcome-bonus.webp'
 import putarRoda from '../assets/banners/putar-roda.webp'
@@ -12,95 +13,65 @@ import bannerBaru from '../assets/banners/banner-baru.webp'
 import hadiah from '../assets/banners/hadiah-togel.webp'
 import bannerQris from '../assets/banners/banner-qris.webp'
 
-const promoData = [
-  {
-    id: 1,
-    title: 'BONUS DEPOSIT HARIAN 10% KHUSUS SLOT GAME',
-    image: bonusDeposit,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 2,
-    title: 'BONUS CASHBACK KEKALAHAN SPORTSBOOK UP TO 5%',
-    image: welcomeBonus,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 3,
-    title: 'BONUS CASHBACK TURNOVER 0.5% ( SPORTSBOOK )',
-    image: bannerBaru,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 4,
-    title: 'BONUS CASHBACK TURNOVER 0.5% ( SLOT GAMES )',
-    image: hadiah,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 5,
-    title: 'BONUS CASHBACK TURNOVER LIVE GAME 0.5%',
-    image: bannerQris,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 6,
-    title: 'BONUS CASHBACK KEKALAHAN SLOT GAMES 5%',
-    image: bonusDeposit,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 7,
-    title: 'BONUS CASHBACK KEKALAHAN LIVEGAME Up To 5%',
-    image: welcomeBonus,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 8,
-    title: 'BONUS REFERRAL',
-    image: bannerBaru,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 9,
-    title: 'SPECIAL BONUS NEW MEMBER 30%',
-    image: welcomeBonus,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 10,
-    title: 'BONUS EXTRA AJAK TEMAN 10%',
-    image: hadiah,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 11,
-    title: 'LUCKY WHEEL',
-    image: putarRoda,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
-  {
-    id: 12,
-    title: 'EVENT SCATTER MAHJONG WAYS 1 & 2',
-    image: bannerBaru,
-    dateStart: '2025-10-14',
-    dateEnd: '2025-10-14'
-  },
+// Image mapping untuk fallback jika API image tidak tersedia
+const imageMap = [
+  bonusDeposit,
+  welcomeBonus,
+  bannerBaru,
+  hadiah,
+  bannerQris,
+  bonusDeposit,
+  welcomeBonus,
+  bannerBaru,
+  welcomeBonus,
+  hadiah,
+  putarRoda,
+  bannerBaru
 ]
 
 export default function PromoPage() {
   const { openMenu } = useContext(MenuContext)
+  const [promotions, setPromotions] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchPromos = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getPromo()
+        // Map API data ke format yang digunakan UI
+        // Struktur siap untuk MySQL: jika image null/empty, gunakan fallback
+        const mappedData = data.map((promo, index) => {
+          // Handle image: jika null/empty/404, gunakan fallback local image
+          let imageUrl = promo.image
+          if (!imageUrl || imageUrl === '' || imageUrl.startsWith('http')) {
+            // Jika image null atau URL external yang mungkin 404, gunakan fallback
+            imageUrl = imageMap[index % imageMap.length]
+          }
+          
+          return {
+            id: promo.id,
+            title: promo.title,
+            image: imageUrl,
+            dateStart: promo.start_date || '2025-10-14', // Akan ada di MySQL nanti
+            dateEnd: promo.end_date || '2025-10-14' // Akan ada di MySQL nanti
+          }
+        })
+        setPromotions(mappedData)
+      } catch (err) {
+        console.error('Error fetching promotions:', err)
+        setError(err.data?.message || 'Failed to load promotions')
+        // Fallback ke empty array atau default data
+        setPromotions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchPromos()
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#0d1829] rounded-lg md:rounded-xl overflow-hidden">
@@ -149,10 +120,26 @@ export default function PromoPage() {
       {/* Spacer */}
       <div className="h-4 md:h-8"></div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-white text-lg">Loading promotions...</div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-red-400 text-lg">Error: {error}</div>
+        </div>
+      )}
+
       {/* Promo Grid - 1 column on mobile, 2 columns on desktop */}
-      <div className="w-full px-2 sm:px-3 md:px-4 lg:px-6 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-          {promoData.map((promo) => (
+      {!loading && !error && (
+        <div className="w-full px-2 sm:px-3 md:px-4 lg:px-6 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+            {promotions.length > 0 ? (
+              promotions.map((promo) => (
             <div 
               key={promo.id}
               className="bg-[#141e2d] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transition-transform p-3 md:p-4"
@@ -163,6 +150,11 @@ export default function PromoPage() {
                   src={promo.image}
                   alt={promo.title}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback jika image gagal load (404, dll)
+                    const fallbackIndex = promo.id % imageMap.length
+                    e.target.src = imageMap[fallbackIndex]
+                  }}
                 />
               </div>
               
@@ -176,9 +168,15 @@ export default function PromoPage() {
                 </p>
               </div>
             </div>
-          ))}
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-white/60">No promotions available</p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Spacer before Footer */}
       <div className="h-8 md:h-12"></div>

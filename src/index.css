@@ -12,6 +12,105 @@
   --color-border: #334155;
 }
 
+/* Theme CSS Variables - set by ThemeContext */
+:root {
+  --ui-primary: #C0C0C0;
+  --ui-secondary: #808080;
+  --ui-border: #3a3a3a;
+}
+
+/* ========== THEMED UI BORDERS & DIVIDERS ========== */
+
+/* Themed border utility classes */
+.themed-border {
+  border-color: var(--ui-border) !important;
+}
+
+.themed-border-primary {
+  border-color: var(--ui-primary) !important;
+}
+
+.themed-border-top {
+  border-top: 1px solid var(--ui-border);
+}
+
+.themed-border-bottom {
+  border-bottom: 1px solid var(--ui-border);
+}
+
+.themed-border-left {
+  border-left: 1px solid var(--ui-border);
+}
+
+.themed-border-right {
+  border-right: 1px solid var(--ui-border);
+}
+
+/* Themed divider line */
+.themed-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ui-border), transparent);
+}
+
+.themed-divider-solid {
+  height: 1px;
+  background: var(--ui-border);
+}
+
+.themed-divider-primary {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ui-primary), transparent);
+}
+
+/* Themed section separator */
+.themed-section-divider {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.themed-section-divider::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ui-border), transparent);
+}
+
+/* Themed card border */
+.themed-card {
+  border: 1px solid var(--ui-border);
+  transition: border-color 0.3s ease;
+}
+
+.themed-card:hover {
+  border-color: var(--ui-primary);
+}
+
+/* Themed glow border */
+.themed-glow {
+  box-shadow: 0 0 10px var(--ui-primary), inset 0 0 5px var(--ui-border);
+}
+
+/* Apply themed borders to common elements */
+.border-themed {
+  border-color: var(--ui-border);
+}
+
+/* Header separator */
+header + nav,
+nav + main,
+header + main {
+  border-top: 1px solid var(--ui-border);
+}
+
+/* Footer separator */
+main + footer,
+section + footer {
+  border-top: 1px solid var(--ui-border);
+}
+
 @layer base {
   * {
     margin: 0;
