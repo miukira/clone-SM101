@@ -2,7 +2,11 @@ import { useEffect } from 'react'
 import { useTheme } from '../context/ThemeContext'
 
 export default function ThemedBackground() {
-  const { bgColorValue, bgImageSrc, uiColorData } = useTheme()
+  const { bgColorData, bgImageData, uiColorData } = useTheme()
+  
+  // Extract actual values from data objects
+  const bgColorValue = bgColorData?.value || '#0a0a0a'
+  const bgImageSrc = bgImageData?.src || null
 
   // Apply CSS variables for UI colors globally
   useEffect(() => {

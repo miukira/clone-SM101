@@ -337,96 +337,102 @@ const mockPromoCodes = [
 
 // ============ SLOT PROVIDERS (1xxx) ============
 const mockSlotProviders = [
-  { provider_id: 1001, name: 'pragmatic-play', display_name: 'Pragmatic Play' },
-  { provider_id: 1002, name: 'pg-soft', display_name: 'PG Soft' },
-  { provider_id: 1003, name: 'nolimit-city', display_name: 'Nolimit City' },
-  { provider_id: 1004, name: 'lucky-monaco', display_name: 'Lucky Monaco' },
-  { provider_id: 1005, name: 'joker', display_name: 'Joker Gaming' },
-  { provider_id: 1006, name: 'cq9', display_name: 'JDB' },
-  { provider_id: 1007, name: 'habanero', display_name: 'Habanero' },
-  { provider_id: 1008, name: 'yggdrasil', display_name: 'Yggdrasil' },
-  { provider_id: 1009, name: 'worldmatch', display_name: 'WorldMatch' },
-  { provider_id: 1010, name: 'sboslot', display_name: 'SBOSLOT' },
-  { provider_id: 1011, name: 'funkygames', display_name: 'Funky Games' },
-  { provider_id: 1012, name: 'microgaming', display_name: 'Microgaming' },
-  { provider_id: 1013, name: 'netent', display_name: 'NetEnt' },
-  { provider_id: 1014, name: 'afb777', display_name: 'AFB777 Gaming' },
-  { provider_id: 1015, name: 'jili', display_name: 'JILI' },
-  { provider_id: 1016, name: 'rich88', display_name: 'RICH88' },
-  { provider_id: 1017, name: 'advantplay', display_name: 'AdvantPlay' },
-  { provider_id: 1018, name: 'kingmaker', display_name: 'Kingmaker' },
-  { provider_id: 1019, name: 'ygr', display_name: 'YGR Gaming' },
-  { provider_id: 1020, name: 'playstar', display_name: 'PlayStar' },
-  { provider_id: 1021, name: 'fastspin', display_name: 'FastSpin' },
-  { provider_id: 1022, name: 'dragoonsoft', display_name: 'Dragoon Soft' },
-  { provider_id: 1023, name: 'nagagames', display_name: 'Naga Games' },
+  { provider_id: 1001, name: 'pragmatic-play', logo: '/providers/logos/pragmatic-play-logo-new.png', character: '/providers/characters/zeus-character.png' },
+  { provider_id: 1002, name: 'pg-soft', logo: '/providers/logos/pg-soft-logo.png', character: '/providers/characters/chinese-empress.png' },
+  { provider_id: 1003, name: 'nolimit-city', logo: '/providers/logos/nolimit-city-logo-new.png', character: '/providers/characters/mariachi-skeleton.png' },
+  { provider_id: 1004, name: 'lucky-monaco', logo: '/providers/logos/lucky-monaco-logo.png', character: '/providers/characters/cleopatra-character.png' },
+  { provider_id: 1005, name: 'joker', logo: '/providers/logos/joker-logo.png', character: '/providers/characters/spartan-character.png' },
+  { provider_id: 1006, name: 'cq9', logo: '/providers/logos/cq9-logo.png', character: '/providers/characters/panda-character.png' },
+  { provider_id: 1007, name: 'habanero', logo: '/providers/logos/habanero-logo.png', character: '/providers/characters/gangster-character.png' },
+  { provider_id: 1008, name: 'yggdrasil', logo: '/providers/logos/yggdrasil-logo-new.png', character: '/providers/characters/soldier-character.png' },
+  { provider_id: 1009, name: 'worldmatch', logo: '/providers/logos/worldmatch-logo.png', character: '/providers/characters/cowgirl-character.png' },
+  { provider_id: 1010, name: 'sboslot', logo: '/providers/logos/sboslot-logo.png', character: '/providers/characters/viking-character.png' },
+  { provider_id: 1011, name: 'funkygames', logo: '/providers/logos/funkygames-logo.png', character: '/providers/characters/king-character.png' },
+  { provider_id: 1012, name: 'microgaming', logo: '/providers/logos/microgaming-logo-new.png', character: '/providers/characters/aladdin-character.png' },
+  { provider_id: 1013, name: 'netent', logo: '/providers/logos/netent-logo.png', character: '/providers/characters/boxer-character.png' },
+  { provider_id: 1014, name: 'afb777', logo: '/providers/logos/afb777-logo.png', character: '/providers/characters/sultan-character.png' },
+  { provider_id: 1015, name: 'jili', logo: '/providers/logos/jili-logo.png', character: '/providers/characters/genie-character.png' },
+  { provider_id: 1016, name: 'rich88', logo: '/providers/logos/rich88-logo.png', character: '/providers/characters/poseidon-character.png' },
+  { provider_id: 1017, name: 'advantplay', logo: '/providers/logos/advantplay-logo.png', character: '/providers/characters/pirate-character.png' },
+  { provider_id: 1018, name: 'kingmaker', logo: '/providers/logos/kingmaker-logo.png', character: '/providers/characters/warrior-character.png' },
+  { provider_id: 1019, name: 'ygr', logo: '/providers/logos/ygr-logo.png', character: '/providers/characters/pharaoh-character.png' },
+  { provider_id: 1020, name: 'playstar', logo: '/providers/logos/playstar-logo.png', character: '/providers/characters/scientist-character.png' },
+  { provider_id: 1021, name: 'fastspin', logo: '/providers/logos/fastspin-logo.png', character: '/providers/characters/dragon-character.png' },
+  { provider_id: 1022, name: 'dragoonsoft', logo: '/providers/logos/dragoonsoft-logo.png', character: '/providers/characters/monopoly-character.png' },
+  { provider_id: 1023, name: 'nagagames', logo: '/providers/logos/nagagames-logo.png', character: '/providers/characters/zeus-character.png' },
 ]
 
 // ============ FISH PROVIDERS (2xxx) ============
+// Fishing uses shark characters (hiu1-7.png) and fishing logos
 const mockFishProviders = [
-  { provider_id: 2001, name: 'microgaming-fishing', display_name: 'Microgaming' },
-  { provider_id: 2002, name: 'jdb-fishing-1', display_name: 'JDB' },
-  { provider_id: 2003, name: 'jili-fishing', display_name: 'JILI' },
-  { provider_id: 2004, name: 'funky-fishing', display_name: 'Funky Games' },
-  { provider_id: 2005, name: 'dragoon-fishing', display_name: 'Dragoon Soft' },
-  { provider_id: 2006, name: 'cq9-fishing', display_name: 'JDB' },
-  { provider_id: 2007, name: 'fachai-fishing', display_name: 'FA Chai' },
+  { provider_id: 2001, name: 'microgaming-fishing', logo: '/providers/fishing/fishing1.jpeg', character: '/providers/fishing/hiu1.png' },
+  { provider_id: 2002, name: 'jdb-fishing', logo: '/providers/fishing/fishing2.jpeg', character: '/providers/fishing/hiu2.png' },
+  { provider_id: 2003, name: 'jili-fishing', logo: '/providers/logos/jili-logo.png', character: '/providers/fishing/hiu3.png' },
+  { provider_id: 2004, name: 'funky-fishing', logo: '/providers/fishing/fishing5.png', character: '/providers/fishing/hiu4.png' },
+  { provider_id: 2005, name: 'dragoon-fishing', logo: '/providers/fishing/fishing3.png', character: '/providers/fishing/hiu5.png' },
+  { provider_id: 2006, name: 'cq9-fishing', logo: '/providers/logos/cq9-logo.png', character: '/providers/fishing/hiu6.png' },
+  { provider_id: 2007, name: 'fachai-fishing', logo: '/providers/fishing/fishing7.png', character: '/providers/fishing/hiu7.png' },
 ]
 
 // ============ CASINO PROVIDERS (3xxx) ============
+// Casino uses real women models (model1-14.png)
 const mockCasinoProviders = [
-  { provider_id: 3001, name: '568win', display_name: '568Win' },
-  { provider_id: 3002, name: 'wm-casino', display_name: 'WM Casino' },
-  { provider_id: 3003, name: 'ion-casino', display_name: 'ION Casino' },
-  { provider_id: 3004, name: 'sa-gaming', display_name: 'SA Gaming' },
-  { provider_id: 3005, name: 'evolution-gaming', display_name: 'Evolution Gaming' },
-  { provider_id: 3006, name: 'allbet', display_name: 'Allbet' },
-  { provider_id: 3007, name: 'green-dragon', display_name: 'Green Dragon' },
-  { provider_id: 3008, name: 'pragmatic-casino', display_name: 'Pragmatic Play' },
-  { provider_id: 3009, name: 'yb-live', display_name: 'YB Live' },
-  { provider_id: 3010, name: 'afb777-casino', display_name: 'AFB777 Gaming' },
-  { provider_id: 3011, name: 'playtech', display_name: 'Playtech' },
-  { provider_id: 3012, name: 'asia-gaming', display_name: 'Asia Gaming' },
-  { provider_id: 3013, name: 'wcasino', display_name: 'WCasino Online' },
-  { provider_id: 3014, name: 'gameplay-interactive', display_name: 'Gameplay Interactive' },
+  { provider_id: 3001, name: '568win', logo: '/providers/logos/kasino1-processed.png', character: '/providers/casino/model1.png' },
+  { provider_id: 3002, name: 'wm-casino', logo: '/providers/logos/kasino2-processed.png', character: '/providers/casino/model2.png' },
+  { provider_id: 3003, name: 'ion-casino', logo: '/providers/logos/kasino3-processed.png', character: '/providers/casino/model3.png' },
+  { provider_id: 3004, name: 'sa-gaming', logo: '/providers/logos/kasino4-processed.png', character: '/providers/casino/model4.png' },
+  { provider_id: 3005, name: 'evolution-gaming', logo: '/providers/logos/kasino5-processed.png', character: '/providers/casino/model5.png' },
+  { provider_id: 3006, name: 'allbet', logo: '/providers/logos/kasino6-processed.png', character: '/providers/casino/model6.png' },
+  { provider_id: 3007, name: 'green-dragon', logo: '/providers/logos/kasino7-processed.png', character: '/providers/casino/model7.png' },
+  { provider_id: 3008, name: 'pragmatic-casino', logo: '/providers/logos/kasino8-processed.png', character: '/providers/casino/model8.png' },
+  { provider_id: 3009, name: 'yb-live', logo: '/providers/logos/kasino9-processed.png', character: '/providers/casino/model9.png' },
+  { provider_id: 3010, name: 'afb777-casino', logo: '/providers/logos/kasino10-processed.png', character: '/providers/casino/model10.png' },
+  { provider_id: 3011, name: 'playtech', logo: '/providers/logos/kasino11-processed.png', character: '/providers/casino/model11.png' },
+  { provider_id: 3012, name: 'asia-gaming', logo: '/providers/logos/kasino12-processed.png', character: '/providers/casino/model12.png' },
+  { provider_id: 3013, name: 'wcasino', logo: '/providers/logos/kasino13-processed.png', character: '/providers/casino/model13.png' },
+  { provider_id: 3014, name: 'gameplay-interactive', logo: '/providers/logos/kasino14-processed.png', character: '/providers/casino/model14.png' },
 ]
 
 // ============ SPORTSBOOK PROVIDERS (4xxx) ============
 const mockSportsbookProviders = [
-  { provider_id: 4001, name: 'sbobet', display_name: 'SBOBET' },
-  { provider_id: 4002, name: 'saba-sports', display_name: 'SABA Sports' },
-  { provider_id: 4003, name: 'afb777-sports', display_name: 'AFB777 Gaming' },
-  { provider_id: 4004, name: 'bti', display_name: 'BTi' },
-  { provider_id: 4005, name: 'betpanda', display_name: 'Betpanda' },
+  { provider_id: 4001, name: 'sbobet', logo: '/providers/logos/sbobet-logo.png', character: '/providers/characters/yamal-character-new.png' },
+  { provider_id: 4002, name: 'saba-sports', logo: '/providers/logos/saba-logo.png', character: '/providers/characters/mbappe-character.png' },
+  { provider_id: 4003, name: 'afb777-sports', logo: '/providers/logos/afb777-sports-logo.png', character: '/providers/characters/haaland-character.png' },
+  { provider_id: 4004, name: 'bti', logo: '/providers/logos/bti-logo.png', character: '/providers/characters/messi-character.png' },
+  { provider_id: 4005, name: 'betpanda', logo: '/providers/logos/betpanda-logo.png', character: '/providers/characters/ronaldo-character.png' },
 ]
 
 // ============ TOGEL PROVIDERS (5xxx) ============
+// Togel uses togel-specific logos and characters
 const mockTogelProviders = [
-  { provider_id: 5001, name: 'hongkong-lotto', display_name: 'Hong Kong Lotto' },
-  { provider_id: 5002, name: 'sydney-lotto', display_name: 'Sydney Lotto' },
-  { provider_id: 5003, name: 'singapore-togel', display_name: 'Singapore' },
-  { provider_id: 5004, name: 'kamboja-togel', display_name: 'Kamboja' },
-  { provider_id: 5005, name: 'taiwan-togel', display_name: 'Taiwan' },
-  { provider_id: 5006, name: 'hongkong-togel', display_name: 'Hongkong' },
-  { provider_id: 5007, name: 'sidney-togel', display_name: 'Sidney' },
+  { provider_id: 5001, name: 'hongkong-lotto', logo: '/providers/togel/hongkong.png', character: '/providers/togel/togel1.png' },
+  { provider_id: 5002, name: 'sydney-lotto', logo: '/providers/togel/sidney.png', character: '/providers/togel/togel2.png' },
+  { provider_id: 5003, name: 'singapore-togel', logo: '/providers/togel/singapore-white.png', character: '/providers/togel/togel3.png' },
+  { provider_id: 5004, name: 'kamboja-togel', logo: '/providers/togel/cambodia.png', character: '/providers/togel/togel4.png' },
+  { provider_id: 5005, name: 'taiwan-togel', logo: '/providers/togel/taiwan.png', character: '/providers/togel/togel5.png' },
+  { provider_id: 5006, name: 'china-togel', logo: '/providers/togel/lotog1-processed.png', character: '/providers/togel/togel6.png' },
+  { provider_id: 5007, name: 'japan-togel', logo: '/providers/togel/lotog2-processed.png', character: '/providers/togel/togel7.png' },
 ]
 
 // ============ ARCADE PROVIDERS (6xxx) ============
+// Arcade uses arcade-specific characters and logos
 const mockArcadeProviders = [
-  { provider_id: 6001, name: 'aviatrix-arcade', display_name: 'Aviatrix' },
-  { provider_id: 6002, name: 'kingmidas-arcade', display_name: 'King Midas' },
-  { provider_id: 6003, name: 'sbobet-arcade', display_name: 'SBOBET' },
-  { provider_id: 6004, name: 'spribe-arcade', display_name: 'Spribe' },
+  { provider_id: 6001, name: 'aviatrix-arcade', logo: '/providers/arcade/arclog1-processed.png', character: '/providers/arcade/arcade1.png' },
+  { provider_id: 6002, name: 'kingmidas-arcade', logo: '/providers/arcade/arclog2.png', character: '/providers/arcade/arcade2.png' },
+  { provider_id: 6003, name: 'sbobet-arcade', logo: '/providers/logos/sbobet-logo.png', character: '/providers/arcade/arcade3.png' },
+  { provider_id: 6004, name: 'spribe-arcade', logo: '/providers/arcade/arclog4.png', character: '/providers/arcade/arcade4.png' },
 ]
 
 // ============ POKER PROVIDERS (7xxx) ============
+// Poker uses poker-specific character and logo
 const mockPokerProviders = [
-  { provider_id: 7001, name: 'millionaire-poker', display_name: 'Millionaire Poker' },
+  { provider_id: 7001, name: 'millionaire-poker', logo: '/providers/poker/poklog1.png', character: '/providers/poker/poker1.png' },
 ]
 
 // ============ COCKFIGHT PROVIDERS (8xxx) ============
+// Cockfight uses rooster character
 const mockCockfightProviders = [
-  { provider_id: 8001, name: 'ga28-cockfight', display_name: 'GA28' },
+  { provider_id: 8001, name: 'ga28-cockfight', logo: '/providers/sabung/colog1.png', character: '/providers/sabung/cook1.webp' },
 ]
 
 /**
@@ -725,56 +731,48 @@ const getRecentWithdrawals = () => {
 const mockWebsiteConfig = {
   title: 'PUSATTOGEL',
   about: 'Platform Alternatif Login Agent Pioneer Resmi Terpercaya',
-  logo: null, // null = gunakan default
-  favicon: null,
-  external_script: [],
-  google_verification: '',
+  logo: '/logo.png',
+  favicon: '/favicon.ico',
+  external_script: [
+    'console.log("External script loaded from API!");',
+    'console.log("PUSATTOGEL - Platform Togel Terpercaya");'
+  ],
+  google_verification: 'google-site-verification-abc123',
   meta_tag: [
     "<meta name='description' content='PUSATTOGEL - Platform Togel Terpercaya'>",
+    "<meta name='keywords' content='togel, slot, casino, sportsbook'>",
     "<meta name='author' content='PUSATTOGEL'>"
   ],
   contact: {
-    whatsapp: {
-      icon: null,
-      link: 'https://wa.me/6281234567890'
-    },
-    telegram: {
-      icon: null,
-      link: 'https://t.me/pusattogel'
-    },
-    testimoni: {
-      icon: null,
-      link: 'https://testimoni.pusattogel.com'
-    }
+    whatsapp: { icon: '/icons/whatsapp.svg', link: 'https://wa.me/6281234567890' },
+    telegram: { icon: '/icons/telegram.svg', link: 'https://t.me/pusattogel' },
+    testimoni: { icon: '/icons/testimoni.svg', link: 'https://t.me/pusattogel_testimoni' },
+    livechat: { icon: '/icons/livechat.svg', link: '#livechat' }
   },
   banner: [
-    {
-      id: 'banner-1',
-      image: null // null = gunakan default dari FE
-    },
-    {
-      id: 'banner-2',
-      image: null
-    }
+    { id: 'banner-1', image: '/banners/banner-1.webp', link: '/promo' },
+    { id: 'banner-2', image: '/banners/banner-2.webp', link: '/promo' },
+    { id: 'banner-3', image: '/banners/banner-3.webp', link: '/promo' }
   ],
-  rtp: {
-    icon: null,
-    link: '/rtp'
-  },
+  rtp: { icon: '/icons/rtp.png', link: '/rtp' },
   popup: {
-    deposit_success: null,
-    deposit_fails: null,
-    withdraw_success: null,
-    withdraw_fails: null,
-    bonus: null,
-    welcome: null
+    deposit_success: '/popups/deposit-success.svg',
+    deposit_fails: '/popups/deposit-fails.svg',
+    withdraw_success: '/popups/withdraw-success.svg',
+    withdraw_fails: '/popups/withdraw-fails.svg',
+    welcome: '/popups/welcome.svg',
+    bonus: '/popups/bonus.svg'
   },
-  // ThemeConfig sesuai OpenAPI - lebih lengkap
   theme: {
-    season: 'lebaran', // 'none', 'imlek', 'lebaran', 'halloween', 'christmas', 'jackpot'
-    background_color: '#0a0a0a', // Warna background default
-    background_image: 'bg-casino-1.webp', // null = no image, atau '/bg-casino-1.webp' atau '/bg-casino-2.webp'
-    border_color: '#C0C0C0' // Warna border/garis UI (Chrome Silver default)
+    season: 'imlek',
+    background_color: '#1a0a0a',
+    background_image: '/bg-casino-1.webp',
+    border_color: '#DC143C'
+  },
+  maintenance: {
+    status: false,
+    message: 'Sistem sedang dalam perbaikan untuk meningkatkan performa dan keamanan. Mohon maaf atas ketidaknyamanannya.',
+    expected_end: '2026-03-28T06:00:00Z'
   }
 }
 

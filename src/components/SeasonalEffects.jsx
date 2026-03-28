@@ -3,8 +3,11 @@ import { useTheme } from '../context/ThemeContext'
 
 // Single falling item component
 function FallingItem({ item, delay, duration, left, size }) {
+  // Debug: log the item path
+  console.log('FallingItem src:', item)
+  
   // Check if item is an image path
-  const isImage = item.startsWith('/') || item.startsWith('http')
+  const isImage = item && (item.startsWith('/') || item.startsWith('http'))
   
   return (
     <div
@@ -23,6 +26,7 @@ function FallingItem({ item, delay, duration, left, size }) {
           src={item} 
           alt="seasonal effect" 
           style={{ width: size, height: size, objectFit: 'contain' }}
+          onError={(e) => console.error('Failed to load:', item, e)}
         />
       ) : (
         <span style={{ fontSize: size }}>{item}</span>
@@ -37,14 +41,14 @@ export default function SeasonalEffects() {
 
   // Generate random falling items
   const fallingItems = useMemo(() => {
-    if (!seasonData?.items?.length || season === 'none') return []
+    if (!seasonData?.item || season === 'none') return []
     
     const generated = []
     // Limit to 15 items for performance
     for (let i = 0; i < 15; i++) {
       generated.push({
         id: i,
-        item: seasonData.items[Math.floor(Math.random() * seasonData.items.length)],
+        item: seasonData.item,
         delay: Math.random() * 5,
         duration: 5 + Math.random() * 4, // 5-9 seconds
         left: Math.random() * 100,

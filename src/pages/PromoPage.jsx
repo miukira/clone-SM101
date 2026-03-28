@@ -5,30 +5,6 @@ import { MenuContext } from '../App'
 import Footer from '../components/Footer'
 import { getPromo } from '../services/api'
 
-// Import existing banner images as fallback
-import bonusDeposit from '../assets/banners/popup-deposit-imlek.webp'
-import welcomeBonus from '../assets/banners/welcome-bonus.webp'
-import putarRoda from '../assets/banners/putar-roda.webp'
-import bannerBaru from '../assets/banners/banner-baru.webp'
-import hadiah from '../assets/banners/hadiah-togel.webp'
-import bannerQris from '../assets/banners/banner-qris.webp'
-
-// Image mapping untuk fallback jika API image tidak tersedia
-const imageMap = [
-  bonusDeposit,
-  welcomeBonus,
-  bannerBaru,
-  hadiah,
-  bannerQris,
-  bonusDeposit,
-  welcomeBonus,
-  bannerBaru,
-  welcomeBonus,
-  hadiah,
-  putarRoda,
-  bannerBaru
-]
-
 export default function PromoPage() {
   const { openMenu } = useContext(MenuContext)
   const [promotions, setPromotions] = useState([])
@@ -41,29 +17,18 @@ export default function PromoPage() {
         setLoading(true)
         setError(null)
         const data = await getPromo()
-        // Map API data ke format yang digunakan UI
-        // Struktur siap untuk MySQL: jika image null/empty, gunakan fallback
-        const mappedData = data.map((promo, index) => {
-          // Handle image: jika null/empty/404, gunakan fallback local image
-          let imageUrl = promo.image
-          if (!imageUrl || imageUrl === '' || imageUrl.startsWith('http')) {
-            // Jika image null atau URL external yang mungkin 404, gunakan fallback
-            imageUrl = imageMap[index % imageMap.length]
-          }
-          
-          return {
-            id: promo.id,
-            title: promo.title,
-            image: imageUrl,
-            dateStart: promo.start_date || '2025-10-14', // Akan ada di MySQL nanti
-            dateEnd: promo.end_date || '2025-10-14' // Akan ada di MySQL nanti
-          }
-        })
+        // Map API data ke format yang digunakan UI (no fallback)
+        const mappedData = data.map((promo) => ({
+          id: promo.id,
+          title: promo.title,
+          image: promo.image,
+          dateStart: promo.start_date,
+          dateEnd: promo.end_date
+        }))
         setPromotions(mappedData)
       } catch (err) {
         console.error('Error fetching promotions:', err)
         setError(err.data?.message || 'Failed to load promotions')
-        // Fallback ke empty array atau default data
         setPromotions([])
       } finally {
         setLoading(false)
@@ -150,11 +115,6 @@ export default function PromoPage() {
                   src={promo.image}
                   alt={promo.title}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback jika image gagal load (404, dll)
-                    const fallbackIndex = promo.id % imageMap.length
-                    e.target.src = imageMap[fallbackIndex]
-                  }}
                 />
               </div>
               

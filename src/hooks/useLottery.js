@@ -1,45 +1,22 @@
 // Hook untuk fetch lottery/togel data dari API
 import { useState, useEffect, useCallback } from 'react'
 import * as api from '../services/api'
+import { useWebsite } from '../context/WebsiteContext'
 
 /**
- * Hook untuk fetch lottery results dari website info
+ * Hook untuk get lottery results dari WebsiteContext
  * Returns lottery results with market, date, result
  */
 export function useLotteryResults() {
-  const [results, setResults] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
+  const { lotteryResults, loading } = useWebsite()
+  
   useEffect(() => {
-    const fetchResults = async () => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const websiteInfo = await api.getWebsite()
-        // Log lottery_result sesuai Swagger WebsiteInfo.lottery_result schema
-        const results = websiteInfo.lottery_result || []
-        if (results.length > 0) {
-          console.log(`🎰 Lottery Results: ${results.length} item(s)`)
-          results.forEach((r, i) => {
-            console.log(`   [${i+1}] id: ${r.id}, market: "${r.market}", date: "${r.date}", result: "${r.result}"`)
-          })
-        }
-        setResults(results)
-      } catch (err) {
-        console.error('Error fetching lottery results:', err)
-        setError(err)
-        setResults([])
-      } finally {
-        setLoading(false)
-      }
+    if (lotteryResults && lotteryResults.length > 0) {
+      console.log(`🎰 Lottery Results from Context: ${lotteryResults.length} item(s)`)
     }
+  }, [lotteryResults])
 
-    fetchResults()
-  }, [])
-
-  return { results, loading, error }
+  return { results: lotteryResults, loading, error: null }
 }
 
 /**
