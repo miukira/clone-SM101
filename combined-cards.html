@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kartu gabungan — Casino, Sport, E-Sport, Fish, Arcade & Crash</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1114;
+        --card: #1a1d23;
+        --border: #2a2f38;
+        --muted: #8b939e;
+        --tab-active: #e8eaed;
+        --tab-inactive: #6b7280;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, sans-serif;
+        background: var(--bg);
+        color: #e8eaed;
+        padding: 2rem 1.25rem 3rem;
+      }
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 600;
+        margin: 0 0 0.35rem;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        max-width: 42rem;
+        line-height: 1.5;
+      }
+      .tabs {
+        display: flex;
+        gap: 0.35rem;
+        margin-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        max-width: 1500px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 0;
+      }
+      .tabs button {
+        appearance: none;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--tab-inactive);
+        background: transparent;
+        border: none;
+        padding: 0.65rem 1rem;
+        margin-bottom: -1px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        border-radius: 8px 8px 0 0;
+      }
+      .tabs button:hover {
+        color: #c8cdd4;
+      }
+      .tabs button[aria-selected="true"] {
+        color: var(--tab-active);
+        border-bottom-color: #5b8def;
+      }
+      .panel {
+        display: none;
+        max-width: 1500px;
+        margin: 0 auto;
+      }
+      .panel.is-active {
+        display: block;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+      @media (max-width: 1280px) {
+        .grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      figure {
+        margin: 0;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+      figure img {
+        display: block;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        aspect-ratio: 350 / 300;
+        object-fit: cover;
+        margin: 0 auto;
+      }
+      figcaption {
+        padding: 0.65rem 0.85rem 0.85rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+      }
+      figcaption strong {
+        color: #c8cdd4;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Kartu gabungan</h1>
+    <p class="sub">
+      <strong>Casino:</strong> cewe + logo, WebP 350×300, latar gelap 20%, logo terang penuh di bawah.
+      <strong>Sport:</strong> sport + logo-sport.
+      <strong>E-Sport:</strong> esport + logo-esport, WebP 350×300, latar gelap 20%, logo terang di bawah.
+      <strong>Fish:</strong> fish + logofish.
+      <strong>Arcade:</strong> arcade + logo-arc.
+      <strong>Crash:</strong> rocket + logo-rocket, WebP 350×300, latar gelap 20%, logo terang di bawah. Semua di <code>src/assets3/</code>.
+    </p>
+    <div class="tabs" role="tablist" aria-label="Jenis kartu">
+      <button type="button" role="tab" id="tab-casino" aria-controls="panel-casino" aria-selected="true">
+        Casino
+      </button>
+      <button type="button" role="tab" id="tab-sport" aria-controls="panel-sport" aria-selected="false">
+        Sport
+      </button>
+      <button type="button" role="tab" id="tab-esport" aria-controls="panel-esport" aria-selected="false">
+        E-Sport
+      </button>
+      <button type="button" role="tab" id="tab-fish" aria-controls="panel-fish" aria-selected="false">
+        Fish
+      </button>
+      <button type="button" role="tab" id="tab-arcade" aria-controls="panel-arcade" aria-selected="false">
+        Arcade
+      </button>
+      <button type="button" role="tab" id="tab-crash" aria-controls="panel-crash" aria-selected="false">
+        Crash
+      </button>
+    </div>
+    <div id="panel-casino" class="panel is-active" role="tabpanel" aria-labelledby="tab-casino">
+      <div class="grid" id="cards-casino"></div>
+    </div>
+    <div id="panel-sport" class="panel" role="tabpanel" aria-labelledby="tab-sport">
+      <div class="grid" id="cards-sport"></div>
+    </div>
+    <div id="panel-esport" class="panel" role="tabpanel" aria-labelledby="tab-esport">
+      <div class="grid" id="cards-esport"></div>
+    </div>
+    <div id="panel-fish" class="panel" role="tabpanel" aria-labelledby="tab-fish">
+      <div class="grid" id="cards-fish"></div>
+    </div>
+    <div id="panel-arcade" class="panel" role="tabpanel" aria-labelledby="tab-arcade">
+      <div class="grid" id="cards-arcade"></div>
+    </div>
+    <div id="panel-crash" class="panel" role="tabpanel" aria-labelledby="tab-crash">
+      <div class="grid" id="cards-crash"></div>
+    </div>
+    <script>
+      const casinoLabels = [
+        'YB Live',
+        'Evolution',
+        'Ezugi',
+        'Oncasino',
+        'Astar',
+        'Playtech',
+        'Dream Gaming',
+        'Sexy Gaming',
+        'SA Gaming',
+        'Microgaming',
+        'Casino Game',
+        'MAC88',
+        'CEAI',
+      ]
+      const casinoLogoFiles = [
+        'logo1.png',
+        'logo2.png',
+        'logo3.png',
+        'logo4.png',
+        'logo5.png',
+        'logo6.png',
+        'logo7.png',
+        'logo8png.png',
+        'logo9.png',
+        'logo10.png',
+        'logo11.png',
+        'logo12.png',
+        'logo13.png',
+      ]
+      const sportRows = [
+        {
+          label: 'United Gaming',
+          sportFile: 'sport01.jpg',
+          logoFile: 'logo-sport1(1).png',
+        },
+        {
+          label: 'Lucky Sports',
+          sportFile: 'sport2.jpg',
+          logoFile: 'logo-sport2(1).png',
+        },
+        {
+          label: 'CMD 368',
+          sportFile: 'sport3.webp',
+          logoFile: 'logo-sport3(1).png',
+        },
+      ]
+      const esportRows = [
+        {
+          label: 'SBOBET',
+          esportFile: 'esport1-new.png',
+          logoFile: 'logo-esport1.png',
+        },
+        {
+          label: 'Thunderfire',
+          esportFile: 'esport2.avif',
+          logoFile: 'logo-esport2.png',
+        },
+        {
+          label: 'IA E-Sports',
+          esportFile: 'esport3.jpg',
+          logoFile: 'logo-esport3.png',
+        },
+      ]
+      const fishRows = [
+        {
+          label: 'BT Gaming',
+          fishFile: 'fish1.jpeg',
+          logoFile: 'logofish1.png',
+        },
+        {
+          label: 'VPLUS',
+          fishFile: 'fish2.jpeg',
+          logoFile: 'logofish2.png',
+        },
+        {
+          label: 'KA Gaming',
+          fishFile: 'fish3.jpeg',
+          logoFile: 'logofish3.png',
+        },
+      ]
+      const arcadeRows = [
+        {
+          label: 'JDB',
+          arcadeFile: 'arcade1.webp',
+          logoFile: 'logo-arc1.png',
+        },
+        {
+          label: 'QQ Gaming',
+          arcadeFile: 'arcade2.jpeg',
+          logoFile: 'logo-arc2.png',
+        },
+        {
+          label: 'FA Chai',
+          arcadeFile: 'arcade3.jpg',
+          logoFile: 'logo-arc3.png',
+        },
+        {
+          label: 'Rich88',
+          arcadeFile: 'arcade4.webp',
+          logoFile: 'logo-arc4.png',
+        },
+        {
+          label: 'Askmeslot',
+          arcadeFile: 'arcade5.jpg',
+          logoFile: 'logo-arc5.png',
+        },
+        {
+          label: 'Arcade 6',
+          arcadeFile: 'arcade6.webp',
+          logoFile: 'logo-arc6.webp',
+        },
+      ]
+      const crashRows = [
+        {
+          label: 'JILI',
+          crashFile: 'rocket1.avif',
+          logoFile: 'logo-rocket1.png',
+        },
+        {
+          label: 'Pragmatic Play',
+          crashFile: 'rocket2.webp',
+          logoFile: 'logo-rocket2.png',
+        },
+        {
+          label: 'Crash 3',
+          crashFile: 'rocket3.avif',
+          logoFile: 'logo-rocket3.webp',
+        },
+        {
+          label: 'Crash 4',
+          crashFile: 'rocket4.avif',
+          logoFile: 'logo-rocket4.png',
+        },
+        {
+          label: 'Crash 5',
+          crashFile: 'rocket5.jpeg',
+          logoFile: 'logo-rocket5.png',
+        },
+        {
+          label: 'Crash 6',
+          crashFile: 'rocket6.avif',
+          logoFile: 'logo-rocket6.png',
+        },
+        {
+          label: 'Crash 7',
+          crashFile: 'rocket7.avif',
+          logoFile: 'logo-rocket7.png',
+        },
+        {
+          label: 'Top Bet',
+          crashFile: 'rocket8.jpg',
+          logoFile: 'logo-rocket8.webp',
+        },
+        {
+          label: 'Top Bet 2',
+          crashFile: 'rocket9.avif',
+          logoFile: 'logo-rocket9.webp',
+        },
+      ]
+
+      function fillCasinoGrid() {
+        const grid = document.getElementById('cards-casino')
+        for (let i = 1; i <= 13; i += 1) {
+          const num = String(i).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/card-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `Casino combined ${i}: ${casinoLabels[i - 1]}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i}</strong> — ${casinoLabels[i - 1]} · cewe${num} + ${casinoLogoFiles[i - 1]}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      function fillSportGrid() {
+        const grid = document.getElementById('cards-sport')
+        for (let i = 0; i < sportRows.length; i += 1) {
+          const row = sportRows[i]
+          const num = String(i + 1).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/sport-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `Sport combined ${i + 1}: ${row.label}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i + 1}</strong> — ${row.label} · ${row.sportFile} + ${row.logoFile}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      function fillEsportGrid() {
+        const grid = document.getElementById('cards-esport')
+        for (let i = 0; i < esportRows.length; i += 1) {
+          const row = esportRows[i]
+          const num = String(i + 1).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/esport-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `E-Sport combined ${i + 1}: ${row.label}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i + 1}</strong> — ${row.label} · ${row.esportFile} + ${row.logoFile}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      function fillFishGrid() {
+        const grid = document.getElementById('cards-fish')
+        for (let i = 0; i < fishRows.length; i += 1) {
+          const row = fishRows[i]
+          const num = String(i + 1).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/fish-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `Fish combined ${i + 1}: ${row.label}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i + 1}</strong> — ${row.label} · ${row.fishFile} + ${row.logoFile}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      function fillArcadeGrid() {
+        const grid = document.getElementById('cards-arcade')
+        for (let i = 0; i < arcadeRows.length; i += 1) {
+          const row = arcadeRows[i]
+          const num = String(i + 1).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/arcade-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `Arcade combined ${i + 1}: ${row.label}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i + 1}</strong> — ${row.label} · ${row.arcadeFile} + ${row.logoFile}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      function fillCrashGrid() {
+        const grid = document.getElementById('cards-crash')
+        for (let i = 0; i < crashRows.length; i += 1) {
+          const row = crashRows[i]
+          const num = String(i + 1).padStart(2, '0')
+          const fig = document.createElement('figure')
+          const img = document.createElement('img')
+          img.src = `src/assets3/crash-combined-${num}.webp`
+          img.width = 350
+          img.height = 300
+          img.alt = `Crash combined ${i + 1}: ${row.label}`
+          const cap = document.createElement('figcaption')
+          cap.innerHTML = `<strong>#${i + 1}</strong> — ${row.label} · ${row.crashFile} + ${row.logoFile}`
+          fig.appendChild(img)
+          fig.appendChild(cap)
+          grid.appendChild(fig)
+        }
+      }
+
+      fillCasinoGrid()
+      fillSportGrid()
+      fillEsportGrid()
+      fillFishGrid()
+      fillArcadeGrid()
+      fillCrashGrid()
+
+      const tabCasino = document.getElementById('tab-casino')
+      const tabSport = document.getElementById('tab-sport')
+      const tabEsport = document.getElementById('tab-esport')
+      const tabFish = document.getElementById('tab-fish')
+      const tabArcade = document.getElementById('tab-arcade')
+      const tabCrash = document.getElementById('tab-crash')
+      const panelCasino = document.getElementById('panel-casino')
+      const panelSport = document.getElementById('panel-sport')
+      const panelEsport = document.getElementById('panel-esport')
+      const panelFish = document.getElementById('panel-fish')
+      const panelArcade = document.getElementById('panel-arcade')
+      const panelCrash = document.getElementById('panel-crash')
+
+      function activateTab(which) {
+        tabCasino.setAttribute('aria-selected', String(which === 'casino'))
+        tabSport.setAttribute('aria-selected', String(which === 'sport'))
+        tabEsport.setAttribute('aria-selected', String(which === 'esport'))
+        tabFish.setAttribute('aria-selected', String(which === 'fish'))
+        tabArcade.setAttribute('aria-selected', String(which === 'arcade'))
+        tabCrash.setAttribute('aria-selected', String(which === 'crash'))
+        panelCasino.classList.toggle('is-active', which === 'casino')
+        panelSport.classList.toggle('is-active', which === 'sport')
+        panelEsport.classList.toggle('is-active', which === 'esport')
+        panelFish.classList.toggle('is-active', which === 'fish')
+        panelArcade.classList.toggle('is-active', which === 'arcade')
+        panelCrash.classList.toggle('is-active', which === 'crash')
+      }
+
+      tabCasino.addEventListener('click', () => activateTab('casino'))
+      tabSport.addEventListener('click', () => activateTab('sport'))
+      tabEsport.addEventListener('click', () => activateTab('esport'))
+      tabFish.addEventListener('click', () => activateTab('fish'))
+      tabArcade.addEventListener('click', () => activateTab('arcade'))
+      tabCrash.addEventListener('click', () => activateTab('crash'))
+    </script>
+  </body>
+</html>

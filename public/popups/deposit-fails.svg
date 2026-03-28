@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#1a1a1a"/>
+  <circle cx="200" cy="120" r="50" fill="#ef4444"/>
+  <path d="M175 95 L225 145 M225 95 L175 145" stroke="white" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <text x="200" y="200" text-anchor="middle" font-size="24" font-weight="bold" fill="#ef4444">DEPOSIT GAGAL</text>
+  <text x="200" y="235" text-anchor="middle" font-size="16" fill="#808080">Silakan coba lagi atau hubungi CS</text>
+</svg>

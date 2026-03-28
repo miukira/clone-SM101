@@ -11,18 +11,6 @@ import {
   getGameList as apiGetGameList
 } from '../services/api'
 
-// Import static provider configs (contain images)
-import { 
-  providers as slotProvidersConfig,
-  sportsProviders as sportsProvidersConfig,
-  casinoProviders as casinoProvidersConfig,
-  togelProviders as togelProvidersConfig,
-  fishingProviders as fishingProvidersConfig,
-  arcadeProviders as arcadeProvidersConfig,
-  pokerProviders as pokerProvidersConfig,
-  cockfightProviders as cockfightProvidersConfig
-} from '../config/providers'
-
 // Map category IDs to their API fetcher functions
 const fetchers = {
   slots: getSlotProviders,
@@ -35,64 +23,28 @@ const fetchers = {
   sabung: getCockfightProviders,
 }
 
-// Map category IDs to their static configs (for images)
-const staticConfigs = {
-  slots: slotProvidersConfig,
-  sports: sportsProvidersConfig,
-  casino: casinoProvidersConfig,
-  togel: togelProvidersConfig,
-  fishing: fishingProvidersConfig,
-  arcade: arcadeProvidersConfig,
-  poker: pokerProvidersConfig,
-  sabung: cockfightProvidersConfig,
-}
-
 /**
- * Merge API data with static config to get images
- * @param {Array} apiData - Data from API
- * @param {Array} staticConfig - Static config with images
- * @returns {Array} Merged data with images
+ * Transform API provider data to frontend format
+ * API schema: { provider_id, name, logo, character }
+ * Frontend needs: { id, provider_id, name, logoImg, characterImg, logoAlt }
  */
-function mergeWithStaticConfig(apiData, staticConfig) {
-  if (!apiData || apiData.length === 0) return staticConfig || []
-  if (!staticConfig || staticConfig.length === 0) return apiData
+function transformProviderData(apiData) {
+  if (!apiData || apiData.length === 0) return []
   
-  return apiData.map(apiProvider => {
-    // Find matching static provider by provider_id or name
-    // Swagger Provider schema: { provider_id, name }
-    const staticProvider = staticConfig.find(sp => 
-      sp.provider_id === apiProvider.provider_id ||
-      sp.id === apiProvider.provider_id ||
-      sp.name?.toLowerCase() === apiProvider.name?.toLowerCase()
-    )
-    
-    if (staticProvider) {
-      // Merge: API data + static images
-      return {
-        ...staticProvider,          // Base from static (has images)
-        ...apiProvider,             // Override with API data
-        // Ensure images from static config are preserved
-        characterImg: staticProvider.characterImg,
-        logoImg: staticProvider.logoImg,
-        logoAlt: staticProvider.logoAlt || staticProvider.display_name || apiProvider.name,
-        // Keep both id formats
-        id: apiProvider.provider_id || staticProvider.id,
-        provider_id: apiProvider.provider_id || staticProvider.provider_id,
-      }
-    }
-    
-    // No match found - return API data as is
-    return {
-      ...apiProvider,
-      id: apiProvider.provider_id || apiProvider.id,
-      provider_id: apiProvider.provider_id || apiProvider.id,
-    }
-  })
+  return apiData.map(provider => ({
+    id: provider.provider_id,
+    provider_id: provider.provider_id,
+    name: provider.name,
+    display_name: provider.name?.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+    logoImg: provider.logo || null,
+    characterImg: provider.character || null,
+    logoAlt: provider.name,
+  }))
 }
 
 /**
  * Custom hook to fetch provider data for a given category from the API
- * Merges API data with static config to include images
+ * All data including images comes from API - no more hardcoded static config
  * @param {string} category - The category ID (slots, sports, casino, togel, fishing, arcade, poker, sabung)
  * @returns {{ providers: Array, loading: boolean, error: Error|null }}
  */
@@ -107,40 +59,28 @@ export function useProviders(category) {
       setError(null)
       
       const fetchProviderFn = fetchers[category]
-      const staticConfig = staticConfigs[category]
       
       if (fetchProviderFn) {
         try {
           const apiData = await fetchProviderFn()
-          // Log provider response sesuai Swagger Provider[] schema (hanya provider_id & name)
+          // Log provider response
           console.log(`📋 Provider Response [${category.toUpperCase()}]: ${apiData.length} item(s)`)
           apiData.forEach((p, i) => {
-            console.log(`   [${i+1}] provider_id: ${p.provider_id}, name: "${p.name}"`)
+            console.log(`   [${i+1}] provider_id: ${p.provider_id}, name: "${p.name}", logo: "${p.logo}", character: "${p.character}"`)
           })
-          // Merge API data with static config (for images)
-          const mergedData = mergeWithStaticConfig(apiData, staticConfig)
-          setProviders(mergedData)
+          // Transform API data to frontend format (images from API)
+          const transformedData = transformProviderData(apiData)
+          setProviders(transformedData)
         } catch (err) {
           console.error(`Error fetching ${category} providers:`, err)
           setError(err)
-          // Fallback to static config on error
-          if (staticConfig) {
-            console.log(`⚠️ Using static config for ${category}`)
-            setProviders(staticConfig)
-          } else {
-            setProviders([])
-          }
+          setProviders([])
         } finally {
           setLoading(false)
         }
       } else {
-        // Unknown category - try static config
-        if (staticConfig) {
-          setProviders(staticConfig)
-        } else {
-          console.warn(`Unknown provider category: ${category}`)
-          setProviders([])
-        }
+        console.warn(`Unknown provider category: ${category}`)
+        setProviders([])
         setLoading(false)
       }
     }

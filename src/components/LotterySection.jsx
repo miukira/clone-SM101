@@ -27,56 +27,9 @@ const marketColors = {
   japan: 'from-pink-600 to-pink-800',
 }
 
-// Static fallback data
-const staticLotteryResults = [
-  { 
-    id: 1, 
-    name: 'TOTO MACAU MALA...', 
-    title: 'TOTO MACAU',
-    subtitle: 'POOLS',
-    image: togelMacau, 
-    periode: '1182', 
-    result: '2495',
-    bgColor: 'from-red-700 to-red-900'
-  },
-  { 
-    id: 2, 
-    name: 'SINGAPORE', 
-    title: 'SINGAPORE',
-    subtitle: 'POOLS/4D',
-    image: togelSingapore, 
-    periode: '844', 
-    result: '4405',
-    bgColor: 'from-blue-600 to-blue-800'
-  },
-]
-
-const staticLiveResults = [
-  { 
-    id: 1, 
-    name: 'SYDNEY LOTTO', 
-    title: 'SYDNEY',
-    subtitle: 'LOTTO',
-    image: togelSydney, 
-    periode: '449', 
-    result: '8396,7689,4846',
-    bgColor: 'from-amber-600 to-amber-800'
-  },
-  { 
-    id: 2, 
-    name: 'HONGKONG LOTTO', 
-    title: 'HongKong',
-    subtitle: 'Lotto',
-    image: togelHongkong, 
-    periode: '448', 
-    result: '3626,9921,1057',
-    bgColor: 'from-purple-600 to-purple-800'
-  },
-]
-
-// Transform API results to display format
+// Transform API results to display format (no fallback - data must come from API)
 const transformApiResults = (apiResults) => {
-  if (!apiResults || apiResults.length === 0) return { lotteryResults: staticLotteryResults, liveResults: staticLiveResults }
+  if (!apiResults || apiResults.length === 0) return { lotteryResults: [], liveResults: [] }
   
   const transformed = apiResults.map((result, index) => {
     const marketKey = result.market?.toLowerCase()
