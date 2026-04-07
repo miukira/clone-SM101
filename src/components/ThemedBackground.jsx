@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useTheme } from '../context/ThemeContext'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 export default function ThemedBackground() {
   const { bgColorData, bgImageData, uiColorData } = useTheme()
@@ -7,6 +8,7 @@ export default function ThemedBackground() {
   // Extract actual values from data objects
   const bgColorValue = bgColorData?.value || '#0a0a0a'
   const bgImageSrc = bgImageData?.src || null
+  const bgImageResolved = bgImageSrc ? publicAssetUrl(bgImageSrc) : null
 
   // Apply CSS variables for UI colors globally
   useEffect(() => {
@@ -28,11 +30,11 @@ export default function ThemedBackground() {
       />
       
       {/* Background image with 30% opacity - more visible */}
-      {bgImageSrc && (
+      {bgImageResolved && (
         <div 
           className="fixed inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
           style={{ 
-            backgroundImage: `url(${bgImageSrc})`,
+            backgroundImage: `url(${JSON.stringify(bgImageResolved)})`,
             opacity: 0.3,
             zIndex: -20,
           }}

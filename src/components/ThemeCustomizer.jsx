@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTheme, SEASONS, BG_COLORS, BG_IMAGES, UI_COLORS } from '../context/ThemeContext'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 // Settings icon
 const SettingsIcon = () => (
@@ -174,7 +175,7 @@ export default function ThemeCustomizer() {
                   {data.src ? (
                     <div 
                       className="w-16 h-10 rounded bg-cover bg-center border border-white/20"
-                      style={{ backgroundImage: `url(${data.src})` }}
+                      style={{ backgroundImage: `url(${JSON.stringify(publicAssetUrl(data.src))})` }}
                     />
                   ) : (
                     <div className="w-16 h-10 rounded bg-[#2a2a2a] flex items-center justify-center text-gray-500 border border-white/10">
@@ -240,7 +241,7 @@ export default function ThemeCustomizer() {
               {BG_IMAGES[pendingBgImage]?.src && (
                 <div 
                   className="absolute inset-0 bg-cover bg-center opacity-20"
-                  style={{ backgroundImage: `url(${BG_IMAGES[pendingBgImage].src})` }}
+                  style={{ backgroundImage: `url(${JSON.stringify(publicAssetUrl(BG_IMAGES[pendingBgImage].src))})` }}
                 />
               )}
               

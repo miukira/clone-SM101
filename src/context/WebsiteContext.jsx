@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { getInfo } from '../services/api'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
 
 const WebsiteContext = createContext()
 
@@ -25,10 +27,6 @@ export function WebsiteProvider({ children }) {
       
       if (data.config?.favicon) {
         updateFavicon(data.config.favicon)
-      }
-      
-      if (data.config?.title) {
-        document.title = data.config.title
       }
       
     } catch (err) {
@@ -63,13 +61,22 @@ export function WebsiteProvider({ children }) {
       link.rel = 'icon'
       document.head.appendChild(link)
     }
-    link.href = faviconUrl
+    link.href = publicAssetUrl(faviconUrl)
     console.log('🎨 Favicon updated:', faviconUrl)
   }
 
   useEffect(() => {
     fetchWebsiteData()
   }, [])
+
+  useEffect(() => {
+    if (!websiteData?.config) return undefined
+    const cfg = websiteData.config
+    if (cfg.title) {
+      document.title = cfg.title
+    }
+    return syncWebsiteHeadMeta(cfg)
+  }, [websiteData])
 
   const config = websiteData?.config || {}
   const notifications = websiteData?.notification || []
@@ -85,9 +92,10 @@ export function WebsiteProvider({ children }) {
   const banners = config.banner || []
   const theme = config.theme || {}
   const contact = config.contact || {}
-  const logo = config.logo || '/logo.png'
+  const logo = publicAssetUrl(config.logo || '/logo.png')
   const title = config.title || 'PUSATTOGEL'
   const about = config.about || ''
+  const footerPromo = config.footer_promo ?? null
 
   const value = {
     loading,
@@ -111,6 +119,7 @@ export function WebsiteProvider({ children }) {
     logo,
     title,
     about,
+    footerPromo,
   }
 
   return (

@@ -1,4 +1,5 @@
 import { useWebsite } from '../context/WebsiteContext'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 export default function MaintenancePage() {
   const { maintenance, logo, title, contact } = useWebsite()
@@ -26,7 +27,7 @@ export default function MaintenancePage() {
         {/* Logo */}
         <div className="mb-8">
           <img 
-            src={logo} 
+            src={publicAssetUrl(logo)} 
             alt={title}
             className="h-16 sm:h-20 mx-auto mb-4"
             onError={(e) => {

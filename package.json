@@ -7,17 +7,26 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test:unit": "node --test test/*.test.mjs",
+    "test:e2e": "playwright test",
     "preview": "vite preview",
-    "combine:casino": "node scripts/combine-casino-cards.mjs"
+    "combine:casino": "node scripts/combine-casino-cards.mjs",
+    "combine:assets3-casino": "node scripts/combine-assets3-casino-cards.mjs",
+    "combine:assets3-crash": "node scripts/combine-assets3-crash-cards.mjs",
+    "combine:assets3-fish": "node scripts/combine-assets3-fish-cards.mjs",
+    "combine:assets3-sport": "node scripts/combine-assets3-sport-cards.mjs",
+    "generate:animated-brand": "node scripts/generate-animated-brand-cards.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
+    "react-qr-code": "^2.0.18",
     "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

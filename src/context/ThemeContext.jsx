@@ -1,12 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { getWebsite } from '../services/api'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 // ============================================
-// THEME OPTIONS
+// THEME OPTIONS (paths → absolute URL)
 // ============================================
 
-// Seasonal Effects - efek jatuhan di atas halaman
-export const SEASONS = {
+const SEASONS_RAW = {
   none: { name: 'Tidak Ada', item: null },
   imlek: { name: 'Imlek', item: '/angpao.svg' },
   lebaran: { name: 'Lebaran', item: '/ketupat.png' },
@@ -14,6 +14,13 @@ export const SEASONS = {
   christmas: { name: 'Christmas', item: '/snow.svg' },
   jackpot: { name: 'Jackpot', item: '/coin.svg' }
 }
+
+export const SEASONS = Object.fromEntries(
+  Object.entries(SEASONS_RAW).map(([k, v]) => [
+    k,
+    { ...v, item: v.item ? publicAssetUrl(v.item) : v.item }
+  ])
+)
 
 // Background Colors
 export const BG_COLORS = {
@@ -26,12 +33,18 @@ export const BG_COLORS = {
   charcoal: { name: 'Charcoal', value: '#1a1a2e' }
 }
 
-// Background Images
-export const BG_IMAGES = {
+const BG_IMAGES_RAW = {
   none: { name: 'Tidak Ada', src: null },
   casino1: { name: 'Casino 1', src: '/bg-casino-1.webp' },
   casino2: { name: 'Casino 2', src: '/bg-casino-2.webp' }
 }
+
+export const BG_IMAGES = Object.fromEntries(
+  Object.entries(BG_IMAGES_RAW).map(([k, v]) => [
+    k,
+    { ...v, src: v.src ? publicAssetUrl(v.src) : v.src }
+  ])
+)
 
 // UI Colors (Border & Line colors)
 export const UI_COLORS = {
@@ -96,6 +109,7 @@ export function ThemeProvider({ children }) {
   const [season, setSeason] = useState('none')
   const [bgColor, setBgColor] = useState('default')
   const [bgImage, setBgImage] = useState('none')
+  const [customBgImageUrl, setCustomBgImageUrl] = useState(null) // For absolute URLs from server
   const [uiColor, setUiColor] = useState('silver')
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false)
 
@@ -108,6 +122,7 @@ export function ThemeProvider({ children }) {
         if (parsed.season) setSeason(parsed.season)
         if (parsed.bgColor) setBgColor(parsed.bgColor)
         if (parsed.bgImage) setBgImage(parsed.bgImage)
+        if (parsed.customBgImageUrl) setCustomBgImageUrl(parsed.customBgImageUrl)
         if (parsed.uiColor) setUiColor(parsed.uiColor)
       } catch (e) {
         console.error('Failed to parse saved theme', e)
@@ -128,11 +143,17 @@ export function ThemeProvider({ children }) {
             if (matchedBgColor) setBgColor(matchedBgColor[0])
           }
           if (config.theme.background_image) {
-            // Find matching bgImage key
-            const matchedBgImage = Object.entries(BG_IMAGES).find(([, val]) =>
-              val.src === config.theme.background_image
+            const bgImageUrl = config.theme.background_image
+            const matchedBgImage = Object.entries(BG_IMAGES).find(
+              ([, val]) => val.src && val.src === bgImageUrl
             )
-            if (matchedBgImage) setBgImage(matchedBgImage[0])
+            if (matchedBgImage) {
+              setBgImage(matchedBgImage[0])
+              setCustomBgImageUrl(null)
+            } else {
+              setBgImage('custom')
+              setCustomBgImageUrl(bgImageUrl)
+            }
           }
           if (config.theme.border_color) {
             // Map border_color to uiColor
@@ -161,9 +182,17 @@ export function ThemeProvider({ children }) {
   // Save to localStorage when theme changes
   useEffect(() => {
     localStorage.setItem('pusattogel-theme', JSON.stringify({
-      season, bgColor, bgImage, uiColor
+      season, bgColor, bgImage, customBgImageUrl, uiColor
     }))
-  }, [season, bgColor, bgImage, uiColor])
+  }, [season, bgColor, bgImage, customBgImageUrl, uiColor])
+  
+  // Compute bgImageData - supports both predefined and custom absolute URLs
+  const bgImageData = useMemo(() => {
+    if (bgImage === 'custom' && customBgImageUrl) {
+      return { name: 'Custom (Server)', src: customBgImageUrl }
+    }
+    return BG_IMAGES[bgImage] || BG_IMAGES.none
+  }, [bgImage, customBgImageUrl])
 
   // Apply theme to body
   useEffect(() => {
@@ -183,6 +212,7 @@ export function ThemeProvider({ children }) {
     season,
     bgColor,
     bgImage,
+    customBgImageUrl,
     uiColor,
     isCustomizerOpen,
     
@@ -190,13 +220,14 @@ export function ThemeProvider({ children }) {
     setSeason,
     setBgColor,
     setBgImage,
+    setCustomBgImageUrl,
     setUiColor,
     setIsCustomizerOpen,
     
     // Data
     seasonData: SEASONS[season],
     bgColorData: BG_COLORS[bgColor],
-    bgImageData: BG_IMAGES[bgImage],
+    bgImageData, // Now computed to support absolute URLs
     uiColorData: UI_COLORS[uiColor],
     
     // Options

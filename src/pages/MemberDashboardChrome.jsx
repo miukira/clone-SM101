@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import QRCode from 'react-qr-code'
 import FooterChrome from '../components/FooterChrome'
 import { useAuth } from '../context/AuthContext'
 import {
@@ -11,8 +12,15 @@ import {
   getUserPromo,
   createDeposit,
   createWithdraw,
+  getDepositStatus,
+  getWithdrawStatus,
   changePassword
 } from '../services/api'
+import {
+  LS_PENDING_DEPOSIT,
+  LS_PENDING_WITHDRAW,
+  PENDING_STATUS_POLL_MS,
+} from '../constants/pendingTransactions'
 import {
   SlotsIconChrome,
   SportsIconChrome,
@@ -26,6 +34,7 @@ import {
   PromoIconChrome,
   ReferralIconChrome,
 } from '../components/IconsChrome'
+import ChromeAppHeader from '../components/ChromeAppHeader'
 
 // Navigation menu items for member page
 const navMenuItems = [
@@ -51,6 +60,15 @@ const DepositIcon = () => (
     <path d="M3 10h16" stroke="#808080" strokeWidth="1.5"/>
     <rect x="13" y="12" width="4" height="3" rx="0.5" fill="#808080"/>
     <path d="M21 2v6M18 5l3 3 3-3" stroke="#C0C0C0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+)
+
+const PendingDepositIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <rect x="3" y="8" width="14" height="11" rx="1.5" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
+    <path d="M3 11h14" stroke="#808080" strokeWidth="1.2"/>
+    <circle cx="17" cy="6" r="4.5" fill="#D0D0D0" stroke="#909090" strokeWidth="0.5"/>
+    <path d="M17 4.2v2.2l1.2 0.8" stroke="#505050" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -138,14 +156,78 @@ const RefreshIcon = () => (
 
 // ============ CONTENT COMPONENTS ============
 
-function DepositContent({ bankList, promoCodes, userBank, onRefreshBalance }) {
+/** True jika response deposit adalah QRIS (type case-insensitive). */
+function isQrisDepositPayment(payment) {
+  return String(payment?.type ?? '').toLowerCase() === 'qris'
+}
+
+/**
+ * String EMV QRIS untuk barcode/QR — utamakan `qr_raw` (OpenAPI DepositQris), lalu alias backend.
+ */
+function getDepositQrisQrRaw(payment) {
+  if (!isQrisDepositPayment(payment)) return ''
+  const raw =
+    payment.qr_raw ??
+    payment.qris_raw ??
+    payment.raw ??
+    payment.qr_string ??
+    payment.qrString
+  if (raw == null || raw === '') return ''
+  return String(raw).trim()
+}
+
+function readStoredPendingDeposit() {
+  try {
+    const raw = localStorage.getItem(LS_PENDING_DEPOSIT)
+    if (!raw) return null
+    const v = JSON.parse(raw)
+    if (v?.deposit_id == null || !v.payment) {
+      localStorage.removeItem(LS_PENDING_DEPOSIT)
+      return null
+    }
+    return v
+  } catch {
+    localStorage.removeItem(LS_PENDING_DEPOSIT)
+    return null
+  }
+}
+
+function readStoredPendingWithdraw() {
+  try {
+    const raw = localStorage.getItem(LS_PENDING_WITHDRAW)
+    if (!raw) return null
+    const v = JSON.parse(raw)
+    if (v?.withdraw_id == null || !v.payment) {
+      localStorage.removeItem(LS_PENDING_WITHDRAW)
+      return null
+    }
+    return v
+  } catch {
+    localStorage.removeItem(LS_PENDING_WITHDRAW)
+    return null
+  }
+}
+
+function DepositContent({
+  bankList,
+  promoCodes,
+  userBank,
+  onRefreshBalance,
+  menuVariant = 'full',
+  onNavigateToDeposit,
+}) {
   const [activeTab, setActiveTab] = useState('qris')
   const [selectedBank, setSelectedBank] = useState(null)
   const [amount, setAmount] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [pending, setPending] = useState(() => readStoredPendingDeposit())
+  const [statusHint, setStatusHint] = useState('')
+
+  useEffect(() => {
+    setPending(readStoredPendingDeposit())
+  }, [menuVariant])
 
   const tabs = [
     { id: 'qris', label: 'Qris Autopay' },
@@ -154,7 +236,6 @@ function DepositContent({ bankList, promoCodes, userBank, onRefreshBalance }) {
     { id: 'pulsa', label: 'Pulsa' },
   ]
 
-  // Filter banks by type
   const filteredBanks = bankList.filter(bank => {
     if (activeTab === 'qris') return bank.type === 'qris'
     if (activeTab === 'bank') return bank.type === 'bank-transfer'
@@ -168,26 +249,146 @@ function DepositContent({ bankList, promoCodes, userBank, onRefreshBalance }) {
     }
   }, [activeTab, filteredBanks])
 
+  useEffect(() => {
+    if (!pending?.deposit_id) return undefined
+    let cancelled = false
+    const tick = async () => {
+      try {
+        const s = await getDepositStatus(pending.deposit_id)
+        if (cancelled) return
+        if (s.status === 'success') {
+          localStorage.removeItem(LS_PENDING_DEPOSIT)
+          setPending(null)
+          setStatusHint('')
+          onRefreshBalance()
+        } else if (s.status === 'failed') {
+          localStorage.removeItem(LS_PENDING_DEPOSIT)
+          setPending(null)
+          setStatusHint('')
+          setError('Deposit gagal atau dibatalkan.')
+        } else {
+          setStatusHint('Menunggu konfirmasi pembayaran…')
+        }
+      } catch {
+        if (!cancelled) {
+          localStorage.removeItem(LS_PENDING_DEPOSIT)
+          setPending(null)
+          setStatusHint('')
+          setError('Tidak dapat memeriksa status deposit. Silakan coba lagi.')
+        }
+      }
+    }
+    tick()
+    const iv = setInterval(tick, PENDING_STATUS_POLL_MS)
+    return () => {
+      cancelled = true
+      clearInterval(iv)
+    }
+  }, [pending?.deposit_id, onRefreshBalance])
+
   const handleSubmit = async () => {
     if (!selectedBank || !amount) {
       setError('Pilih bank dan masukkan jumlah')
       return
     }
-    
+
     setLoading(true)
     setError('')
-    setSuccess('')
-    
+    setStatusHint('')
+
     try {
-      const result = await createDeposit(selectedBank.id, parseInt(amount), promoCode || null)
-      setSuccess(`Deposit berhasil! ID: ${result.deposit_id}`)
+      const result = await createDeposit(selectedBank.id, parseInt(amount, 10), promoCode || null)
+      const stored = { deposit_id: result.deposit_id, payment: result }
+      localStorage.setItem(LS_PENDING_DEPOSIT, JSON.stringify(stored))
+      setPending(stored)
       setAmount('')
-      onRefreshBalance()
     } catch (err) {
       setError(err.data?.message || 'Gagal membuat deposit')
     } finally {
       setLoading(false)
     }
+  }
+
+  const payment = pending?.payment
+  const qrisPayload = getDepositQrisQrRaw(payment)
+
+  if (pending && payment) {
+    return (
+    <div className="space-y-4 sm:space-y-6">
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
+      {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
+      <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
+        <p className="font-semibold mb-1">ID deposit: {pending.deposit_id}</p>
+        <p className="text-[#a0a0a0] text-xs">
+          Status dicek otomatis setiap {PENDING_STATUS_POLL_MS / 1000} detik. Setelah berhasil, saldo diperbarui dan halaman ini kembali ke form deposit.
+        </p>
+        {statusHint ? <p className="mt-2 text-xs text-[#C0C0C0]">{statusHint}</p> : null}
+      </div>
+      {isQrisDepositPayment(payment) && !qrisPayload ? (
+        <div className="p-3 bg-red-500/10 border border-red-500/40 rounded-lg text-sm text-red-300">
+          Data QRIS (qr_raw) tidak tersedia dari server. Hubungi layanan pelanggan.
+        </div>
+      ) : isQrisDepositPayment(payment) && qrisPayload ? (
+        <div className="space-y-4">
+          <p className="text-sm text-[#4a4a4a]">Scan kode QR dengan aplikasi e-wallet atau m-banking Anda:</p>
+          <div className="flex justify-center p-4 sm:p-6 bg-white rounded-xl border border-[#2a2a2a] shadow-inner w-fit mx-auto">
+            <QRCode
+              value={qrisPayload}
+              size={240}
+              level="M"
+              bgColor="#ffffff"
+              fgColor="#000000"
+            />
+          </div>
+          {payment.amount != null ? (
+            <p className="text-center text-sm font-medium text-[#3a3a3a]">
+              Nominal: IDR {Number(payment.amount).toLocaleString('id-ID')}
+            </p>
+          ) : null}
+          <details className="text-xs sm:text-sm">
+            <summary className="cursor-pointer text-[#606060] hover:text-[#2a2a2a] select-none">
+              Tampilkan data mentah (qr_raw)
+            </summary>
+            <pre className="mt-2 text-[10px] sm:text-xs bg-[#1a1a1a] text-[#C0C0C0] p-3 rounded-lg border border-[#333] overflow-x-auto whitespace-pre-wrap break-all">
+              {qrisPayload}
+            </pre>
+          </details>
+        </div>
+      ) : (
+        <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-2 text-sm text-[#2a2a2a]">
+          <p><span className="text-[#5a5a5a]">Tujuan</span>: {(payment.name || '').toUpperCase()}</p>
+          <p><span className="text-[#5a5a5a]">Rekening</span>: {payment.account}</p>
+          <p><span className="text-[#5a5a5a]">Nomor</span>: {payment.number}</p>
+          {payment.amount != null ? (
+            <p><span className="text-[#5a5a5a]">Jumlah</span>: IDR {Number(payment.amount).toLocaleString('id-ID')}</p>
+          ) : null}
+        </div>
+      )}
+    </div>
+    )
+  }
+
+  if (menuVariant === 'pending-only') {
+    return (
+      <div className="space-y-4 sm:space-y-6">
+        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit tertunda</h2>
+        <div className="p-4 rounded-lg border border-[#909090]/40 bg-[#d8d8d8]/40 text-sm text-[#3a3a3a]">
+          <p>Tidak ada deposit yang sedang menunggu pembayaran.</p>
+          <p className="mt-2 text-xs text-[#5a5a5a]">
+            Setelah mengirim permintaan deposit, QR dan detail pembayaran bisa Anda lihat di sini atau di menu Deposit.
+          </p>
+        </div>
+        {onNavigateToDeposit ? (
+          <button
+            type="button"
+            onClick={onNavigateToDeposit}
+            className="px-6 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] text-sm font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all"
+          >
+            Buat deposit baru
+          </button>
+        ) : null}
+      </div>
+    )
   }
 
   return (
@@ -212,7 +413,6 @@ function DepositContent({ bankList, promoCodes, userBank, onRefreshBalance }) {
       </div>
 
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
-      {success && <div className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">{success}</div>}
 
       {/* Form */}
       <div className="space-y-4">
@@ -295,28 +495,67 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [pending, setPending] = useState(readStoredPendingWithdraw)
+  const [statusHint, setStatusHint] = useState('')
+
+  useEffect(() => {
+    if (!pending?.withdraw_id) return undefined
+    let cancelled = false
+    const tick = async () => {
+      try {
+        const s = await getWithdrawStatus(pending.withdraw_id)
+        if (cancelled) return
+        if (s.status === 'success') {
+          localStorage.removeItem(LS_PENDING_WITHDRAW)
+          setPending(null)
+          setStatusHint('')
+          onRefreshBalance()
+        } else if (s.status === 'failed') {
+          localStorage.removeItem(LS_PENDING_WITHDRAW)
+          setPending(null)
+          setStatusHint('')
+          setError('Penarikan ditolak atau gagal diproses.')
+        } else {
+          setStatusHint('Menunggu persetujuan penarikan…')
+        }
+      } catch {
+        if (!cancelled) {
+          localStorage.removeItem(LS_PENDING_WITHDRAW)
+          setPending(null)
+          setStatusHint('')
+          setError('Tidak dapat memeriksa status penarikan. Silakan coba lagi.')
+        }
+      }
+    }
+    tick()
+    const iv = setInterval(tick, PENDING_STATUS_POLL_MS)
+    return () => {
+      cancelled = true
+      clearInterval(iv)
+    }
+  }, [pending?.withdraw_id, onRefreshBalance])
 
   const handleSubmit = async () => {
     if (!amount) {
       setError('Masukkan jumlah penarikan')
       return
     }
-    
-    if (parseInt(amount) > balance) {
+
+    if (parseInt(amount, 10) > balance) {
       setError('Saldo tidak mencukupi')
       return
     }
-    
+
     setLoading(true)
     setError('')
-    setSuccess('')
-    
+    setStatusHint('')
+
     try {
-      const result = await createWithdraw(parseInt(amount))
-      setSuccess(`Penarikan berhasil diajukan! ID: ${result.withdraw_id}`)
+      const result = await createWithdraw(parseInt(amount, 10))
+      const stored = { withdraw_id: result.withdraw_id, payment: result }
+      localStorage.setItem(LS_PENDING_WITHDRAW, JSON.stringify(stored))
+      setPending(stored)
       setAmount('')
-      onRefreshBalance()
     } catch (err) {
       setError(err.data?.message || 'Gagal membuat penarikan')
     } finally {
@@ -324,12 +563,37 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
     }
   }
 
+  const pay = pending?.payment
+
+  if (pending && pay) {
+    return (
+    <div className="space-y-4 sm:space-y-6">
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan — menunggu persetujuan</h2>
+      {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
+      <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
+        <p className="font-semibold mb-1">ID penarikan: {pending.withdraw_id}</p>
+        <p className="text-[#a0a0a0] text-xs">
+          Status dicek otomatis setiap {PENDING_STATUS_POLL_MS / 1000} detik. Setelah disetujui, saldo akan dikurangi dan halaman kembali ke form penarikan.
+        </p>
+        {statusHint ? <p className="mt-2 text-xs text-[#C0C0C0]">{statusHint}</p> : null}
+      </div>
+      <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-2 text-sm text-[#2a2a2a]">
+        <p><span className="text-[#5a5a5a]">Tujuan</span>: {(pay.name || '').toUpperCase()}</p>
+        <p><span className="text-[#5a5a5a]">Rekening</span>: {pay.account}</p>
+        <p><span className="text-[#5a5a5a]">Nomor</span>: {pay.number}</p>
+        {pay.amount != null ? (
+          <p><span className="text-[#5a5a5a]">Jumlah diminta</span>: IDR {Number(pay.amount).toLocaleString('id-ID')}</p>
+        ) : null}
+      </div>
+    </div>
+    )
+  }
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan</h2>
       
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
-      {success && <div className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">{success}</div>}
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -759,7 +1023,7 @@ function InboxContent() {
       <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Kotak Masuk</h2>
       
       {/* Mobile: Card Layout */}
-      <div className="sm:hidden space-y-3">
+      <div className="md:hidden space-y-3">
         {messages.map((msg, i) => (
           <div key={i} className="bg-white/50 rounded-lg p-3 border border-[#909090]/20">
             <div className="flex justify-between items-start gap-2">
@@ -776,7 +1040,7 @@ function InboxContent() {
       </div>
 
       {/* Desktop: Table Layout */}
-      <div className="hidden sm:block overflow-x-auto rounded-lg border border-[#909090]/30">
+      <div className="hidden md:block overflow-x-auto rounded-lg border border-[#909090]/30">
         <table className="w-full">
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
@@ -818,7 +1082,7 @@ function BankAccountContent({ profile }) {
       </div>
       
       {/* Mobile: Card Layout */}
-      <div className="sm:hidden space-y-3">
+      <div className="md:hidden space-y-3">
         <div className="bg-white/50 rounded-lg p-4 border border-[#909090]/20">
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
@@ -838,7 +1102,7 @@ function BankAccountContent({ profile }) {
       </div>
 
       {/* Desktop: Table Layout */}
-      <div className="hidden sm:block overflow-x-auto rounded-lg border border-[#909090]/30">
+      <div className="hidden md:block overflow-x-auto rounded-lg border border-[#909090]/30">
         <table className="w-full">
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
@@ -892,23 +1156,9 @@ function MissionContent() {
 }
 
 // ============ MOBILE MENU ICONS ============
-const HamburgerIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-)
-
 const CloseIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-)
-
-const WalletIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <rect x="2" y="6" width="20" height="14" rx="2" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
-    <path d="M2 10h20" stroke="#808080" strokeWidth="1.5"/>
-    <rect x="14" y="12" width="4" height="4" rx="1" fill="#808080"/>
   </svg>
 )
 
@@ -921,8 +1171,7 @@ export default function MemberDashboardChrome() {
   
   const [activeMenu, setActiveMenu] = useState(section || 'deposit')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isWalletOpen, setIsWalletOpen] = useState(false)
-  
+
   // API Data States
   const [profile, setProfile] = useState(null)
   const [balance, setBalance] = useState(0)
@@ -931,6 +1180,14 @@ export default function MemberDashboardChrome() {
   const [promoCodes, setPromoCodes] = useState([])
   const [referralData, setReferralData] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (section) {
+      setActiveMenu(section)
+    } else {
+      setActiveMenu('deposit')
+    }
+  }, [section])
 
   // Fetch all data on mount
   useEffect(() => {
@@ -964,17 +1221,32 @@ export default function MemberDashboardChrome() {
     }
   }, [isAuthenticated])
 
-  const refreshBalance = async () => {
+  const refreshBalance = useCallback(async () => {
     try {
       const balanceRes = await getBalance()
       setBalance(balanceRes.balance)
     } catch (err) {
       console.error('Error refreshing balance:', err)
     }
-  }
-  
+  }, [])
+
+  const [balanceRefreshing, setBalanceRefreshing] = useState(false)
+  const refreshBalanceWithSpin = useCallback(async () => {
+    const started = Date.now()
+    const minSpinMs = 450
+    setBalanceRefreshing(true)
+    try {
+      await refreshBalance()
+    } finally {
+      const wait = minSpinMs - (Date.now() - started)
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait))
+      setBalanceRefreshing(false)
+    }
+  }, [refreshBalance])
+
   const menuItems = [
     { id: 'deposit', label: 'DEPOSIT', icon: DepositIcon },
+    { id: 'pending-deposit', label: 'DEPOSIT TERTUNDA', icon: PendingDepositIcon },
     { id: 'withdraw', label: 'PENARIKAN', icon: WithdrawIcon },
     { id: 'pending', label: 'PENARIKAN TERTUNDA', icon: PendingIcon },
     { id: 'history', label: 'RIWAYAT', icon: HistoryIcon },
@@ -986,9 +1258,14 @@ export default function MemberDashboardChrome() {
     { id: 'mission', label: 'MISI ANGGOTA', icon: MissionIcon },
   ]
 
-  const handleMenuSelect = (id) => {
+  const goToMemberSection = useCallback((id) => {
     setActiveMenu(id)
+    navigate(`/member/${id}`)
+  }, [navigate])
+
+  const handleMenuSelect = (id) => {
     setIsMobileMenuOpen(false)
+    goToMemberSection(id)
   }
 
   const handleLogout = () => {
@@ -1006,18 +1283,23 @@ export default function MemberDashboardChrome() {
     }
 
     switch (activeMenu) {
-      case 'deposit': 
-        return <DepositContent 
-          bankList={bankList} 
-          promoCodes={promoCodes} 
-          userBank={profile} 
-          onRefreshBalance={refreshBalance}
-        />
+      case 'deposit':
+      case 'pending-deposit':
+        return (
+          <DepositContent
+            bankList={bankList}
+            promoCodes={promoCodes}
+            userBank={profile}
+            onRefreshBalance={refreshBalanceWithSpin}
+            menuVariant={activeMenu === 'pending-deposit' ? 'pending-only' : 'full'}
+            onNavigateToDeposit={() => goToMemberSection('deposit')}
+          />
+        )
       case 'withdraw': 
         return <WithdrawContent 
           userBank={profile} 
           balance={balance}
-          onRefreshBalance={refreshBalance}
+          onRefreshBalance={refreshBalanceWithSpin}
         />
       case 'pending': return <PendingWithdrawContent />
       case 'history': return <HistoryContent balanceMutations={balanceMutations} />
@@ -1027,7 +1309,15 @@ export default function MemberDashboardChrome() {
       case 'inbox': return <InboxContent />
       case 'bank': return <BankAccountContent profile={profile} />
       case 'mission': return <MissionContent />
-      default: return <DepositContent bankList={bankList} promoCodes={promoCodes} userBank={profile} onRefreshBalance={refreshBalance} />
+      default:
+        return (
+          <DepositContent
+            bankList={bankList}
+            promoCodes={promoCodes}
+            userBank={profile}
+            onRefreshBalance={refreshBalanceWithSpin}
+          />
+        )
     }
   }
 
@@ -1040,92 +1330,26 @@ export default function MemberDashboardChrome() {
 
   return (
     <div className="min-h-screen">
-      {/* ==================== HEADER ==================== */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a] themed-border-bottom">
-        <div className="max-w-[1600px] mx-auto px-3 sm:px-8">
-          <div className="h-14 sm:h-20 flex items-center justify-between">
-            {/* Mobile: Hamburger + Logo */}
-            <div className="flex items-center gap-2">
-              {/* Hamburger - Mobile only */}
-              <button 
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="lg:hidden p-2 text-[#C0C0C0] hover:text-white"
-              >
-                <HamburgerIcon />
-              </button>
-              
-              {/* Logo */}
-              <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-gradient-to-br from-[#E0E0E0] via-[#C0C0C0] to-[#808080] rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shadow-black/30">
-                  <svg viewBox="0 0 24 24" className="w-5 sm:w-6 h-5 sm:h-6" fill="none">
-                    <path d="M12 2L4 7v10l8 5 8-5V7l-8-5z" fill="#1a1a1a"/>
-                    <path d="M12 4L6 8v8l6 4 6-4V8l-6-4z" fill="#2a2a2a"/>
-                    <text x="12" y="14" textAnchor="middle" fontSize="6" fill="#E0E0E0" fontWeight="bold">PT</text>
-                  </svg>
-                </div>
-                <span className="hidden sm:block text-lg font-black bg-gradient-to-r from-[#E0E0E0] via-[#C0C0C0] to-[#E0E0E0] bg-clip-text text-transparent tracking-wider">
-                  PUSATTOGEL
-                </span>
-              </button>
-            </div>
-
-            {/* Right side - Desktop */}
-            <div className="hidden sm:flex items-center gap-4">
-              <button 
-                onClick={() => setActiveMenu('deposit')}
-                className="px-5 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-[#1a1a1a] text-sm font-bold hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all shadow-lg"
-              >
-                Deposit
-              </button>
-              
-              <div className="flex items-center gap-2 text-[#C0C0C0]">
-                <span className="text-sm">Saldo</span>
-                <span className="text-lg font-bold text-white">IDR {balance?.toLocaleString() || '0'}</span>
-              </div>
-
-              <button 
-                onClick={refreshBalance}
-                className="text-[#808080] hover:text-[#C0C0C0] transition-colors"
-              >
-                <RefreshIcon />
-              </button>
-
-              <button className="px-4 py-2 bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg text-white text-sm font-bold border border-[#4a4a4a]">
-                {user?.username || profile?.username || 'User'}
-              </button>
-
-              <button 
-                onClick={handleLogout}
-                className="text-[#808080] hover:text-white text-sm font-medium transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-
-            {/* Right side - Mobile */}
-            <div className="flex sm:hidden items-center gap-2">
-              <div className="text-center">
-                <span className="text-[10px] text-[#808080] block">Saldo</span>
-                <span className="text-sm font-bold text-white">IDR {balance?.toLocaleString() || '0'}</span>
-              </div>
-              
-              <button 
-                onClick={() => setIsWalletOpen(!isWalletOpen)}
-                className="p-2 text-[#C0C0C0] hover:text-white"
-              >
-                <WalletIcon />
-              </button>
-              
-              <button className="px-2 py-1 bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded text-white text-xs font-bold border border-[#4a4a4a]">
-                {user?.username || profile?.username || 'User'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <ChromeAppHeader
+        navigate={navigate}
+        onOpenAuth={() => navigate('/')}
+        isAuthenticated={isAuthenticated}
+        user={user}
+        onLogout={handleLogout}
+        mobileCurrentPage="home"
+        hamburgerGradientIdSuffix="member"
+        desktopNav={null}
+        balanceOverride={balance}
+        onBalanceRefresh={refreshBalanceWithSpin}
+        balanceRefreshSpinning={balanceRefreshing}
+        showQuickDeposit
+        onQuickDeposit={() => goToMemberSection('deposit')}
+        useCustomMobileDrawer
+        onHamburgerClick={() => setIsMobileMenuOpen(true)}
+      />
 
       {/* ==================== NAVIGATION MENU BAR ==================== */}
-      <nav className="fixed top-14 sm:top-20 left-0 right-0 z-40 bg-[#111] themed-border-bottom">
+      <nav className="fixed top-14 md:top-16 left-0 right-0 z-40 bg-[#111] themed-border-bottom">
         <div className="max-w-[1600px] mx-auto">
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1 px-4 py-2 overflow-x-auto hide-scrollbar">
@@ -1145,17 +1369,17 @@ export default function MemberDashboardChrome() {
           </div>
           
           {/* Mobile Nav - Scrollable */}
-          <div className="lg:hidden flex items-center gap-1 px-2 py-2 overflow-x-auto hide-scrollbar">
+          <div className="lg:hidden flex items-center gap-1 px-2 md:px-4 py-2 overflow-x-auto hide-scrollbar">
             {navMenuItems.map(item => {
               const Icon = item.icon
               return (
                 <button
                   key={item.id}
                   onClick={() => navigate(item.path)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 text-[#808080] hover:bg-[#1a1a1a] hover:text-[#C0C0C0] whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 md:px-4 py-2 md:py-2.5 rounded-lg transition-all duration-300 text-[#808080] hover:bg-[#1a1a1a] hover:text-[#C0C0C0] whitespace-nowrap touch-manipulation"
                 >
                   <Icon size={16} />
-                  <span className="text-[10px] font-bold tracking-wider">{item.name}</span>
+                  <span className="text-[10px] md:text-xs font-bold tracking-wider">{item.name}</span>
                 </button>
               )
             })}
@@ -1165,7 +1389,7 @@ export default function MemberDashboardChrome() {
 
       {/* ==================== MOBILE MENU OVERLAY ==================== */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[60]">
+        <div className="md:hidden fixed inset-0 z-[60]">
           {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-black/70 backdrop-blur-sm"
@@ -1244,36 +1468,10 @@ export default function MemberDashboardChrome() {
         </div>
       )}
 
-      {/* ==================== MOBILE WALLET DROPDOWN ==================== */}
-      {isWalletOpen && (
-        <div className="sm:hidden fixed top-14 right-2 z-50 bg-[#1a1a1a] themed-card rounded-xl p-4 w-56 shadow-xl">
-          <div className="flex justify-between text-xs font-bold text-[#808080] mb-3 pb-2 themed-border-bottom">
-            <span>Wallet Type</span>
-            <span>Jumlah</span>
-          </div>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-[#C0C0C0]">Dompet Utama</span>
-            <span className="text-sm text-white font-bold">IDR {balance?.toLocaleString() || '0'}</span>
-          </div>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-sm text-[#C0C0C0]">Rollover</span>
-            <span className="text-sm text-white font-bold">IDR 0</span>
-          </div>
-          <button 
-            onClick={refreshBalance}
-            className="flex items-center gap-2 text-[#C0C0C0] hover:text-white transition-colors mt-2 pt-2 themed-border-top"
-          >
-            <RefreshIcon />
-            <span className="text-sm">Segarkan</span>
-          </button>
-        </div>
-      )}
-
-      {/* ==================== MAIN LAYOUT - DESKTOP ==================== */}
-      <div className="hidden lg:block pt-[132px]">
-        <div className="flex">
-          {/* Left Sidebar - Desktop */}
-          <aside className="w-56 flex-shrink-0 bg-[#0a0a0a] border-r border-[#1a1a1a] p-3">
+      {/* ==================== MAIN LAYOUT (satu renderContent — mobile & desktop) ==================== */}
+      <div className="pt-[108px] md:pt-[116px] lg:pt-[128px] pb-4 lg:pb-0">
+        <div className="flex max-w-[1600px] mx-auto">
+          <aside className="hidden md:block w-48 lg:w-56 flex-shrink-0 bg-[#0a0a0a] border-r border-[#1a1a1a] p-3">
             <nav className="space-y-1">
               {menuItems.map(item => {
                 const Icon = item.icon
@@ -1281,7 +1479,8 @@ export default function MemberDashboardChrome() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setActiveMenu(item.id)}
+                    type="button"
+                    onClick={() => goToMemberSection(item.id)}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all ${
                       isActive
                         ? 'bg-gradient-to-r from-[#E0E0E0] via-[#C0C0C0] to-[#A0A0A0] text-[#1a1a1a]'
@@ -1289,8 +1488,8 @@ export default function MemberDashboardChrome() {
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      isActive 
-                        ? 'bg-[#1a1a1a]/20' 
+                      isActive
+                        ? 'bg-[#1a1a1a]/20'
                         : 'bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] border border-[#3a3a3a]'
                     }`}>
                       <Icon />
@@ -1304,15 +1503,13 @@ export default function MemberDashboardChrome() {
             </nav>
           </aside>
 
-          {/* Main Content - Desktop */}
-          <main className="flex-1 p-6">
-            <div className="bg-gradient-to-br from-[#D0D0D0] via-[#C0C0C0] to-[#A8A8A8] rounded-3xl p-6 min-h-[400px] shadow-2xl">
+          <main className="flex-1 min-w-0 p-3 md:p-4 lg:p-6">
+            <div className="bg-gradient-to-br from-[#D0D0D0] via-[#C0C0C0] to-[#A8A8A8] rounded-2xl lg:rounded-3xl p-4 md:p-5 lg:p-6 min-h-[400px] shadow-xl lg:shadow-2xl">
               {renderContent()}
             </div>
           </main>
 
-          {/* Right Sidebar - Desktop */}
-          <aside className="w-52 flex-shrink-0 bg-[#0a0a0a] border-l border-[#1a1a1a] p-4">
+          <aside className="hidden lg:block w-52 flex-shrink-0 bg-[#0a0a0a] border-l border-[#1a1a1a] p-4">
             <div className="space-y-4">
               <div className="flex justify-between text-sm font-bold text-[#808080] themed-border-bottom pb-2">
                 <span>Wallet Type</span>
@@ -1326,25 +1523,25 @@ export default function MemberDashboardChrome() {
                 <span className="text-sm text-[#C0C0C0]">Rollover</span>
                 <span className="text-sm text-[#808080]">IDR 0</span>
               </div>
-              <button 
-                onClick={refreshBalance}
-                className="flex items-center gap-2 text-[#C0C0C0] hover:text-white transition-colors"
+              <button
+                type="button"
+                onClick={refreshBalanceWithSpin}
+                disabled={balanceRefreshing}
+                className="flex items-center gap-2 text-[#C0C0C0] hover:text-white transition-colors disabled:opacity-70 disabled:cursor-wait"
               >
-                <RefreshIcon />
+                <span
+                  className={`inline-flex shrink-0 items-center justify-center origin-center ${
+                    balanceRefreshing ? 'animate-saldo-refresh motion-reduce:animate-none' : ''
+                  }`}
+                  aria-hidden
+                >
+                  <RefreshIcon />
+                </span>
                 <span className="text-sm">Segarkan</span>
               </button>
             </div>
           </aside>
         </div>
-      </div>
-
-      {/* ==================== MAIN LAYOUT - MOBILE ==================== */}
-      <div className="lg:hidden pt-[100px] pb-4">
-        <main className="p-3">
-          <div className="bg-gradient-to-br from-[#D0D0D0] via-[#C0C0C0] to-[#A8A8A8] rounded-2xl p-4 shadow-xl">
-            {renderContent()}
-          </div>
-        </main>
       </div>
 
 

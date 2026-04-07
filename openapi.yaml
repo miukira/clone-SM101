@@ -959,6 +959,14 @@ paths:
                   message:
                     type: string
                     example: success
+                  new_balance:
+                    type: integer
+                    format: int64
+                    description: Saldo user setelah potong total pay
+                  total_bet:
+                    type: integer
+                    format: int64
+                    description: Total pay yang dipotong (jumlah bet.pay semua baris)
         '400':
           description: Market closed or bad request
           content:
@@ -1031,8 +1039,10 @@ paths:
         - name: type
           in: query
           required: true
+          description: Tipe taruhan untuk konteks UI (bbfs = halaman BBFS; respons prize tetap berisi 4d/3d/2d)
           schema:
             type: string
+            enum: [4d, 3d, 2d, bbfs]
           example: 4d
       responses:
         '200':
@@ -1152,9 +1162,13 @@ components:
           type: string
           enum: [qris]
           example: qris
+        qr_raw:
+          type: string
+          description: EMV QRIS payload — encode sebagai barcode QR untuk pembayaran
+          example: "00020101021126570011ID.CO.QRIS.WWW..."
         raw:
           type: string
-          description: QRIS raw data string
+          description: Alias kompatibilitas untuk qr_raw (isi sama)
           example: dbqwudeue723562ge2362eg2ue627eg2eey27eg
 
     WithdrawResponse:
@@ -1279,6 +1293,9 @@ components:
         about:
           type: string
           example: casino website
+        footer_promo:
+          $ref: '#/components/schemas/FooterPromoConfig'
+          description: Teks blok promo di footer; gunakan token literal PUSATTOGEL untuk nama brand (diganti title di client)
         logo:
           type: string
           format: uri
@@ -1326,8 +1343,29 @@ components:
           $ref: '#/components/schemas/PopupConfig'
         theme:
           $ref: '#/components/schemas/ThemeConfig'
+        footer_promo:
+          $ref: '#/components/schemas/FooterPromoConfig'
+          description: >
+            Teks blok promo di footer. Gunakan literal PUSATTOGEL sebagai placeholder
+            nama brand; frontend menggantinya dengan config.title.
         maintenance:
           $ref: '#/components/schemas/MaintenanceConfig'
+
+    FooterPromoConfig:
+      type: object
+      description: Konten footer promo (heading, intro, daftar baris, penutup)
+      properties:
+        heading:
+          type: string
+          example: DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL
+        intro:
+          type: string
+        lines:
+          type: array
+          items:
+            type: string
+        outro:
+          type: string
 
     MaintenanceConfig:
       type: object
@@ -1472,9 +1510,26 @@ components:
         name:
           type: string
           example: pragmatic-play
+        image:
+          type: string
+          format: uri
+          description: URL logo/gambar provider
+          example: https://provider.com/logo/pragmatic-play.png
+        badge:
+          type: object
+          nullable: true
+          description: Label promo pada kartu provider (opsional)
+          properties:
+            type:
+              type: string
+              enum: [hot, new, top]
 
     BetRequest:
       type: object
+      description: |
+        Satu baris taruhan. BBFS mengirim banyak objek (4D/3D/2D per kombinasi).
+        Backend harus menghitung kemenangan memakai `prize` (multiplier efektif) dan `discount`
+        konsisten dengan `pay` vs `amount` (lihat frontend togelDiscount).
       required:
         - market
         - type
@@ -1494,9 +1549,11 @@ components:
           example: 4D
         prize:
           type: integer
+          description: Multiplier hadiah efektif untuk baris ini (penuh jika discount false; dikurangi proporsional diskon pasaran jika discount true)
           example: 9000
         discount:
           type: boolean
+          description: true jika pemain memilih mode diskon; false = bayar penuh & multiplier penuh
           example: false
         number:
           type: string
@@ -1505,10 +1562,12 @@ components:
         amount:
           type: integer
           format: int64
+          description: Nominal taruhan per baris (basis sebelum potong diskon di UI)
           example: 100
         pay:
           type: integer
           format: int64
+          description: Jumlah dipotong dari saldo untuk baris ini (setelah diskon jika dipakai)
           example: 100
         position:
           type: string

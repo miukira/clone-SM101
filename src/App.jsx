@@ -1,9 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import HomePageChrome from './pages/HomePageChrome'
-import PromoPageChrome from './pages/PromoPageChrome'
-import ReferralPageChrome from './pages/ReferralPageChrome'
-import MemberDashboardChrome from './pages/MemberDashboardChrome'
-import TogelBettingPage from './pages/TogelBettingPage'
+import { BrowserRouter } from 'react-router-dom'
 import MaintenancePage from './pages/MaintenancePage'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
@@ -11,9 +6,7 @@ import { WebsiteProvider, useWebsite } from './context/WebsiteContext'
 import SeasonalEffects from './components/SeasonalEffects'
 import ThemeCustomizer from './components/ThemeCustomizer'
 import ThemedBackground from './components/ThemedBackground'
-import { createContext } from 'react'
-
-export const MenuContext = createContext()
+import AppRoutes from './Routes'
 
 function MaintenanceWrapper({ children }) {
   const { isUnderMaintenance, loading } = useWebsite()
@@ -43,20 +36,7 @@ function AppContent() {
         <ThemedBackground />
         <SeasonalEffects />
         <ThemeCustomizer />
-        
-        <Routes>
-          <Route path="/" element={<HomePageChrome />} />
-          <Route path="/providers/:category" element={<HomePageChrome />} />
-          <Route path="/promo" element={<PromoPageChrome />} />
-          <Route path="/referral" element={<ReferralPageChrome />} />
-          <Route path="/member" element={<MemberDashboardChrome />} />
-          <Route path="/member/:section" element={<MemberDashboardChrome />} />
-          
-          <Route path="/togel" element={<TogelBettingPage />} />
-          <Route path="/togel/:market" element={<TogelBettingPage />} />
-          
-          <Route path="*" element={<HomePageChrome />} />
-        </Routes>
+        <AppRoutes />
       </ThemeProvider>
     </MaintenanceWrapper>
   )

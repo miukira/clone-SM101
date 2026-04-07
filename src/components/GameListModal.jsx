@@ -1,6 +1,7 @@
 // Modal untuk menampilkan daftar game dari provider
 import { useState, useEffect } from 'react'
-import { playGame } from '../services/api'
+import { playGame, getToken } from '../services/api'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { useGameList } from '../hooks/useProviders'
 
 // Loading Spinner
@@ -27,7 +28,7 @@ function GameCard({ game, onPlay, isLoading }) {
       <div className="relative aspect-[4/3] bg-[#111] overflow-hidden">
         {!imageError && game.image ? (
           <img
-            src={game.image}
+            src={publicAssetUrl(game.image)}
             alt={game.name}
             className={`w-full h-full object-cover transition-all duration-500 ${
               imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
@@ -67,7 +68,7 @@ function GameCard({ game, onPlay, isLoading }) {
 }
 
 // Main Modal Component
-export default function GameListModal({ isOpen, onClose, provider }) {
+export default function GameListModal({ isOpen, onClose, provider, onRequireAuth }) {
   const [playingGameId, setPlayingGameId] = useState(null)
   const { games, loading, error, refetch } = useGameList(provider?.provider_id)
 
@@ -80,17 +81,31 @@ export default function GameListModal({ isOpen, onClose, provider }) {
 
   // Handle play game - uses game.id (sesuai Swagger Game schema)
   const handlePlay = async (game) => {
+    if (!getToken()) {
+      onRequireAuth?.()
+      alert('Silakan login terlebih dahulu untuk bermain.')
+      return
+    }
     try {
       setPlayingGameId(game.id)
       const response = await playGame(provider.provider_id, game.id)
-      // Response sesuai Swagger: { game_url }
       if (response?.game_url) {
         console.log(`🎮 Opening game: ${response.game_url}`)
         window.open(response.game_url, '_blank')
       }
+      if (response?.redirect) {
+        window.open(response.redirect, '_blank')
+      }
     } catch (err) {
       console.error('Failed to play game:', err)
-      alert('Gagal memulai game. Silakan coba lagi.')
+      const status = err?.status
+      const msg = err?.data?.message
+      if (status === 401 || msg === 'please login' || msg === 'invalid token') {
+        onRequireAuth?.()
+        alert('Sesi tidak valid atau Anda belum login. Silakan login kembali.')
+      } else {
+        alert(msg || 'Gagal memulai game. Silakan coba lagi.')
+      }
     } finally {
       setPlayingGameId(null)
     }
@@ -112,9 +127,9 @@ export default function GameListModal({ isOpen, onClose, provider }) {
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[#333] bg-gradient-to-r from-[#1a1a1a] via-[#222] to-[#1a1a1a]">
           <div className="flex items-center gap-4">
             {/* Provider Logo */}
-            {provider?.logoImg && (
+            {(provider?.logoImg || provider?.characterImg) && (
               <img
-                src={provider.logoImg}
+                src={publicAssetUrl(provider.logoImg || provider.characterImg)}
                 alt={provider.name}
                 className="h-8 sm:h-10 w-auto object-contain"
               />

@@ -159,8 +159,8 @@ export function usePlaceBet() {
  * Combined hook untuk togel betting page
  * Menggabungkan market info, bet history, dan place bet
  */
-export function useTogelBetting(market) {
-  const { marketInfo, loading: marketLoading, error: marketError, refetch: refetchMarket } = useMarketInfo(market)
+export function useTogelBetting(market, marketInfoType = '4d') {
+  const { marketInfo, loading: marketLoading, error: marketError, refetch: refetchMarket } = useMarketInfo(market, marketInfoType)
   const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useBetHistory(market)
   const { placeBet, loading: betLoading, error: betError, success: betSuccess, lastResult, reset: resetBet } = usePlaceBet()
 

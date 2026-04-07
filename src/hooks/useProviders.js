@@ -1,15 +1,18 @@
 import { useState, useEffect, useCallback } from 'react'
-import { 
-  getSlotProviders, 
-  getSportsbookProviders, 
-  getCasinoProviders, 
-  getTogelProviders, 
-  getFishProviders, 
-  getArcadeProviders, 
-  getPokerProviders, 
+import {
+  getSlotProviders,
+  getSportsbookProviders,
+  getCasinoProviders,
+  getTogelProviders,
+  getFishProviders,
+  getArcadeProviders,
+  getPokerProviders,
   getCockfightProviders,
-  getGameList as apiGetGameList
+  getGameList as apiGetGameList,
 } from '../services/api'
+import { transformProviderData } from '../utils/transformProviderApi.js'
+
+export { transformProviderData }
 
 // Map category IDs to their API fetcher functions
 const fetchers = {
@@ -21,25 +24,6 @@ const fetchers = {
   arcade: getArcadeProviders,
   poker: getPokerProviders,
   sabung: getCockfightProviders,
-}
-
-/**
- * Transform API provider data to frontend format
- * API schema: { provider_id, name, logo, character }
- * Frontend needs: { id, provider_id, name, logoImg, characterImg, logoAlt }
- */
-function transformProviderData(apiData) {
-  if (!apiData || apiData.length === 0) return []
-  
-  return apiData.map(provider => ({
-    id: provider.provider_id,
-    provider_id: provider.provider_id,
-    name: provider.name,
-    display_name: provider.name?.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-    logoImg: provider.logo || null,
-    characterImg: provider.character || null,
-    logoAlt: provider.name,
-  }))
 }
 
 /**
@@ -66,7 +50,7 @@ export function useProviders(category) {
           // Log provider response
           console.log(`📋 Provider Response [${category.toUpperCase()}]: ${apiData.length} item(s)`)
           apiData.forEach((p, i) => {
-            console.log(`   [${i+1}] provider_id: ${p.provider_id}, name: "${p.name}", logo: "${p.logo}", character: "${p.character}"`)
+            console.log(`   [${i + 1}] provider_id: ${p.provider_id}, name: "${p.name}", image: "${p.image ?? ''}"`)
           })
           // Transform API data to frontend format (images from API)
           const transformedData = transformProviderData(apiData)
