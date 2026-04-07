@@ -204,6 +204,21 @@
         'logo12.png',
         'logo13.png',
       ]
+      const casinoCeweFiles = [
+        'cewe1.jpeg',
+        'cewe2.jpeg',
+        'cewe3.jpeg',
+        'cewe4.jpg',
+        'cewe5.jpg',
+        'cewe6.jpeg',
+        'cewe7.jpeg',
+        'cewe8.jpg',
+        'cewe9.avif',
+        'cewe14.webp',
+        'cewe11(1).jpg',
+        'cewe12.avif',
+        'cewe13.webp',
+      ]
       const sportRows = [
         {
           label: 'United Gaming',
@@ -212,12 +227,12 @@
         },
         {
           label: 'Lucky Sports',
-          sportFile: 'sport2.jpg',
+          sportFile: 'bola 1.webp',
           logoFile: 'logo-sport2(1).png',
         },
         {
           label: 'CMD 368',
-          sportFile: 'sport3.webp',
+          sportFile: 'sport2.jpg',
           logoFile: 'logo-sport3(1).png',
         },
       ]
@@ -241,17 +256,17 @@
       const fishRows = [
         {
           label: 'BT Gaming',
-          fishFile: 'fish1.jpeg',
+          fishFile: '6f551d248990a7532cc74ce1b7e35e18_0_1774887154_6887-min.png',
           logoFile: 'logofish1.png',
         },
         {
           label: 'VPLUS',
-          fishFile: 'fish2.jpeg',
+          fishFile: 'b14da608420468a0e164a32ac7ae66c3_0_1774886952_2519-min.png',
           logoFile: 'logofish2.png',
         },
         {
           label: 'KA Gaming',
-          fishFile: 'fish3.jpeg',
+          fishFile: 'a8c6c07aa66d0e22854e6b5b9a94b958_0_1774886786_6355-min.png',
           logoFile: 'logofish3.png',
         },
       ]
@@ -290,37 +305,37 @@
       const crashRows = [
         {
           label: 'JILI',
-          crashFile: 'rocket1.avif',
+          crashFile: 'fly1.png',
           logoFile: 'logo-rocket1.png',
         },
         {
           label: 'Pragmatic Play',
-          crashFile: 'rocket2.webp',
+          crashFile: 'rocket2-pragmatic-hero.png',
           logoFile: 'logo-rocket2.png',
         },
         {
           label: 'Crash 3',
-          crashFile: 'rocket3.avif',
+          crashFile: 'fly2.jpg',
           logoFile: 'logo-rocket3.webp',
         },
         {
           label: 'Crash 4',
-          crashFile: 'rocket4.avif',
+          crashFile: 'fly7.webp',
           logoFile: 'logo-rocket4.png',
         },
         {
           label: 'Crash 5',
-          crashFile: 'rocket5.jpeg',
+          crashFile: 'fly4.jpg',
           logoFile: 'logo-rocket5.png',
         },
         {
           label: 'Crash 6',
-          crashFile: 'rocket6.avif',
+          crashFile: 'fly6.webp',
           logoFile: 'logo-rocket6.png',
         },
         {
           label: 'Crash 7',
-          crashFile: 'rocket7.avif',
+          crashFile: 'fly5.webp',
           logoFile: 'logo-rocket7.png',
         },
         {
@@ -330,7 +345,7 @@
         },
         {
           label: 'Top Bet 2',
-          crashFile: 'rocket9.avif',
+          crashFile: 'fly3.jpg',
           logoFile: 'logo-rocket9.webp',
         },
       ]
@@ -346,7 +361,7 @@
           img.height = 300
           img.alt = `Casino combined ${i}: ${casinoLabels[i - 1]}`
           const cap = document.createElement('figcaption')
-          cap.innerHTML = `<strong>#${i}</strong> — ${casinoLabels[i - 1]} · cewe${num} + ${casinoLogoFiles[i - 1]}`
+          cap.innerHTML = `<strong>#${i}</strong> — ${casinoLabels[i - 1]} · ${casinoCeweFiles[i - 1]} + ${casinoLogoFiles[i - 1]}`
           fig.appendChild(img)
           fig.appendChild(cap)
           grid.appendChild(fig)

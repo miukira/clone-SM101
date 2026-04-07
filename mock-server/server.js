@@ -10,6 +10,12 @@ const swaggerUi = require('swagger-ui-express')
 const YAML = require('yamljs')
 const path = require('path')
 
+const providerMockAnimatedImages = require(path.join(
+  __dirname,
+  '../src/data/provider-mock-animated-images.json'
+))
+const pImg = (providerId) => providerMockAnimatedImages[String(providerId)]
+
 const app = express()
 const PORT = 4010
 
@@ -84,104 +90,98 @@ const mockPromoCodes = [
 ]
 
 // ============ SLOT PROVIDERS (1xxx) ============
-// Provider schema: { provider_id, name, logo, character }
+// OpenAPI: { provider_id, name, image } — gambar dari public/animated-brand
 const mockSlotProviders = [
-  { provider_id: 1001, name: 'pragmatic-play', logo: '/providers/logos/pragmatic-play-logo-new.png', character: '/providers/characters/zeus-character.png' },
-  { provider_id: 1002, name: 'pg-soft', logo: '/providers/logos/pg-soft-logo.png', character: '/providers/characters/chinese-empress.png' },
-  { provider_id: 1003, name: 'nolimit-city', logo: '/providers/logos/nolimit-city-logo-new.png', character: '/providers/characters/mariachi-skeleton.png' },
-  { provider_id: 1004, name: 'lucky-monaco', logo: '/providers/logos/lucky-monaco-logo.png', character: '/providers/characters/cleopatra-character.png' },
-  { provider_id: 1005, name: 'joker', logo: '/providers/logos/joker-logo.png', character: '/providers/characters/spartan-character.png' },
-  { provider_id: 1006, name: 'cq9', logo: '/providers/logos/cq9-logo.png', character: '/providers/characters/panda-character.png' },
-  { provider_id: 1007, name: 'habanero', logo: '/providers/logos/habanero-logo.png', character: '/providers/characters/gangster-character.png' },
-  { provider_id: 1008, name: 'yggdrasil', logo: '/providers/logos/yggdrasil-logo-new.png', character: '/providers/characters/soldier-character.png' },
-  { provider_id: 1009, name: 'worldmatch', logo: '/providers/logos/worldmatch-logo.png', character: '/providers/characters/cowgirl-character.png' },
-  { provider_id: 1010, name: 'sboslot', logo: '/providers/logos/sboslot-logo.png', character: '/providers/characters/viking-character.png' },
-  { provider_id: 1011, name: 'funkygames', logo: '/providers/logos/funkygames-logo.png', character: '/providers/characters/king-character.png' },
-  { provider_id: 1012, name: 'microgaming', logo: '/providers/logos/microgaming-logo-new.png', character: '/providers/characters/aladdin-character.png' },
-  { provider_id: 1013, name: 'netent', logo: '/providers/logos/netent-logo.png', character: '/providers/characters/boxer-character.png' },
-  { provider_id: 1014, name: 'afb777', logo: '/providers/logos/afb777-logo.png', character: '/providers/characters/sultan-character.png' },
-  { provider_id: 1015, name: 'jili', logo: '/providers/logos/jili-logo.png', character: '/providers/characters/genie-character.png' },
-  { provider_id: 1016, name: 'rich88', logo: '/providers/logos/rich88-logo.png', character: '/providers/characters/poseidon-character.png' },
-  { provider_id: 1017, name: 'advantplay', logo: '/providers/logos/advantplay-logo.png', character: '/providers/characters/pirate-character.png' },
-  { provider_id: 1018, name: 'kingmaker', logo: '/providers/logos/kingmaker-logo.png', character: '/providers/characters/warrior-character.png' },
-  { provider_id: 1019, name: 'ygr', logo: '/providers/logos/ygr-logo.png', character: '/providers/characters/pharaoh-character.png' },
-  { provider_id: 1020, name: 'playstar', logo: '/providers/logos/playstar-logo.png', character: '/providers/characters/scientist-character.png' },
-  { provider_id: 1021, name: 'fastspin', logo: '/providers/logos/fastspin-logo.png', character: '/providers/characters/dragon-character.png' },
-  { provider_id: 1022, name: 'dragoonsoft', logo: '/providers/logos/dragoonsoft-logo.png', character: '/providers/characters/monopoly-character.png' },
-  { provider_id: 1023, name: 'nagagames', logo: '/providers/logos/nagagames-logo.png', character: '/providers/characters/zeus-character.png' },
+  { provider_id: 1001, name: 'pragmatic-play', image: pImg(1001), badge: { type: 'hot' } },
+  { provider_id: 1002, name: 'pg-soft', image: pImg(1002), badge: { type: 'new' } },
+  { provider_id: 1003, name: 'nolimit-city', image: pImg(1003) },
+  { provider_id: 1004, name: 'lucky-monaco', image: pImg(1004) },
+  { provider_id: 1005, name: 'joker', image: pImg(1005) },
+  { provider_id: 1006, name: 'cq9', image: pImg(1006) },
+  { provider_id: 1007, name: 'habanero', image: pImg(1007) },
+  { provider_id: 1008, name: 'yggdrasil', image: pImg(1008) },
+  { provider_id: 1009, name: 'worldmatch', image: pImg(1009) },
+  { provider_id: 1010, name: 'sboslot', image: pImg(1010) },
+  { provider_id: 1011, name: 'funkygames', image: pImg(1011) },
+  { provider_id: 1012, name: 'microgaming', image: pImg(1012) },
+  { provider_id: 1013, name: 'netent', image: pImg(1013) },
+  { provider_id: 1014, name: 'afb777', image: pImg(1014) },
+  { provider_id: 1015, name: 'jili', image: pImg(1015) },
+  { provider_id: 1016, name: 'rich88', image: pImg(1016) },
+  { provider_id: 1017, name: 'advantplay', image: pImg(1017) },
+  { provider_id: 1018, name: 'kingmaker', image: pImg(1018) },
+  { provider_id: 1019, name: 'ygr', image: pImg(1019) },
+  { provider_id: 1020, name: 'playstar', image: pImg(1020) },
+  { provider_id: 1021, name: 'fastspin', image: pImg(1021) },
+  { provider_id: 1022, name: 'dragoonsoft', image: pImg(1022) },
+  { provider_id: 1023, name: 'nagagames', image: pImg(1023) },
 ]
 
 // ============ FISH PROVIDERS (2xxx) ============
-// Fishing uses shark characters (hiu1-7.png) and fishing logos
 const mockFishProviders = [
-  { provider_id: 2001, name: 'microgaming-fishing', logo: '/providers/fishing/fishing1.jpeg', character: '/providers/fishing/hiu1.png' },
-  { provider_id: 2002, name: 'jdb-fishing', logo: '/providers/fishing/fishing2.jpeg', character: '/providers/fishing/hiu2.png' },
-  { provider_id: 2003, name: 'jili-fishing', logo: '/providers/logos/jili-logo.png', character: '/providers/fishing/hiu3.png' },
-  { provider_id: 2004, name: 'funky-fishing', logo: '/providers/fishing/fishing5.png', character: '/providers/fishing/hiu4.png' },
-  { provider_id: 2005, name: 'dragoon-fishing', logo: '/providers/fishing/fishing3.png', character: '/providers/fishing/hiu5.png' },
-  { provider_id: 2006, name: 'cq9-fishing', logo: '/providers/logos/cq9-logo.png', character: '/providers/fishing/hiu6.png' },
-  { provider_id: 2007, name: 'fachai-fishing', logo: '/providers/fishing/fishing7.png', character: '/providers/fishing/hiu7.png' },
+  { provider_id: 2001, name: 'microgaming-fishing', image: pImg(2001) },
+  { provider_id: 2002, name: 'jdb-fishing', image: pImg(2002) },
+  { provider_id: 2003, name: 'jili-fishing', image: pImg(2003) },
+  { provider_id: 2004, name: 'funky-fishing', image: pImg(2004) },
+  { provider_id: 2005, name: 'dragoon-fishing', image: pImg(2005) },
+  { provider_id: 2006, name: 'cq9-fishing', image: pImg(2006) },
+  { provider_id: 2007, name: 'fachai-fishing', image: pImg(2007) },
 ]
 
 // ============ CASINO PROVIDERS (3xxx) ============
-// Casino uses real women models (model1-14.png)
 const mockCasinoProviders = [
-  { provider_id: 3001, name: '568win', logo: '/providers/logos/kasino1-processed.png', character: '/providers/casino/model1.png' },
-  { provider_id: 3002, name: 'wm-casino', logo: '/providers/logos/kasino2-processed.png', character: '/providers/casino/model2.png' },
-  { provider_id: 3003, name: 'ion-casino', logo: '/providers/logos/kasino3-processed.png', character: '/providers/casino/model3.png' },
-  { provider_id: 3004, name: 'sa-gaming', logo: '/providers/logos/kasino4-processed.png', character: '/providers/casino/model4.png' },
-  { provider_id: 3005, name: 'evolution-gaming', logo: '/providers/logos/kasino5-processed.png', character: '/providers/casino/model5.png' },
-  { provider_id: 3006, name: 'allbet', logo: '/providers/logos/kasino6-processed.png', character: '/providers/casino/model6.png' },
-  { provider_id: 3007, name: 'green-dragon', logo: '/providers/logos/kasino7-processed.png', character: '/providers/casino/model7.png' },
-  { provider_id: 3008, name: 'pragmatic-casino', logo: '/providers/logos/kasino8-processed.png', character: '/providers/casino/model8.png' },
-  { provider_id: 3009, name: 'yb-live', logo: '/providers/logos/kasino9-processed.png', character: '/providers/casino/model9.png' },
-  { provider_id: 3010, name: 'afb777-casino', logo: '/providers/logos/kasino10-processed.png', character: '/providers/casino/model10.png' },
-  { provider_id: 3011, name: 'playtech', logo: '/providers/logos/kasino11-processed.png', character: '/providers/casino/model11.png' },
-  { provider_id: 3012, name: 'asia-gaming', logo: '/providers/logos/kasino12-processed.png', character: '/providers/casino/model12.png' },
-  { provider_id: 3013, name: 'wcasino', logo: '/providers/logos/kasino13-processed.png', character: '/providers/casino/model13.png' },
-  { provider_id: 3014, name: 'gameplay-interactive', logo: '/providers/logos/kasino14-processed.png', character: '/providers/casino/model14.png' },
+  { provider_id: 3001, name: '568win', image: pImg(3001) },
+  { provider_id: 3002, name: 'wm-casino', image: pImg(3002) },
+  { provider_id: 3003, name: 'ion-casino', image: pImg(3003) },
+  { provider_id: 3004, name: 'sa-gaming', image: pImg(3004) },
+  { provider_id: 3005, name: 'evolution-gaming', image: pImg(3005) },
+  { provider_id: 3006, name: 'allbet', image: pImg(3006) },
+  { provider_id: 3007, name: 'green-dragon', image: pImg(3007) },
+  { provider_id: 3008, name: 'pragmatic-casino', image: pImg(3008) },
+  { provider_id: 3009, name: 'yb-live', image: pImg(3009) },
+  { provider_id: 3010, name: 'afb777-casino', image: pImg(3010) },
+  { provider_id: 3011, name: 'playtech', image: pImg(3011) },
+  { provider_id: 3012, name: 'asia-gaming', image: pImg(3012) },
+  { provider_id: 3013, name: 'wcasino', image: pImg(3013) },
+  { provider_id: 3014, name: 'gameplay-interactive', image: pImg(3014) },
 ]
 
 // ============ SPORTSBOOK PROVIDERS (4xxx) ============
 const mockSportsbookProviders = [
-  { provider_id: 4001, name: 'sbobet', logo: '/providers/logos/sbobet-logo.png', character: '/providers/characters/yamal-character-new.png' },
-  { provider_id: 4002, name: 'saba-sports', logo: '/providers/logos/saba-logo.png', character: '/providers/characters/mbappe-character.png' },
-  { provider_id: 4003, name: 'afb777-sports', logo: '/providers/logos/afb777-sports-logo.png', character: '/providers/characters/haaland-character.png' },
-  { provider_id: 4004, name: 'bti', logo: '/providers/logos/bti-logo.png', character: '/providers/characters/messi-character.png' },
-  { provider_id: 4005, name: 'betpanda', logo: '/providers/logos/betpanda-logo.png', character: '/providers/characters/ronaldo-character.png' },
+  { provider_id: 4001, name: 'sbobet', image: pImg(4001) },
+  { provider_id: 4002, name: 'saba-sports', image: pImg(4002) },
+  { provider_id: 4003, name: 'afb777-sports', image: pImg(4003) },
+  { provider_id: 4004, name: 'bti', image: pImg(4004) },
+  { provider_id: 4005, name: 'betpanda', image: pImg(4005) },
 ]
 
 // ============ TOGEL PROVIDERS (5xxx) ============
-// Togel uses togel-specific logos and characters
 const mockTogelProviders = [
-  { provider_id: 5001, name: 'hongkong-lotto', logo: '/providers/togel/hongkong.png', character: '/providers/togel/togel1.png' },
-  { provider_id: 5002, name: 'sydney-lotto', logo: '/providers/togel/sidney.png', character: '/providers/togel/togel2.png' },
-  { provider_id: 5003, name: 'singapore-togel', logo: '/providers/togel/singapore-white.png', character: '/providers/togel/togel3.png' },
-  { provider_id: 5004, name: 'kamboja-togel', logo: '/providers/togel/cambodia.png', character: '/providers/togel/togel4.png' },
-  { provider_id: 5005, name: 'taiwan-togel', logo: '/providers/togel/taiwan.png', character: '/providers/togel/togel5.png' },
-  { provider_id: 5006, name: 'china-togel', logo: '/providers/togel/lotog1-processed.png', character: '/providers/togel/togel6.png' },
-  { provider_id: 5007, name: 'japan-togel', logo: '/providers/togel/lotog2-processed.png', character: '/providers/togel/togel7.png' },
+  { provider_id: 5001, name: 'hongkong-lotto', image: pImg(5001) },
+  { provider_id: 5002, name: 'sydney-lotto', image: pImg(5002) },
+  { provider_id: 5003, name: 'singapore-togel', image: pImg(5003) },
+  { provider_id: 5004, name: 'kamboja-togel', image: pImg(5004) },
+  { provider_id: 5005, name: 'taiwan-togel', image: pImg(5005) },
+  { provider_id: 5006, name: 'china-togel', image: pImg(5006) },
+  { provider_id: 5007, name: 'japan-togel', image: pImg(5007) },
 ]
 
 // ============ ARCADE PROVIDERS (6xxx) ============
-// Arcade uses arcade-specific characters and logos
 const mockArcadeProviders = [
-  { provider_id: 6001, name: 'aviatrix-arcade', logo: '/providers/arcade/arclog1-processed.png', character: '/providers/arcade/arcade1.png' },
-  { provider_id: 6002, name: 'kingmidas-arcade', logo: '/providers/arcade/arclog2.png', character: '/providers/arcade/arcade2.png' },
-  { provider_id: 6003, name: 'sbobet-arcade', logo: '/providers/logos/sbobet-logo.png', character: '/providers/arcade/arcade3.png' },
-  { provider_id: 6004, name: 'spribe-arcade', logo: '/providers/arcade/arclog4.png', character: '/providers/arcade/arcade4.png' },
+  { provider_id: 6001, name: 'aviatrix-arcade', image: pImg(6001) },
+  { provider_id: 6002, name: 'kingmidas-arcade', image: pImg(6002) },
+  { provider_id: 6003, name: 'sbobet-arcade', image: pImg(6003) },
+  { provider_id: 6004, name: 'spribe-arcade', image: pImg(6004) },
 ]
 
 // ============ POKER PROVIDERS (7xxx) ============
-// Poker uses poker-specific character and logo
 const mockPokerProviders = [
-  { provider_id: 7001, name: 'millionaire-poker', logo: '/providers/poker/poklog1.png', character: '/providers/poker/poker1.png' },
+  { provider_id: 7001, name: 'millionaire-poker', image: pImg(7001) },
 ]
 
 // ============ COCKFIGHT PROVIDERS (8xxx) ============
-// Cockfight uses rooster character
 const mockCockfightProviders = [
-  { provider_id: 8001, name: 'ga28-cockfight', logo: '/providers/sabung/colog1.png', character: '/providers/sabung/cook1.webp' },
+  { provider_id: 8001, name: 'ga28-cockfight', image: pImg(8001) },
 ]
 
 // Game schema sesuai Swagger: { id, name, image }
@@ -451,6 +451,31 @@ const getRecentWithdrawals = () => {
 const mockWebsiteConfig = {
   title: 'PUSATTOGEL',
   about: 'Platform Alternatif Login Agent Pioneer Resmi Terpercaya',
+  // Footer promo block — gunakan token PUSATTOGEL; frontend mengganti dengan config.title
+  footer_promo: {
+    heading: 'DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL',
+    intro:
+      'KAMI JUGA AKAN SELALU MEMBERIKAN UPDATE AN PROMO YANG MENARIK UNTUK SEMUA PARA PEMAIN / MEMBER DI PUSATTOGEL DENGAN REWARD HADIAH YANG TENTUNYA SANGAT BESAR DAN BISA DI DAPATKAN OLEH SEMUA PARA MEMBER DI SINI, BERIKUT DAFTAR PROMONYA :',
+    lines: [
+      'EVENT PROMOSI LOMBA PANJAT TO PUSATTOGEL',
+      'PROMO BONUS EXTRA AJAK TEMAN 10% (AWAL DEPOSITO PERTAMA)',
+      'PROMO BONUS AKUN LEVEL SULTAN PUSATTOGEL',
+      'EVENT PROMOSI SILVER & GOLDEN TICKET LUCKY SPIN',
+      'BONUS SALDO GRATIS / FREEBET 30, 50 , 100K',
+      'BONUS EXTRA DOWNLOAD APLIKASI DAPAT FREECHIP GRATIS RP.5.000',
+      'EVENT PROMO SPACEMAN BONUS BERLIMPAH',
+      'PROMO MIX SPORT TARUHAN OLAHRAGA PUSATTOGEL',
+      'EVENT PROMO BONUS ULANG TAHUN',
+      'BONUS NEW MEMBER 50%',
+      'BONUS CASHBACK MINGGUAN 0,5% SETIAP HARI SELASA',
+      'BONUS CASHBACK SPORTBET 0.25%',
+      'BONUS REFERRAL 0,3%',
+      'BONUS DEPOSIT PULSA TANPA POTONGAN',
+      'EVENT VIP PRAGMATIC PLAY & PG SOFT',
+    ],
+    outro:
+      'DENGAN REWARD PROMO TERBAIK YANG KAMI BERIKAN TENTU SAJA HAL INI AKAN MENJADI SALAH SATU PILIHAN TERBAIK MENGAPA ANDA MEMILIH PUSATTOGEL SEBAGAI SITUS PENYEDIA GAME ONLINE TERPERCAYA. AYO TUNGGU APALAGI MARI BERGABUNG SEKARANG JUGA BERSAMA PUSATTOGEL.',
+  },
   logo: '/logo.png',
   favicon: '/favicon.svg',
   external_script: [
@@ -505,9 +530,10 @@ const mockWebsiteConfig = {
   //   - '#1a1a2e'    : Charcoal
   //
   // background_image options:
-  //   - null                 : Tidak ada
-  //   - '/bg-casino-1.webp'  : Casino 1
-  //   - '/bg-casino-2.webp'  : Casino 2
+  //   - null                              : Tidak ada
+  //   - '/bg-casino-1.webp'               : Casino 1 (local)
+  //   - '/bg-casino-2.webp'               : Casino 2 (local)
+  //   - 'https://cdn.example.com/bg.webp' : Absolute URL dari CDN (supported)
   //
   // border_color options (UI accent color):
   //   - '#C0C0C0'    : Silver (default)
@@ -649,8 +675,88 @@ let mockBetHistory = {
   sidney: []
 }
 
-let pendingDeposits = []
-let pendingWithdraws = []
+let depositRequests = []
+let withdrawRequests = []
+const TX_AUTO_COMPLETE_MS = 4500
+
+const findUserPendingDeposit = (userId) =>
+  depositRequests.find((r) => r.userId === userId && r.status === 'pending')
+
+const findUserPendingWithdraw = (userId) =>
+  withdrawRequests.find((r) => r.userId === userId && r.status === 'pending')
+
+/** Payload QRIS sama seperti POST /deposit baru (untuk resync jika klien kehilangan localStorage). */
+const buildQrisQrRaw = (deposit_id, amount) =>
+  `00020101021126570011ID.PUSATTOGEL0215${deposit_id}0303UMI51440014ID.CO.QRIS.WWW0215ID1234567890123030${amount}5802ID5913PUSATTOGEL6007JAKARTA61051234062070703A01`
+
+/** Response JSON deposit sesuai rekaman pending (bukan membuat deposit baru). */
+const depositJsonFromPendingRecord = (rec) => {
+  const bank = mockBanks.find((b) => b.id === rec.bank_id)
+  if (!bank) return null
+  if (bank.type === 'qris') {
+    const qr_raw = buildQrisQrRaw(rec.deposit_id, rec.amount)
+    return {
+      deposit_id: rec.deposit_id,
+      amount: rec.amount,
+      type: 'qris',
+      qr_raw,
+      raw: qr_raw,
+    }
+  }
+  return {
+    deposit_id: rec.deposit_id,
+    amount: rec.amount,
+    type: 'e-wallet',
+    name: bank.name,
+    account: bank.account,
+    number: bank.number,
+  }
+}
+
+const finalizeDepositRequest = (rec, mockDownlineDataRef) => {
+  if (rec.status !== 'pending') return
+  const user = mockUsers.find((u) => u.id === rec.userId)
+  if (!user) return
+  const formattedDate = new Date().toISOString().slice(0, 19).replace('T', ' ')
+  user.balance += rec.amount
+  mockBalanceMutations.unshift({
+    id: mockBalanceMutations.length + 1,
+    type: 'deposit',
+    reference: `deposit_${rec.deposit_id}`,
+    amount: rec.amount,
+    balance_type: 'credit',
+    created_at: formattedDate,
+  })
+  if (user.referrer_id && mockDownlineDataRef[user.referrer_id]) {
+    const downlineEntry = mockDownlineDataRef[user.referrer_id].find((d) => d.username === user.username)
+    if (downlineEntry && !downlineEntry.first_depo_date) {
+      downlineEntry.first_depo_date = formattedDate
+      downlineEntry.first_depo_amount = rec.amount
+    }
+  }
+  rec.status = 'success'
+}
+
+const finalizeWithdrawRequest = (rec) => {
+  if (rec.status !== 'pending') return
+  const user = mockUsers.find((u) => u.id === rec.userId)
+  if (!user) return
+  if (user.balance < rec.amount) {
+    rec.status = 'failed'
+    return
+  }
+  const formattedDate = new Date().toISOString().slice(0, 19).replace('T', ' ')
+  user.balance -= rec.amount
+  mockBalanceMutations.unshift({
+    id: mockBalanceMutations.length + 1,
+    type: 'withdraw',
+    reference: `wd_${rec.withdraw_id}`,
+    amount: rec.amount,
+    balance_type: 'debit',
+    created_at: formattedDate,
+  })
+  rec.status = 'success'
+}
 
 // Token storage (simple in-memory)
 const tokens = new Map()
@@ -804,116 +910,134 @@ router.post('/change-password', (req, res) => {
   res.json({ message: 'success' })
 })
 
+// GET /deposit/status
+router.get('/deposit/status', (req, res) => {
+  const user = verifyToken(req)
+  if (!user) return res.status(401).json({ message: 'please login' })
+  const deposit_id = Number(req.query.deposit_id)
+  if (!deposit_id) return res.status(400).json({ message: 'deposit_id required' })
+  const rec = depositRequests.find((r) => r.deposit_id === deposit_id)
+  if (!rec || rec.userId !== user.id) {
+    return res.status(404).json({ message: 'deposit not found' })
+  }
+  if (rec.status === 'pending' && Date.now() - rec.createdAt >= TX_AUTO_COMPLETE_MS) {
+    finalizeDepositRequest(rec, mockDownlineData)
+  }
+  if (rec.status === 'success') {
+    return res.json({ status: 'success', deposit_id: rec.deposit_id, amount: rec.amount })
+  }
+  if (rec.status === 'failed') {
+    return res.json({ status: 'failed', deposit_id: rec.deposit_id, amount: rec.amount })
+  }
+  return res.json({ status: 'pending', deposit_id: rec.deposit_id, amount: rec.amount })
+})
+
 // POST /deposit
 router.post('/deposit', (req, res) => {
   const user = verifyToken(req)
   if (!user) return res.status(401).json({ message: 'please login' })
-  
-  // Auto-clear old pending deposits (no createdAt or older than 5 seconds)
-  if (pendingDeposits.length > 0) {
-    const pending = pendingDeposits[0]
-    if (!pending.createdAt || Date.now() - pending.createdAt > 5000) {
-      console.log('🧹 Auto-clearing old pending deposit')
-      pendingDeposits = []
-    } else {
-      return res.status(400).json({ message: 'have pending deposit' })
-    }
+
+  const existingPending = findUserPendingDeposit(user.id)
+  if (existingPending) {
+    const again = depositJsonFromPendingRecord(existingPending)
+    if (again) return res.json(again)
+    return res.status(400).json({ message: 'have pending deposit' })
   }
-  
+
   const { bank_id, amount, promo_code } = req.body
-  const bank = mockBanks.find(b => b.id === bank_id)
+  const bank = mockBanks.find((b) => b.id === bank_id)
   if (!bank) return res.status(400).json({ message: 'bank not found' })
-  
-  const deposit_id = Math.floor(Math.random() * 1000000)
-  const now = new Date()
-  const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ')
-  
-  // LANGSUNG tambahkan ke riwayat dan update balance
-  user.balance += amount
-  mockBalanceMutations.unshift({
-    id: mockBalanceMutations.length + 1,
-    type: 'deposit',
-    reference: `deposit_${deposit_id}`,
-    amount: amount,
-    balance_type: 'credit',
-    created_at: formattedDate
+  if (amount < bank.min_deposit) {
+    return res.status(400).json({ message: `minimum deposit is ${bank.min_deposit}` })
+  }
+
+  const deposit_id = 1 + Math.floor(Math.random() * 999999)
+
+  depositRequests.push({
+    deposit_id,
+    userId: user.id,
+    amount,
+    bank_id,
+    promo_code: promo_code || null,
+    status: 'pending',
+    createdAt: Date.now(),
   })
-  
-  console.log(`✅ Deposit ${deposit_id} completed! Amount: ${amount}, New balance: ${user.balance}`)
-  
-  // Update first deposit untuk referral tracking (jika user punya referrer)
-  if (user.referrer_id) {
-    const downlineList = mockDownlineData[user.referrer_id]
-    if (downlineList) {
-      const downlineEntry = downlineList.find(d => d.username === user.username)
-      if (downlineEntry && !downlineEntry.first_depo_date) {
-        downlineEntry.first_depo_date = formattedDate
-        downlineEntry.first_depo_amount = amount
-        console.log(`📊 First deposit tracked for referral: ${user.username}`)
-      }
-    }
-  }
-  
-  // Track pending untuk mencegah double deposit dalam waktu singkat
-  pendingDeposits.push({ deposit_id, createdAt: Date.now() })
-  setTimeout(() => {
-    pendingDeposits = pendingDeposits.filter(d => d.deposit_id !== deposit_id)
-  }, 5000)
-  
-  // Response sesuai Swagger - tambahkan amount
+
   if (bank.type === 'qris') {
-    res.json({ deposit_id, amount, type: 'qris', raw: `QRIS_RAW_DATA_${deposit_id}` })
+    const qr_raw = buildQrisQrRaw(deposit_id, amount)
+    res.json({
+      deposit_id,
+      amount,
+      type: 'qris',
+      qr_raw,
+      raw: qr_raw,
+    })
   } else {
-    res.json({ deposit_id, amount, type: 'e-wallet', name: bank.name, account: bank.account, number: bank.number })
+    res.json({
+      deposit_id,
+      amount,
+      type: 'e-wallet',
+      name: bank.name,
+      account: bank.account,
+      number: bank.number,
+    })
   }
+})
+
+// GET /withdraw/status
+router.get('/withdraw/status', (req, res) => {
+  const user = verifyToken(req)
+  if (!user) return res.status(401).json({ message: 'please login' })
+  const withdraw_id = Number(req.query.withdraw_id)
+  if (!withdraw_id) return res.status(400).json({ message: 'withdraw_id required' })
+  const rec = withdrawRequests.find((r) => r.withdraw_id === withdraw_id)
+  if (!rec || rec.userId !== user.id) {
+    return res.status(404).json({ message: 'withdraw not found' })
+  }
+  if (rec.status === 'pending' && Date.now() - rec.createdAt >= TX_AUTO_COMPLETE_MS) {
+    finalizeWithdrawRequest(rec)
+  }
+  if (rec.status === 'success') {
+    return res.json({ status: 'success', withdraw_id: rec.withdraw_id, amount: rec.amount })
+  }
+  if (rec.status === 'failed') {
+    return res.json({ status: 'failed', withdraw_id: rec.withdraw_id, amount: rec.amount })
+  }
+  return res.json({ status: 'pending', withdraw_id: rec.withdraw_id, amount: rec.amount })
 })
 
 // POST /withdraw
 router.post('/withdraw', (req, res) => {
   const user = verifyToken(req)
   if (!user) return res.status(401).json({ message: 'please login' })
-  
-  // Auto-clear old pending withdraws (no createdAt or older than 5 seconds)
-  if (pendingWithdraws.length > 0) {
-    const pending = pendingWithdraws[0]
-    if (!pending.createdAt || Date.now() - pending.createdAt > 5000) {
-      console.log('🧹 Auto-clearing old pending withdraw')
-      pendingWithdraws = []
-    } else {
-      return res.status(400).json({ message: 'have pending withdraw' })
-    }
+
+  if (findUserPendingWithdraw(user.id)) {
+    return res.status(400).json({ message: 'have pending withdraw' })
   }
-  
+
   const { amount } = req.body
   if (user.balance < amount) {
     return res.status(400).json({ message: 'insufficient balance' })
   }
-  
+
   const withdraw_id = Math.floor(Math.random() * 1000000)
-  const now = new Date()
-  const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ')
-  
-  // LANGSUNG kurangi balance dan tambahkan ke riwayat
-  user.balance -= amount
-  mockBalanceMutations.unshift({
-    id: mockBalanceMutations.length + 1,
-    type: 'withdraw',
-    reference: `wd_${withdraw_id}`,
-    amount: amount,
-    balance_type: 'debit',
-    created_at: formattedDate
+
+  withdrawRequests.push({
+    withdraw_id,
+    userId: user.id,
+    amount,
+    status: 'pending',
+    createdAt: Date.now(),
   })
-  
-  console.log(`✅ Withdraw ${withdraw_id} completed! Amount: ${amount}, New balance: ${user.balance}`)
-  
-  // Track pending untuk mencegah double withdraw dalam waktu singkat
-  pendingWithdraws.push({ withdraw_id, createdAt: Date.now() })
-  setTimeout(() => {
-    pendingWithdraws = pendingWithdraws.filter(w => w.withdraw_id !== withdraw_id)
-  }, 5000)
-  
-  // Response sesuai Swagger - tambahkan amount
-  res.json({ withdraw_id, amount, type: 'e-wallet', name: user.bank_name, account: user.bank_account, number: user.bank_number })
+
+  res.json({
+    withdraw_id,
+    amount,
+    type: 'e-wallet',
+    name: user.bank_name,
+    account: user.bank_account,
+    number: user.bank_number,
+  })
 })
 
 // GET /user-referral
@@ -1075,7 +1199,18 @@ router.get('/play', (req, res) => {
   res.json(response)
 })
 
-// POST /bet
+/**
+ * POST /bet — body: BetRequest[]
+ * Kontrak (selaras frontend TogelBettingPage + backend nyata yang diharapkan):
+ * - market: string id pasaran
+ * - type: '4D' | '3D' | '2D' (per baris; BBFS mengirim banyak baris dengan type per jenis)
+ * - number: string digit dipisah koma, e.g. "1,2,3,4"
+ * - amount: nominal taruhan per baris (sebelum potong diskon di UI)
+ * - pay: jumlah yang dipotong saldo untuk baris ini (setelah diskon jika dipakai)
+ * - prize: multiplier hadiah efektif untuk baris ini (penuh jika discount:false, dikurangi jika discount:true)
+ * - discount: boolean — true = pemain memilih mode diskon (bayar & multiplier disesuaikan % pasaran)
+ * - position: 'full' | 'depan' | 'tengah' | 'belakang'
+ */
 router.post('/bet', (req, res) => {
   const user = verifyToken(req)
   if (!user) return res.status(401).json({ message: 'please login' })
@@ -1141,7 +1276,7 @@ router.get('/market-info', (req, res) => {
   console.log(`📊 Market info request: ${market} (${type})`)
   const info = mockMarketInfo[market]
   if (!info) return res.status(400).json({ message: 'market not found' })
-  if (!['4d', '3d', '2d'].includes(type?.toLowerCase())) {
+  if (!['4d', '3d', '2d', 'bbfs'].includes(String(type || '').toLowerCase())) {
     return res.status(400).json({ message: 'type not found' })
   }
   // Response sesuai Swagger MarketInfo schema
@@ -1174,6 +1309,13 @@ router.post('/theme', (req, res) => {
   if (border_color !== undefined) mockWebsiteConfig.theme.border_color = border_color
   
   res.json({ message: 'success' })
+})
+
+/** Hapus pending deposit/withdraw di memori — hanya untuk mock lokal / Playwright (jangan expose ke publik). */
+router.post('/__e2e/reset-transactions', (req, res) => {
+  depositRequests = []
+  withdrawRequests = []
+  res.json({ ok: true })
 })
 
 // Mount router

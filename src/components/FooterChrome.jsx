@@ -1,81 +1,95 @@
 // FooterChrome.jsx - Reusable footer component for Chrome theme
 
-// Import provider logos from assets2
-import pragmaticLogo from '../assets2/pragmatic-play-logo-new.png'
-import pgSoftLogo from '../assets2/download.png'
-import nolimitLogo from '../assets2/nolimit-city-logo-new.png'
-import luckyMonacoLogo from '../assets2/lucky-monaco-logo.png'
-import jokerLogo from '../assets2/joker-logo.png'
-import cq9Logo from '../assets2/cq9-logo.png'
-import habaneroLogo from '../assets2/habanero-logo.png'
-import yggdrasilLogo from '../assets2/yggdrasil-logo-new.png'
-import worldmatchLogo from '../assets2/worldmatch-logo.png'
-import sboslotLogo from '../assets2/sboslot-logo.png'
-import funkygamesLogo from '../assets2/funkygames-logo.png'
-import microgamingLogo from '../assets2/microgaming-logo-new.png'
-import netentLogo from '../assets2/netent-logo.png'
-import afb777Logo from '../assets2/afb777-logo.png'
-import jiliLogo from '../assets2/jili-logo.png'
-import rich88Logo from '../assets2/rich88-logo.png'
-import advantplayLogo from '../assets2/advantplay-logo.png'
-import kingmakerLogo from '../assets2/kingmaker-logo.png'
-import ygrLogo from '../assets2/ygr-logo.png'
-import playstarLogo from '../assets2/playstar-logo.png'
-import fastspinLogo from '../assets2/fastspin-logo.png'
-import dragoonsoftLogo from '../assets2/dragoonsoft-logo.png'
-import nagagamesLogo from '../assets2/nagagames-logo.png'
-import sbobetLogo from '../assets2/sbobet-logo.png'
-import sabaLogo from '../assets2/saba-logo.png'
-import btiLogo from '../assets2/bti-logo.png'
+import { useMemo, Fragment } from 'react'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { useWebsite } from '../context/WebsiteContext'
+import ChromeSiteBrand from './ChromeSiteBrand'
 
-// Game Provider logos - ONLY providers with actual logos
-const gameProviders = [
-  { name: 'Pragmatic Play', logo: pragmaticLogo },
-  { name: 'YGR', logo: ygrLogo },
-  { name: 'Dragoon Soft', logo: dragoonsoftLogo },
-  { name: 'FastSpin', logo: fastspinLogo },
-  { name: 'Playstar', logo: playstarLogo },
-  { name: 'PG Soft', logo: pgSoftLogo },
-  { name: 'Advant Play', logo: advantplayLogo },
-  { name: 'Rich88', logo: rich88Logo },
-  { name: 'Joker', logo: jokerLogo },
-  { name: 'Habanero', logo: habaneroLogo },
-  { name: 'Funky Games', logo: funkygamesLogo },
-  { name: 'SBOBET', logo: sbobetLogo },
-  { name: 'CQ9', logo: cq9Logo },
-  { name: 'Microgaming', logo: microgamingLogo },
-  { name: 'Yggdrasil', logo: yggdrasilLogo },
-  { name: 'Nolimit City', logo: nolimitLogo },
-  { name: 'Saba Sports', logo: sabaLogo },
-  { name: 'BTi', logo: btiLogo },
-  { name: 'JILI', logo: jiliLogo },
-  { name: 'Naga Games', logo: nagagamesLogo },
-  { name: 'Lucky Monaco', logo: luckyMonacoLogo },
-  { name: 'World Match', logo: worldmatchLogo },
-  { name: 'SBO Slot', logo: sboslotLogo },
-  { name: 'NetEnt', logo: netentLogo },
-  { name: 'AFB777', logo: afb777Logo },
-  { name: 'Kingmaker', logo: kingmakerLogo },
+/** Logo footer: file PNG lama di assets2 tidak ada — pakai kartu animated-brand di public/ */
+const AB = '/animated-brand'
+const gameProvidersRaw = [
+  { name: 'Pragmatic Play', logo: `${AB}/slot/slot-pragmatic-play.webp` },
+  { name: 'YGR', logo: `${AB}/slot/slot-ygr.webp` },
+  { name: 'Dragoon Soft', logo: `${AB}/slot/slot-dragoonsoft.webp` },
+  { name: 'FastSpin', logo: `${AB}/slot/slot-fastspin.webp` },
+  { name: 'Playstar', logo: `${AB}/slot/slot-playstar.webp` },
+  { name: 'PG Soft', logo: `${AB}/slot/slot-pg-soft.webp` },
+  { name: 'Advant Play', logo: `${AB}/slot/slot-advantplay.webp` },
+  { name: 'Rich88', logo: `${AB}/slot/slot-rich88.webp` },
+  { name: 'Joker', logo: `${AB}/slot/slot-joker.webp` },
+  { name: 'Habanero', logo: `${AB}/slot/slot-habanero.webp` },
+  { name: 'Funky Games', logo: `${AB}/slot/slot-funkygames.webp` },
+  { name: 'SBOBET', logo: `${AB}/sport/sport-sbobet.webp` },
+  { name: 'CQ9', logo: `${AB}/slot/slot-cq9.webp` },
+  { name: 'Microgaming', logo: `${AB}/slot/slot-microgaming.webp` },
+  { name: 'Yggdrasil', logo: `${AB}/slot/slot-yggdrasil.webp` },
+  { name: 'Nolimit City', logo: `${AB}/slot/slot-nolimit-city.webp` },
+  { name: 'Saba Sports', logo: `${AB}/sport/sport-saba-sports.webp` },
+  { name: 'BTi', logo: `${AB}/sport/sport-bti.webp` },
+  { name: 'JILI', logo: `${AB}/slot/slot-jili.webp` },
+  { name: 'Naga Games', logo: `${AB}/slot/slot-nagagames.webp` },
+  { name: 'Lucky Monaco', logo: `${AB}/slot/slot-lucky-monaco.webp` },
+  { name: 'World Match', logo: `${AB}/slot/slot-worldmatch.webp` },
+  { name: 'SBO Slot', logo: `${AB}/slot/slot-sboslot.webp` },
+  { name: 'NetEnt', logo: `${AB}/slot/slot-netent.webp` },
+  { name: 'AFB777', logo: `${AB}/slot/slot-afb777.webp` },
+  { name: 'Kingmaker', logo: `${AB}/slot/slot-kingmaker.webp` },
 ]
 
-// Promo list
-const promoList = [
-  'EVENT PROMOSI LOMBA PANJAT TO PUSATTOGEL',
-  'PROMO BONUS EXTRA AJAK TEMAN 10% (AWAL DEPOSITO PERTAMA)',
-  'PROMO BONUS AKUN LEVEL SULTAN PUSATTOGEL',
-  'EVENT PROMOSI SILVER & GOLDEN TICKET LUCKY SPIN',
-  'BONUS SALDO GRATIS / FREEBET 30, 50 , 100K',
-  'BONUS EXTRA DOWNLOAD APLIKASI DAPAT FREECHIP GRATIS RP.5.000',
-  'EVENT PROMO SPACEMAN BONUS BERLIMPAH',
-  'PROMO MIX SPORT TARUHAN OLAHRAGA PUSATTOGEL',
-  'EVENT PROMO BONUS ULANG TAHUN',
-  'BONUS NEW MEMBER 50%',
-  'BONUS CASHBACK MINGGUAN 0,5% SETIAP HARI SELASA',
-  'BONUS CASHBACK SPORTBET 0.25%',
-  'BONUS REFERRAL 0,3%',
-  'BONUS DEPOSIT PULSA TANPA POTONGAN',
-  'EVENT VIP PRAGMATIC PLAY & PG SOFT',
-]
+const gameProviders = gameProvidersRaw.map((p) => ({
+  ...p,
+  logo: publicAssetUrl(p.logo),
+}))
+
+const BRAND_TOKEN = 'PUSATTOGEL'
+
+/** Default footer promo (dipakai jika API tidak mengirim footer_promo lengkap) */
+const DEFAULT_FOOTER_PROMO = {
+  heading: 'DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL',
+  intro:
+    'KAMI JUGA AKAN SELALU MEMBERIKAN UPDATE AN PROMO YANG MENARIK UNTUK SEMUA PARA PEMAIN / MEMBER DI PUSATTOGEL DENGAN REWARD HADIAH YANG TENTUNYA SANGAT BESAR DAN BISA DI DAPATKAN OLEH SEMUA PARA MEMBER DI SINI, BERIKUT DAFTAR PROMONYA :',
+  lines: [
+    'EVENT PROMOSI LOMBA PANJAT TO PUSATTOGEL',
+    'PROMO BONUS EXTRA AJAK TEMAN 10% (AWAL DEPOSITO PERTAMA)',
+    'PROMO BONUS AKUN LEVEL SULTAN PUSATTOGEL',
+    'EVENT PROMOSI SILVER & GOLDEN TICKET LUCKY SPIN',
+    'BONUS SALDO GRATIS / FREEBET 30, 50 , 100K',
+    'BONUS EXTRA DOWNLOAD APLIKASI DAPAT FREECHIP GRATIS RP.5.000',
+    'EVENT PROMO SPACEMAN BONUS BERLIMPAH',
+    'PROMO MIX SPORT TARUHAN OLAHRAGA PUSATTOGEL',
+    'EVENT PROMO BONUS ULANG TAHUN',
+    'BONUS NEW MEMBER 50%',
+    'BONUS CASHBACK MINGGUAN 0,5% SETIAP HARI SELASA',
+    'BONUS CASHBACK SPORTBET 0.25%',
+    'BONUS REFERRAL 0,3%',
+    'BONUS DEPOSIT PULSA TANPA POTONGAN',
+    'EVENT VIP PRAGMATIC PLAY & PG SOFT',
+  ],
+  outro:
+    'DENGAN REWARD PROMO TERBAIK YANG KAMI BERIKAN TENTU SAJA HAL INI AKAN MENJADI SALAH SATU PILIHAN TERBAIK MENGAPA ANDA MEMILIH PUSATTOGEL SEBAGAI SITUS PENYEDIA GAME ONLINE TERPERCAYA. AYO TUNGGU APALAGI MARI BERGABUNG SEKARANG JUGA BERSAMA PUSATTOGEL.',
+}
+
+function resolveFooterPromo(api, fallback) {
+  if (!api || typeof api !== 'object') return fallback
+  return {
+    heading: typeof api.heading === 'string' && api.heading.trim() ? api.heading : fallback.heading,
+    intro: typeof api.intro === 'string' && api.intro.trim() ? api.intro : fallback.intro,
+    lines: Array.isArray(api.lines) && api.lines.length > 0 ? api.lines : fallback.lines,
+    outro: typeof api.outro === 'string' && api.outro.trim() ? api.outro : fallback.outro,
+  }
+}
+
+/** Ganti token PUSATTOGEL dengan title; kemunculan nama brand diberi warna emas */
+function interleaveBrand(text, title) {
+  if (!text) return null
+  const parts = text.split(BRAND_TOKEN)
+  return parts.map((part, i) => (
+    <Fragment key={i}>
+      {part}
+      {i < parts.length - 1 ? <span className="text-[#fbbf24]">{title}</span> : null}
+    </Fragment>
+  ))
+}
 
 // Bank/Payment SVG Components - matching momo99 style
 const BankLogos = {
@@ -285,29 +299,36 @@ const bankItems = [
 ]
 
 export default function FooterChrome() {
+  const { title, about, footerPromo } = useWebsite()
+  const promo = useMemo(() => resolveFooterPromo(footerPromo, DEFAULT_FOOTER_PROMO), [footerPromo])
+  const promoLines = useMemo(
+    () => promo.lines.map((line) => line.split(BRAND_TOKEN).join(title)),
+    [promo.lines, title]
+  )
+  const headingText = useMemo(() => promo.heading.split(BRAND_TOKEN).join(title), [promo.heading, title])
+
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
       {/* Promo Section */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
-        <h3 className="text-sm sm:text-base font-bold text-[#fbbf24] mb-4 tracking-wider">
-          DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL
-        </h3>
+        {about ? (
+          <p className="text-[10px] sm:text-xs text-[#909090] mb-4 leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
+            {about}
+          </p>
+        ) : null}
+        <h3 className="text-sm sm:text-base font-bold text-[#fbbf24] mb-4 tracking-wider">{headingText}</h3>
         <p className="text-[10px] sm:text-xs text-[#808080] mb-4 leading-relaxed">
-          KAMI JUGA AKAN SELALU MEMBERIKAN UPDATE AN PROMO YANG MENARIK UNTUK SEMUA PARA PEMAIN / MEMBER DI{' '}
-          <span className="text-[#fbbf24]">PUSATTOGEL</span> DENGAN REWARD HADIAH YANG TENTUNYA SANGAT BESAR DAN BISA DI
-          DAPATKAN OLEH SEMUA PARA MEMBER DI SINI, BERIKUT DAFTAR PROMONYA :
+          {interleaveBrand(promo.intro, title)}
         </p>
         <ul className="space-y-1 mb-4">
-          {promoList.map((promo, i) => (
+          {promoLines.map((line, i) => (
             <li key={i} className="text-[10px] sm:text-xs text-[#606060]">
-              {promo}
+              {line}
             </li>
           ))}
         </ul>
         <p className="text-[10px] sm:text-xs text-[#808080] leading-relaxed">
-          DENGAN REWARD PROMO TERBAIK YANG KAMI BERIKAN TENTU SAJA HAL INI AKAN MENJADI SALAH SATU PILIHAN TERBAIK MENGAPA
-          ANDA MEMILIH <span className="text-[#fbbf24]">PUSATTOGEL</span> SEBAGAI SITUS PENYEDIA GAME ONLINE TERPERCAYA.
-          AYO TUNGGU APALAGI MARI BERGABUNG SEKARANG JUGA BERSAMA PUSATTOGEL.
+          {interleaveBrand(promo.outro, title)}
         </p>
       </section>
 
@@ -376,12 +397,8 @@ export default function FooterChrome() {
             <span className="text-xs text-[#606060]">Powered by</span>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="w-24 h-14 bg-[#111] themed-card rounded-lg flex items-center justify-center">
-              <span className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080]">
-                🎰 PT
-              </span>
-            </div>
+          <div className="flex items-center gap-3 min-w-0">
+            <ChromeSiteBrand variant="footer" className="min-w-0" />
           </div>
         </div>
       </section>
@@ -389,7 +406,7 @@ export default function FooterChrome() {
       {/* Copyright */}
       <div className="border-t border-[#1a1a1a] py-4 text-center">
         <p className="text-[10px] text-[#404040]">
-          © 2026 PUSATTOGEL. All Rights Reserved.
+          © 2026 {title}. All Rights Reserved.
         </p>
       </div>
     </footer>

@@ -1,152 +1,27 @@
 // Provider Card Configuration
 // Add new providers here - no need to create new component files!
 
-// Import character images
-import zeusBody from '../assets2/zeus-layers/zeus-body.png'
-import zeusLightning from '../assets2/zeus-layers/zeus-lightning.png'
-import mariachiSkeleton from '../assets2/mariachi-skeleton.png'
-import cleopatraChar from '../assets2/cleopatra-character.png'
-import empressChar from '../assets2/chinese-empress.png'
-import spartanChar from '../assets2/spartan-character.png'
-import pandaChar from '../assets2/panda-character.png'
-import gangsterChar from '../assets2/gangster-character.png'
-import soldierChar from '../assets2/soldier-character.png'
-import cowgirlChar from '../assets2/cowgirl-character.png'
-import vikingChar from '../assets2/viking-character.png'
-import kingChar from '../assets2/king-character.png'
-import skeletonGuitaristChar from '../assets2/skeleton-guitarist.png'
-import aladdinChar from '../assets2/aladdin-character.png'
-import boxerChar from '../assets2/boxer-character.png'
-import sultanChar from '../assets2/sultan-character.png'
-import genieChar from '../assets2/genie-character.png'
-import poseidonChar from '../assets2/poseidon-character.png'
-import pirateChar from '../assets2/pirate-character.png'
-import warriorChar from '../assets2/warrior-character.png'
-import pharaohChar from '../assets2/pharaoh-character.png'
-import scientistChar from '../assets2/scientist-character.png'
-import dragonChar from '../assets2/dragon-character.png'
-import monopolyChar from '../assets2/monopoly-character.png'
+// Provider config — gambar kartu dari provider-mock-animated-images.json (public/animated-brand)
+import providerMockAnimatedImages from '../data/provider-mock-animated-images.json'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
-// Import logo images
-import pragmaticLogo from '../assets2/pragmatic-play-logo-new.png'
-import pgSoftLogo from '../assets2/download.png'
-import nolimitLogo from '../assets2/nolimit-city-logo-new.png'
-import luckyMonacoLogo from '../assets2/lucky-monaco-logo.png'
-import jokerLogo from '../assets2/joker-logo.png'
-import cq9Logo from '../assets2/cq9-logo.png'
-import habaneroLogo from '../assets2/habanero-logo.png'
-import yggdrasilLogo from '../assets2/yggdrasil-logo-new.png'
-import worldmatchLogo from '../assets2/worldmatch-logo.png'
-import sboslotLogo from '../assets2/sboslot-logo.png'
-import funkygamesLogo from '../assets2/funkygames-logo.png'
-import microgamingLogo from '../assets2/microgaming-logo-new.png'
-import netentLogo from '../assets2/netent-logo.png'
-import afb777Logo from '../assets2/afb777-logo.png'
-import jiliLogo from '../assets2/jili-logo.png'
-import rich88Logo from '../assets2/rich88-logo.png'
-import advantplayLogo from '../assets2/advantplay-logo.png'
-import kingmakerLogo from '../assets2/kingmaker-logo.png'
-import ygrLogo from '../assets2/ygr-logo.png'
-import playstarLogo from '../assets2/playstar-logo.png'
-import fastspinLogo from '../assets2/fastspin-logo.png'
-import dragoonsoftLogo from '../assets2/dragoonsoft-logo.png'
-import nagagamesLogo from '../assets2/nagagames-logo.png'
+function pImg(providerId) {
+  return providerMockAnimatedImages[String(providerId)] ?? null
+}
 
-// SPORTS logos
-import sbobetLogo from '../assets2/sbobet-logo.png'
-import sabaLogo from '../assets2/saba-logo.png'
-import afb777SportsLogo from '../assets2/afb777-sports-logo.png'
-import btiLogo from '../assets2/bti-logo.png'
-import betpandaLogo from '../assets2/betpanda-logo.png'
-
-// SPORTS characters
-import footballerChar from '../assets2/yamal-character-new.png'
-import mbappeChar from '../assets2/mbappe-character.png'
-import haalandChar from '../assets2/haaland-character.png'
-import messiChar from '../assets2/messi-character.png'
-import ronaldoChar from '../assets2/ronaldo-character.png'
-
-// CASINO logos (processed - bg removed, black text to white)
-import casinoLogo1 from '../assets2/kasino1-processed.png' // 568Win
-import casinoLogo2 from '../assets2/kasino2-processed.png' // WM Casino
-import casinoLogo3 from '../assets2/kasino3-processed.png' // ION Casino
-import casinoLogo4 from '../assets2/kasino4-processed.png' // SA Gaming
-import casinoLogo5 from '../assets2/kasino5-processed.png' // Evolution Gaming
-import casinoLogo6 from '../assets2/kasino6-processed.png' // Allbet
-import casinoLogo7 from '../assets2/kasino7-processed.png' // Green Dragon
-import casinoLogo8 from '../assets2/kasino8-processed.png' // Pragmatic Play
-import casinoLogo9 from '../assets2/kasino9-processed.png' // YB Live
-import casinoLogo10 from '../assets2/kasino10-processed.png' // AFB777 Gaming
-import casinoLogo11 from '../assets2/kasino11-processed.png' // Playtech
-import casinoLogo12 from '../assets2/kasino12-processed.png' // Asia Gaming
-import casinoLogo13 from '../assets2/kasino13-processed.png' // WCasino
-import casinoLogo14 from '../assets2/kasino14-processed.png' // Gameplay Interactive
-
-// CASINO models (model1-14 paired with kasino1-14)
-import casinoModel1 from '../assets2/model1.png'
-import casinoModel2 from '../assets2/model2.png'
-import casinoModel3 from '../assets2/model3.png'
-import casinoModel4 from '../assets2/model4.png'
-import casinoModel5 from '../assets2/model5.png'
-import casinoModel6 from '../assets2/model6.png'
-import casinoModel7 from '../assets2/model7.png'
-import casinoModel8 from '../assets2/model8.png'
-import casinoModel9 from '../assets2/model9.png'
-import casinoModel10 from '../assets2/model10.png'
-import casinoModel11 from '../assets2/model11.png'
-import casinoModel12 from '../assets2/model12.png'
-import casinoModel13 from '../assets2/model13.png'
-import casinoModel14 from '../assets2/model14.png'
-
-// TOGEL models and logos
-import togelModel1 from '../assets2/togel1.png'
-import togelModel2 from '../assets2/togel2.png'
-import togelModel3 from '../assets2/togel3.png'
-import togelModel4 from '../assets2/togel4.png'
-import togelModel5 from '../assets2/togel5.png'
-import togelModel6 from '../assets2/togel6.png'
-import togelLogo1 from '../assets2/lotog1-processed.png'  // Hong Kong Lotto (circle only)
-import togelLogo2 from '../assets2/lotog2-processed.png'  // Sydney Lotto (circle only)
-import togelLogoSingapore from '../assets2/singapore-white.png'   // Singapore Pools
-import togelLogoKamboja from '../assets2/cambodia.png'       // Cambodia Pools
-import togelLogoTaiwan from '../assets2/taiwan.png'          // Taiwan Lottery
-import togelLogoHongkong from '../assets2/hongkong.png'      // Hongkong Pools
-import togelLogoSidney from '../assets2/sidney.png'         // Sydney Pools
-import togelModel7 from '../assets2/togel7.png'             // Sidney character
-
-// FISHING characters and logos
-import fishingChar1 from '../assets2/hiu1.png'
-import fishingChar2 from '../assets2/hiu2.png'
-import fishingChar3 from '../assets2/hiu3.png'
-import fishingChar4 from '../assets2/hiu4.png'
-import fishingChar5 from '../assets2/hiu5.png'
-import fishingChar6 from '../assets2/hiu6.png'
-import fishingChar7 from '../assets2/hiu7.png'
-import fishingLogo1 from '../assets2/fishing1.jpeg'      // Microgaming
-import fishingLogo2 from '../assets2/fishing2.jpeg'     // JDB
-import fishingLogo3 from '../assets2/jili-logo.png'     // JILI
-import fishingLogo4 from '../assets2/fishing5.png'      // Funky Games
-import fishingLogo5 from '../assets2/fishing3.png'      // Dragoon Soft
-import fishingLogo6 from '../assets2/cq9-logo.png'      // CQ9 Gaming
-import fishingLogo7 from '../assets2/fishing7.png'      // FA Chai Fishing
-
-// ARCADE characters and logos
-import arcadeChar1 from '../assets2/arcade1.png'
-import arcadeChar2 from '../assets2/arcade2.png'
-import arcadeChar3 from '../assets2/arcade3.png'
-import arcadeChar4 from '../assets2/arcade4.png'
-import arcadeLogo1 from '../assets2/arclog1-processed.png'  // Aviatrix
-import arcadeLogo2 from '../assets2/arclog2.png'            // King Midas
-import arcadeLogo3 from '../assets2/sbobet-logo.png'        // SBOBET
-import arcadeLogo4 from '../assets2/arclog4.png'       // Spribe
-
-// POKER characters and logos
-import pokerChar1 from '../assets2/poker1.png'
-import pokerLogo1 from '../assets2/poklog1.png'     // Millionaire Poker
-
-// COCK FIGHTING characters and logos
-import cockChar1 from '../assets2/cook1.webp'
-import cockLogo1 from '../assets2/colog1.png'         // GA28
+function mapProviderImages(list) {
+  return list.map((p) => {
+    const { characterImg, logoImg, overlayImg, ...rest } = p
+    const url = pImg(rest.provider_id)
+    const resolved = url ? publicAssetUrl(url) : null
+    return {
+      ...rest,
+      characterImg: resolved,
+      logoImg: resolved,
+      overlayImg: null,
+    }
+  })
+}
 
 /**
  * Provider Configuration
@@ -171,14 +46,12 @@ import cockLogo1 from '../assets2/colog1.png'         // GA28
  * - animationPrefix: string - CSS animation class prefix
  */
 
-export const providers = [
+const providersRaw = [
   {
     id: 'pragmatic-play',
     provider_id: 1001,
     name: 'Pragmatic Play',
-    characterImg: zeusBody,
     characterImgAlt: 'Zeus',
-    logoImg: pragmaticLogo,
     logoAlt: 'Pragmatic Play',
     logoWidth: '800px',
     logoTop: '20px',
@@ -189,16 +62,13 @@ export const providers = [
     glowColor: 'white',
     glowColorHover: 'cyan',
     badge: { type: 'hot' },
-    overlayImg: zeusLightning,
     animationPrefix: 'zeus',
   },
   {
     id: 'pg-soft',
     provider_id: 1002,
     name: 'PG Soft',
-    characterImg: mariachiSkeleton,
     characterImgAlt: 'Mariachi Skeleton',
-    logoImg: pgSoftLogo,
     logoAlt: 'PG Soft',
     logoWidth: '160px',
     logoTop: '30px',
@@ -209,16 +79,13 @@ export const providers = [
     glowColor: 'orange',
     glowColorHover: 'orange',
     badge: { type: 'new' },
-    overlayImg: null,
     animationPrefix: 'mariachi',
   },
   {
     id: 'nolimit-city',
     provider_id: 1003,
     name: 'Nolimit City',
-    characterImg: cleopatraChar,
     characterImgAlt: 'Cleopatra',
-    logoImg: nolimitLogo,
     logoAlt: 'Nolimit City',
     logoWidth: '600px',
     logoTop: '30px',
@@ -229,16 +96,13 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'yellow',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'cleopatra',
   },
   {
     id: 'lucky-monaco',
     provider_id: 1004,
     name: 'Lucky Monaco',
-    characterImg: empressChar,
     characterImgAlt: 'Chinese Empress',
-    logoImg: luckyMonacoLogo,
     logoAlt: 'Lucky Monaco',
     logoWidth: '200px',
     logoTop: '24px',
@@ -249,16 +113,13 @@ export const providers = [
     glowColor: 'red',
     glowColorHover: 'red',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'empress',
   },
   {
     id: 'joker',
     provider_id: 1005,
     name: 'Joker Gaming',
-    characterImg: spartanChar,
     characterImgAlt: 'Spartan Warrior',
-    logoImg: jokerLogo,
     logoAlt: 'Joker',
     logoWidth: '250px',
     logoTop: '-15px',
@@ -269,16 +130,13 @@ export const providers = [
     glowColor: 'red',
     glowColorHover: 'yellow',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'spartan',
   },
   {
     id: 'cq9',
     provider_id: 1006,
     name: 'JDB',
-    characterImg: pandaChar,
     characterImgAlt: 'Panda Warrior',
-    logoImg: cq9Logo,
     logoAlt: 'JDB',
     logoWidth: '170px',
     logoTop: '25px',
@@ -289,16 +147,13 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'orange',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'panda',
   },
   {
     id: 'habanero',
     provider_id: 1007,
     name: 'Habanero',
-    characterImg: gangsterChar,
     characterImgAlt: 'Gangster',
-    logoImg: habaneroLogo,
     logoAlt: 'Habanero',
     logoWidth: '180px',
     logoTop: '30px',
@@ -309,16 +164,13 @@ export const providers = [
     glowColor: 'orange',
     glowColorHover: 'red',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'gangster',
   },
   {
     id: 'yggdrasil',
     provider_id: 1008,
     name: 'Yggdrasil',
-    characterImg: soldierChar,
     characterImgAlt: 'Soldier',
-    logoImg: yggdrasilLogo,
     logoAlt: 'Yggdrasil',
     logoWidth: '400px',
     logoTop: '20px',
@@ -329,16 +181,13 @@ export const providers = [
     glowColor: 'orange',
     glowColorHover: 'white',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'soldier',
   },
   {
     id: 'worldmatch',
     provider_id: 1009,
     name: 'WorldMatch',
-    characterImg: cowgirlChar,
     characterImgAlt: 'Cowgirl',
-    logoImg: worldmatchLogo,
     logoAlt: 'WorldMatch',
     logoWidth: '170px',
     logoTop: '15px',
@@ -349,16 +198,13 @@ export const providers = [
     glowColor: 'red',
     glowColorHover: 'white',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'cowgirl',
   },
   {
     id: 'sboslot',
     provider_id: 1010,
     name: 'SBOSLOT',
-    characterImg: vikingChar,
     characterImgAlt: 'Viking Warrior',
-    logoImg: sboslotLogo,
     logoAlt: 'SBOSLOT',
     logoWidth: '180px',
     logoTop: '50px',
@@ -369,16 +215,13 @@ export const providers = [
     glowColor: 'cyan',
     glowColorHover: 'white',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'viking',
   },
   {
     id: 'funkygames',
     provider_id: 1011,
     name: 'Funky Games',
-    characterImg: kingChar,
     characterImgAlt: 'King',
-    logoImg: funkygamesLogo,
     logoAlt: 'Funky Games',
     logoWidth: '200px',
     logoTop: '20px',
@@ -389,16 +232,13 @@ export const providers = [
     glowColor: 'purple',
     glowColorHover: 'white',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'king',
   },
   {
     id: 'microgaming',
     provider_id: 1012,
     name: 'Microgaming',
-    characterImg: skeletonGuitaristChar,
     characterImgAlt: 'Fire Skeleton Guitarist',
-    logoImg: microgamingLogo,
     logoAlt: 'Microgaming',
     logoWidth: '300px',
     logoTop: '20px',
@@ -409,16 +249,13 @@ export const providers = [
     glowColor: 'orange',
     glowColorHover: 'red',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'firerock',
   },
   {
     id: 'netent',
     provider_id: 1013,
     name: 'NetEnt',
-    characterImg: aladdinChar,
     characterImgAlt: 'Aladdin',
-    logoImg: netentLogo,
     logoAlt: 'NetEnt',
     logoWidth: '180px',
     logoTop: '25px',
@@ -429,16 +266,13 @@ export const providers = [
     glowColor: 'cyan',
     glowColorHover: 'yellow',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'aladdin',
   },
   {
     id: 'afb777',
     provider_id: 1014,
     name: 'AFB777 Gaming',
-    characterImg: boxerChar,
     characterImgAlt: 'Boxer',
-    logoImg: afb777Logo,
     logoAlt: 'AFB777 Gaming',
     logoWidth: '180px',
     logoTop: '30px',
@@ -449,16 +283,13 @@ export const providers = [
     glowColor: 'red',
     glowColorHover: 'orange',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'boxer',
   },
   {
     id: 'jili',
     provider_id: 1015,
     name: 'JILI',
-    characterImg: sultanChar,
     characterImgAlt: 'Sultan',
-    logoImg: jiliLogo,
     logoAlt: 'JILI',
     logoWidth: '150px',
     logoTop: '5px',
@@ -469,16 +300,13 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'orange',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'sultan',
   },
   {
     id: 'rich88',
     provider_id: 1016,
     name: 'RICH88',
-    characterImg: genieChar,
     characterImgAlt: 'Genie',
-    logoImg: rich88Logo,
     logoAlt: 'RICH88',
     logoWidth: '160px',
     logoTop: '20px',
@@ -489,16 +317,13 @@ export const providers = [
     glowColor: 'cyan',
     glowColorHover: 'yellow',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'genie',
   },
   {
     id: 'advantplay',
     provider_id: 1017,
     name: 'AdvantPlay',
-    characterImg: poseidonChar,
     characterImgAlt: 'Poseidon',
-    logoImg: advantplayLogo,
     logoAlt: 'AdvantPlay',
     logoWidth: '160px',
     logoTop: '20px',
@@ -509,16 +334,13 @@ export const providers = [
     glowColor: 'cyan',
     glowColorHover: 'white',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'poseidon',
   },
   {
     id: 'kingmaker',
     provider_id: 1018,
     name: 'Kingmaker',
-    characterImg: pirateChar,
     characterImgAlt: 'Pirate',
-    logoImg: kingmakerLogo,
     logoAlt: 'Kingmaker',
     logoWidth: '180px',
     logoTop: '15px',
@@ -529,16 +351,13 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'orange',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'pirate',
   },
   {
     id: 'ygr',
     provider_id: 1019,
     name: 'YGR Gaming',
-    characterImg: warriorChar,
     characterImgAlt: 'Warrior',
-    logoImg: ygrLogo,
     logoAlt: 'YGR Gaming',
     logoWidth: '160px',
     logoTop: '20px',
@@ -549,16 +368,13 @@ export const providers = [
     glowColor: 'orange',
     glowColorHover: 'yellow',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'warrior',
   },
   {
     id: 'playstar',
     provider_id: 1020,
     name: 'PlayStar',
-    characterImg: pharaohChar,
     characterImgAlt: 'Pharaoh',
-    logoImg: playstarLogo,
     logoAlt: 'PlayStar',
     logoWidth: '180px',
     logoTop: '20px',
@@ -569,16 +385,13 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'purple',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'pharaoh',
   },
   {
     id: 'fastspin',
     provider_id: 1021,
     name: 'FastSpin',
-    characterImg: scientistChar,
     characterImgAlt: 'Mad Scientist',
-    logoImg: fastspinLogo,
     logoAlt: 'FastSpin',
     logoWidth: '180px',
     logoTop: '30px',
@@ -589,16 +402,13 @@ export const providers = [
     glowColor: 'green',
     glowColorHover: 'purple',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'scientist',
   },
   {
     id: 'dragoonsoft',
     provider_id: 1022,
     name: 'Dragoon Soft',
-    characterImg: dragonChar,
     characterImgAlt: 'Dragon',
-    logoImg: dragoonsoftLogo,
     logoAlt: 'Dragoon Soft',
     logoWidth: '180px',
     logoTop: '40px',
@@ -609,16 +419,13 @@ export const providers = [
     glowColor: 'green',
     glowColorHover: 'orange',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'dragon',
   },
   {
     id: 'nagagames',
     provider_id: 1023,
     name: 'Naga Games',
-    characterImg: monopolyChar,
     characterImgAlt: 'Monopoly Man',
-    logoImg: nagagamesLogo,
     logoAlt: 'Naga Games',
     logoWidth: '180px',
     logoTop: '-15px',
@@ -629,20 +436,19 @@ export const providers = [
     glowColor: 'yellow',
     glowColorHover: 'green',
     badge: null,
-    overlayImg: null,
     animationPrefix: 'monopoly',
   },
 ]
 
+export const providers = mapProviderImages(providersRaw)
+
 // ========== SPORTS PROVIDERS ==========
-export const sportsProviders = [
+const sportsProvidersRaw = [
   {
     id: 'sbobet',
     provider_id: 4001,
     name: 'SBOBET',
-    characterImg: footballerChar,
     characterImgAlt: 'Lamine Yamal',
-    logoImg: sbobetLogo,
     logoAlt: 'SBOBET',
     logoWidth: '200px',
     logoTop: '45px',
@@ -652,16 +458,13 @@ export const sportsProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'footballer',
   },
   {
     id: 'saba-sports',
     provider_id: 4002,
     name: 'SABA Sports',
-    characterImg: mbappeChar,
     characterImgAlt: 'Mbappe',
-    logoImg: sabaLogo,
     logoAlt: 'SABA Sports',
     logoWidth: '200px',
     logoTop: '30px',
@@ -671,16 +474,13 @@ export const sportsProviders = [
     characterCentered: true,
     glowColor: 'red',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'footballer',
   },
   {
     id: 'afb777-sports',
     provider_id: 4003,
     name: 'AFB777 Gaming',
-    characterImg: haalandChar,
     characterImgAlt: 'Haaland',
-    logoImg: afb777SportsLogo,
     logoAlt: 'AFB777 Gaming',
     logoWidth: '200px',
     logoTop: '35px',
@@ -690,16 +490,13 @@ export const sportsProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'footballer',
   },
   {
     id: 'bti',
     provider_id: 4004,
     name: 'BTi',
-    characterImg: messiChar,
     characterImgAlt: 'Messi',
-    logoImg: btiLogo,
     logoAlt: 'BTi',
     logoWidth: '180px',
     logoTop: '35px',
@@ -709,16 +506,13 @@ export const sportsProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'footballer',
   },
   {
     id: 'betpanda',
     provider_id: 4005,
     name: 'Betpanda',
-    characterImg: ronaldoChar,
     characterImgAlt: 'Ronaldo',
-    logoImg: betpandaLogo,
     logoAlt: 'Betpanda',
     logoWidth: '200px',
     logoTop: '20px',
@@ -728,23 +522,22 @@ export const sportsProviders = [
     characterCentered: true,
     glowColor: 'green',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'footballer',
   },
 ]
 
+export const sportsProviders = mapProviderImages(sportsProvidersRaw)
+
 // ========== CASINO PROVIDERS ==========
 // Paired: model1 + kasino1, model2 + kasino2, etc.
-export const casinoProviders = [
+const casinoProvidersRaw = [
   {
     id: '568win',
     provider_id: 3001,
     name: '568Win',
-    characterImg: casinoModel1,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo1,
     logoAlt: '568Win',
-    logoWidth: '180px',
+    logoWidth: '200px',
     logoTop: '35px',
     logoLeft: '46%',
     characterWidth: 'w-[55%]',
@@ -752,16 +545,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'wm-casino',
     provider_id: 3002,
     name: 'WM Casino',
-    characterImg: casinoModel2,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo2,
     logoAlt: 'WM Casino',
     logoWidth: '200px',
     logoTop: '35px',
@@ -771,18 +561,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'ion-casino',
     provider_id: 3003,
     name: 'ION Casino',
-    characterImg: casinoModel3,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo3,
     logoAlt: 'ION Casino',
-    logoWidth: '150px',
+    logoWidth: '200px',
     logoTop: '-5px',
     logoLeft: '46%',
     characterWidth: 'w-[50%]',
@@ -790,16 +577,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'sa-gaming',
     provider_id: 3004,
     name: 'SA Gaming',
-    characterImg: casinoModel4,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo4,
     logoAlt: 'SA Gaming',
     logoWidth: '200px',
     logoTop: '20px',
@@ -809,16 +593,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'evolution-gaming',
     provider_id: 3005,
     name: 'Evolution Gaming',
-    characterImg: casinoModel5,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo5,
     logoAlt: 'Evolution Gaming',
     logoWidth: '200px',
     logoTop: '35px',
@@ -828,16 +609,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'purple',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'allbet',
     provider_id: 3006,
     name: 'Allbet',
-    characterImg: casinoModel6,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo6,
     logoAlt: 'Allbet',
     logoWidth: '200px',
     logoTop: '25px',
@@ -847,18 +625,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'green-dragon',
     provider_id: 3007,
     name: 'Green Dragon',
-    characterImg: casinoModel7,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo7,
     logoAlt: 'Green Dragon',
-    logoWidth: '150px',
+    logoWidth: '200px',
     logoTop: '-15px',
     logoLeft: '46%',
     characterWidth: 'w-[55%]',
@@ -866,16 +641,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'green',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'pragmatic-casino',
     provider_id: 3008,
     name: 'Pragmatic Play',
-    characterImg: casinoModel8,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo8,
     logoAlt: 'Pragmatic Play',
     logoWidth: '200px',
     logoTop: '25px',
@@ -885,18 +657,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'orange',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'yb-live',
     provider_id: 3009,
     name: 'YB Live',
-    characterImg: casinoModel9,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo9,
     logoAlt: 'YB Live',
-    logoWidth: '180px',
+    logoWidth: '200px',
     logoTop: '-5px',
     logoLeft: '46%',
     characterWidth: 'w-[50%]',
@@ -904,18 +673,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'afb777-casino',
     provider_id: 3010,
     name: 'AFB777 Gaming',
-    characterImg: casinoModel10,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo10,
     logoAlt: 'AFB777 Gaming',
-    logoWidth: '180px',
+    logoWidth: '200px',
     logoTop: '35px',
     logoLeft: '46%',
     characterWidth: 'w-[75%]',
@@ -923,16 +689,13 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'playtech',
     provider_id: 3011,
     name: 'Playtech',
-    characterImg: casinoModel11,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo11,
     logoAlt: 'Playtech',
     logoWidth: '200px',
     logoTop: '25px',
@@ -942,18 +705,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'asia-gaming',
     provider_id: 3012,
     name: 'Asia Gaming',
-    characterImg: casinoModel12,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo12,
     logoAlt: 'Asia Gaming',
-    logoWidth: '180px',
+    logoWidth: '200px',
     logoTop: '30px',
     logoLeft: '46%',
     characterWidth: 'w-[55%]',
@@ -961,18 +721,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'orange',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'wcasino',
     provider_id: 3013,
     name: 'WCasino Online',
-    characterImg: casinoModel13,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo13,
     logoAlt: 'WCasino Online',
-    logoWidth: '160px',
+    logoWidth: '200px',
     logoTop: '-5px',
     logoLeft: '46%',
     characterWidth: 'w-[55%]',
@@ -980,18 +737,15 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'green',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'casinomodel',
   },
   {
     id: 'gameplay-interactive',
     provider_id: 3014,
     name: 'Gameplay Interactive',
-    characterImg: casinoModel14,
     characterImgAlt: 'Casino Model',
-    logoImg: casinoLogo14,
     logoAlt: 'Gameplay Interactive',
-    logoWidth: '180px',
+    logoWidth: '200px',
     logoTop: '15px',
     logoLeft: '46%',
     characterWidth: 'w-[65%]',
@@ -999,21 +753,20 @@ export const casinoProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'yellow',
-      overlayImg: null,
     animationPrefix: 'casinomodel',
   },
 ]
 
+export const casinoProviders = mapProviderImages(casinoProvidersRaw)
+
 // ========== TOGEL PROVIDERS ==========
 // Paired: togel1 + loteg1, togel2 + loteg2
-export const togelProviders = [
+const togelProvidersRaw = [
   {
     id: 'hongkong-lotto',
     provider_id: 5001,
     name: 'Hong Kong Lotto',
-    characterImg: togelModel1,
     characterImgAlt: 'Togel Model',
-    logoImg: togelLogo1,
     logoAlt: 'Hong Kong Lotto',
     logoWidth: '110px',
     logoTop: '10px',
@@ -1023,16 +776,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'red',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'sydney-lotto',
     provider_id: 5002,
     name: 'Sydney Lotto',
-    characterImg: togelModel2,
     characterImgAlt: 'Togel Model',
-    logoImg: togelLogo2,
     logoAlt: 'Sydney Lotto',
     logoWidth: '110px',
     logoTop: '10px',
@@ -1042,16 +792,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'singapore-togel',
     provider_id: 5003,
     name: 'Singapore',
-    characterImg: togelModel3,
     characterImgAlt: 'Singapore Model',
-    logoImg: togelLogoSingapore,
     logoAlt: 'Singapore',
     logoWidth: '100px',
     logoTop: '3px',
@@ -1061,16 +808,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'kamboja-togel',
     provider_id: 5004,
     name: 'Kamboja',
-    characterImg: togelModel4,
     characterImgAlt: 'Kamboja Model',
-    logoImg: togelLogoKamboja,
     logoAlt: 'Kamboja',
     logoWidth: '160px',
     logoTop: '35px',
@@ -1080,16 +824,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'red',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'taiwan-togel',
     provider_id: 5005,
     name: 'Taiwan',
-    characterImg: togelModel5,
     characterImgAlt: 'Taiwan Model',
-    logoImg: togelLogoTaiwan,
     logoAlt: 'Taiwan',
     logoWidth: '150px',
     logoTop: '45px',
@@ -1099,16 +840,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'hongkong-togel',
     provider_id: 5006,
     name: 'Hongkong',
-    characterImg: togelModel6,
     characterImgAlt: 'Hongkong Model',
-    logoImg: togelLogoHongkong,
     logoAlt: 'Hongkong',
     logoWidth: '110px',
     logoTop: '6px',
@@ -1118,16 +856,13 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'purple',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
   {
     id: 'sidney-togel',
     provider_id: 5007,
     name: 'Sidney',
-    characterImg: togelModel7,
     characterImgAlt: 'Sidney Model',
-    logoImg: togelLogoSidney,
     logoAlt: 'Sydney Pools',
     logoWidth: '110px',
     logoTop: '8px',
@@ -1137,10 +872,11 @@ export const togelProviders = [
     characterCentered: true,
     glowColor: 'orange',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'togelmodel',
   },
 ]
+
+export const togelProviders = mapProviderImages(togelProvidersRaw)
 
 // Rename existing providers to slotProviders for clarity
 export const slotProviders = providers
@@ -1152,14 +888,12 @@ export const TOTAL_CASINO_SLOTS = 16
 export const TOTAL_TOGEL_SLOTS = 8
 
 // ========== FISHING PROVIDERS ==========
-export const fishingProviders = [
+const fishingProvidersRaw = [
   {
     id: 'microgaming-fishing',
     provider_id: 2001,
     name: 'Microgaming',
-    characterImg: fishingChar1,
     characterImgAlt: 'Shark Warrior',
-    logoImg: fishingLogo1,
     logoAlt: 'Microgaming',
     logoWidth: '180px',
     logoTop: '16px',
@@ -1169,16 +903,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'cyan',
     glowColorHover: 'green',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'jdb-fishing-1',
     provider_id: 2002,
     name: 'JDB',
-    characterImg: fishingChar2,
     characterImgAlt: 'Pirate Shark',
-    logoImg: fishingLogo2,
     logoAlt: 'JDB',
     logoWidth: '180px',
     logoTop: '20px',
@@ -1188,16 +919,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'orange',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'jili-fishing',
     provider_id: 2003,
     name: 'JILI',
-    characterImg: fishingChar3,
     characterImgAlt: 'Treasure Shark',
-    logoImg: fishingLogo3,
     logoAlt: 'JILI',
     logoWidth: '150px',
     logoTop: '5px',
@@ -1207,16 +935,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'funky-fishing',
     provider_id: 2004,
     name: 'Funky Games',
-    characterImg: fishingChar4,
     characterImgAlt: 'Pirate Rider',
-    logoImg: fishingLogo4,
     logoAlt: 'Funky Games',
     logoWidth: '180px',
     logoTop: '25px',
@@ -1226,16 +951,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'white',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'dragoon-fishing',
     provider_id: 2005,
     name: 'Dragoon Soft',
-    characterImg: fishingChar5,
     characterImgAlt: 'Captain Shark',
-    logoImg: fishingLogo5,
     logoAlt: 'Dragoon Soft',
     logoWidth: '200px',
     logoTop: '45px',
@@ -1245,16 +967,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'cq9-fishing',
     provider_id: 2006,
     name: 'JDB',
-    characterImg: fishingChar6,
     characterImgAlt: 'Pirate Shark',
-    logoImg: fishingLogo6,
     logoAlt: 'JDB',
     logoWidth: '180px',
     logoTop: '25px',
@@ -1264,16 +983,13 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'orange',
     glowColorHover: 'red',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
   {
     id: 'fachai-fishing',
     provider_id: 2007,
     name: 'FA Chai',
-    characterImg: fishingChar7,
     characterImgAlt: 'Pirate Shark Captain',
-    logoImg: fishingLogo7,
     logoAlt: 'FA Chai Fishing',
     logoWidth: '130px',
     logoTop: '5px',
@@ -1283,22 +999,21 @@ export const fishingProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'fishingchar',
   },
 ]
 
+export const fishingProviders = mapProviderImages(fishingProvidersRaw)
+
 export const TOTAL_FISHING_SLOTS = 12
 
 // ========== ARCADE PROVIDERS ==========
-export const arcadeProviders = [
+const arcadeProvidersRaw = [
   {
     id: 'aviatrix-arcade',
     provider_id: 6001,
     name: 'Aviatrix',
-    characterImg: arcadeChar1,
     characterImgAlt: 'Aviatrix Plane',
-    logoImg: arcadeLogo1,
     logoAlt: 'Aviatrix',
     logoWidth: '180px',
     logoTop: '-15px',
@@ -1308,16 +1023,13 @@ export const arcadeProviders = [
     characterCentered: true,
     glowColor: 'purple',
     glowColorHover: 'white',
-    overlayImg: null,
     animationPrefix: 'arcadechar',
   },
   {
     id: 'kingmidas-arcade',
     provider_id: 6002,
     name: 'King Midas',
-    characterImg: arcadeChar2,
     characterImgAlt: 'King Midas',
-    logoImg: arcadeLogo2,
     logoAlt: 'King Midas',
     logoWidth: '200px',
     logoTop: '45px',
@@ -1327,16 +1039,13 @@ export const arcadeProviders = [
     characterCentered: true,
     glowColor: 'yellow',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'arcadechar',
   },
   {
     id: 'sbobet-arcade',
     provider_id: 6003,
     name: 'SBOBET',
-    characterImg: arcadeChar3,
     characterImgAlt: 'Hamster Coin',
-    logoImg: arcadeLogo3,
     logoAlt: 'SBOBET',
     logoWidth: '180px',
     logoTop: '45px',
@@ -1346,16 +1055,13 @@ export const arcadeProviders = [
     characterCentered: true,
     glowColor: 'blue',
     glowColorHover: 'cyan',
-    overlayImg: null,
     animationPrefix: 'arcadechar',
   },
   {
     id: 'spribe-arcade',
     provider_id: 6004,
     name: 'Spribe',
-    characterImg: arcadeChar4,
     characterImgAlt: 'Pilot Hamster',
-    logoImg: arcadeLogo4,
     logoAlt: 'Spribe',
     logoWidth: '180px',
     logoTop: '-10px',
@@ -1365,22 +1071,21 @@ export const arcadeProviders = [
     characterCentered: true,
     glowColor: 'white',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'arcadechar',
   },
 ]
 
+export const arcadeProviders = mapProviderImages(arcadeProvidersRaw)
+
 export const TOTAL_ARCADE_SLOTS = 8
 
 // ========== POKER PROVIDERS ==========
-export const pokerProviders = [
+const pokerProvidersRaw = [
   {
     id: 'millionaire-poker',
     provider_id: 7001,
     name: 'Millionaire Poker',
-    characterImg: pokerChar1,
     characterImgAlt: 'Poker Cards',
-    logoImg: pokerLogo1,
     logoAlt: 'Millionaire Poker',
     logoWidth: '200px',
     logoTop: '25px',
@@ -1390,22 +1095,21 @@ export const pokerProviders = [
     characterCentered: true,
     glowColor: 'red',
     glowColorHover: 'yellow',
-    overlayImg: null,
     animationPrefix: 'pokerchar',
   },
 ]
 
+export const pokerProviders = mapProviderImages(pokerProvidersRaw)
+
 export const TOTAL_POKER_SLOTS = 8
 
 // ========== COCK FIGHTING PROVIDERS ==========
-export const cockfightProviders = [
+const cockfightProvidersRaw = [
   {
     id: 'ga28-cockfight',
     provider_id: 8001,
     name: 'GA28',
-    characterImg: cockChar1,
     characterImgAlt: 'Fighting Roosters',
-    logoImg: cockLogo1,
     logoAlt: 'GA28',
     logoWidth: '180px',
     logoTop: '40px',
@@ -1415,9 +1119,10 @@ export const cockfightProviders = [
     characterCentered: true,
     glowColor: 'red',
     glowColorHover: 'orange',
-    overlayImg: null,
     animationPrefix: 'cockchar',
   },
 ]
+
+export const cockfightProviders = mapProviderImages(cockfightProvidersRaw)
 
 export const TOTAL_COCKFIGHT_SLOTS = 8

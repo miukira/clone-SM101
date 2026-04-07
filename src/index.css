@@ -12,6 +12,18 @@
   --color-border: #334155;
 }
 
+/* Ikon segarkan saldo: rotasi kontinu dengan pivot tengah */
+@keyframes saldo-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-saldo-refresh {
+  animation: saldo-refresh-spin 0.85s linear infinite;
+  transform-origin: 50% 50%;
+}
+
 /* Theme CSS Variables - set by ThemeContext */
 :root {
   --ui-primary: #C0C0C0;

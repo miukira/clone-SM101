@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useTheme } from '../context/ThemeContext'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 // Single falling item component
 function FallingItem({ item, delay, duration, left, size }) {
@@ -23,7 +24,7 @@ function FallingItem({ item, delay, duration, left, size }) {
     >
       {isImage ? (
         <img 
-          src={item} 
+          src={publicAssetUrl(item)} 
           alt="seasonal effect" 
           style={{ width: size, height: size, objectFit: 'contain' }}
           onError={(e) => console.error('Failed to load:', item, e)}
