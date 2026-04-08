@@ -17,6 +17,7 @@ import bannerBaru from '../assets/banners/banner-baru.webp'
 // Static config fallback - will be overridden by API data
 import {
   slotProviders,
+  crashProviders,
   sportsProviders,
   casinoProviders,
   togelProviders,
@@ -92,6 +93,7 @@ const headerMenuItems = [
 const categories = [
   { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, providers: slotProviders },
   { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, providers: casinoProviders },
+  { id: 'crash', name: 'CRASH', icon: SlotsIconChrome, providers: crashProviders },
   { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome, providers: togelProviders },
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },

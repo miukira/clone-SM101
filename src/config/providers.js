@@ -878,6 +878,28 @@ const togelProvidersRaw = [
 
 export const togelProviders = mapProviderImages(togelProvidersRaw)
 
+// ========== Crash PROVIDERS ==========
+const crashProvidersRaw = [
+  {
+    id: 'spribe-crash',
+    provider_id: 87,
+    name: 'Spribe',
+    characterImgAlt: 'Shark Warrior',
+    logoAlt: 'Microgaming',
+    logoWidth: '180px',
+    logoTop: '16px',
+    logoLeft: '46%',
+    characterWidth: 'w-[60%]',
+    characterPosition: 'left-[-30px] bottom-[-50px]',
+    characterCentered: true,
+    glowColor: 'cyan',
+    glowColorHover: 'green',
+    animationPrefix: 'fishingchar',
+  },
+]
+
+export const crashProviders = mapProviderImages(crashProvidersRaw)
+
 // Rename existing providers to slotProviders for clarity
 export const slotProviders = providers
 

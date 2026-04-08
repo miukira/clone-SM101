@@ -9,13 +9,13 @@ import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
 // - mock-direct: Panggil mockApi langsung (tidak muncul di Network tab)
 // - mock-server: HTTP request ke mock server localhost:4010 (muncul di Network tab)
 // - real: HTTP request ke real backend
-const API_MODE = 'mock-server'
+const API_MODE = 'real'
 
 // URL untuk masing-masing mode
 const API_URLS = {
   'mock-direct': null,
   'mock-server': 'http://localhost:4010/api/v1',
-  'real': '/api/v1'
+  'real': 'http://localhost:8080/api/v1'
 }
 
 const API_BASE_URL = API_URLS[API_MODE]
@@ -259,6 +259,13 @@ export const getSlotProviders = () => {
     return withAssets(mockApi.getSlotProviders())
   }
   return apiCall('/slot')
+}
+
+export const getCrashProviders = () => {
+  if (useMockDirect) {
+    return withAssets(mockApi.getCrashProviders())
+  }
+  return apiCall('/crash')
 }
 
 export const getFishProviders = () => {
