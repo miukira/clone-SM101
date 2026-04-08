@@ -1561,6 +1561,17 @@ export const getSlotProviders = async () => {
 }
 
 /**
+ * GET /crash
+ * Response: Provider[]
+ */
+export const getCrashProviders = async () => {
+  await delay(500)
+  console.log('📡 GET /crash')
+  console.log('✅ Response:', mockSlotProviders)
+  return mockSlotProviders
+}
+
+/**
  * GET /fish
  * Response: Provider[]
  */

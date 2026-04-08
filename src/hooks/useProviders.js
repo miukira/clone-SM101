@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   getSlotProviders,
+  getCrashProviders,
   getSportsbookProviders,
   getCasinoProviders,
   getTogelProviders,
@@ -17,6 +18,7 @@ export { transformProviderData }
 // Map category IDs to their API fetcher functions
 const fetchers = {
   slots: getSlotProviders,
+  crash: getCrashProviders,
   sports: getSportsbookProviders,
   casino: getCasinoProviders,
   togel: getTogelProviders,
