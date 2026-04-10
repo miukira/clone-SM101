@@ -104,7 +104,7 @@ export default function ProviderCard({
                 src={heroImageUrl}
                 alt={alt}
                 onError={handleHeroError}
-                className={`absolute inset-0 z-[2] h-full w-full object-cover object-center transition-transform duration-500 ease-out ${
+                className={`absolute inset-0 z-[2] h-full w-full object-fill object-center transition-transform duration-500 ease-out ${
                   isHovered ? 'scale-[1.04]' : 'scale-100'
                 }`}
               />
@@ -120,7 +120,7 @@ export default function ProviderCard({
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'
                 }}
-                className={`pointer-events-none absolute inset-0 z-[3] h-full w-full object-cover object-center mix-blend-screen opacity-90 ${
+                className={`pointer-events-none absolute inset-0 z-[3] h-full w-full object-fill object-center mix-blend-screen opacity-90 ${
                   isHovered ? `${animationPrefix}-overlay-active` : `${animationPrefix}-overlay-idle`
                 }`}
               />

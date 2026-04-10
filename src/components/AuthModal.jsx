@@ -361,7 +361,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               {/* Demo account hint */}
               <div className="mt-4 p-3 bg-[#1a1a1a] border border-[#333] rounded-lg">
                 <p className="text-xs text-[#606060] text-center">
-                  Demo: username <span className="text-[#C0C0C0]">user1</span> / password <span className="text-[#C0C0C0]">123</span>
+                  Demo: username <span className="text-[#C0C0C0]">user1</span> / password <span className="text-[#C0C0C0]">1234</span>
                 </p>
               </div>
             </form>

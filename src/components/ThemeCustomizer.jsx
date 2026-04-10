@@ -301,6 +301,22 @@ export default function ThemeCustomizer() {
           </div>
         </div>
       </div>
+
+      {!isCustomizerOpen && (
+        <button
+          type="button"
+          onClick={toggleCustomizer}
+          className="fixed bottom-4 right-4 z-[10000] w-11 h-11 rounded-full shadow-lg flex items-center justify-center border border-[#3a3a3a] transition-transform hover:scale-105 active:scale-95"
+          style={{
+            background: `linear-gradient(135deg, ${uiColorData.primary}, ${uiColorData.secondary})`,
+            color: '#1a1a1a',
+          }}
+          title="Theme Settings"
+          aria-label="Buka pengaturan tema"
+        >
+          <SettingsIcon />
+        </button>
+      )}
     </>
   )
 }

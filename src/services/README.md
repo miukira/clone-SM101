@@ -4,22 +4,17 @@ Service layer untuk integrasi dengan Backend API sesuai OpenAPI spec.
 
 ## Struktur Files
 
-- **`mockApi.js`** - Mock data service dengan struktur siap untuk MySQL
-- **`api.js`** - Wrapper untuk switch antara mock dan real API
+- **`api.js`** — Klien REST: selalu `fetch` ke backend. Base URL dari `VITE_API_BASE_URL` (lihat `.env.example`); bila kosong dipakai fallback dev `http://localhost:4010/api/v1` (Express di folder `mock-server/`).
 
 ## Konfigurasi
 
-### Mock Mode (Default - Saat ini)
-```javascript
-// src/services/api.js
-const USE_MOCK = true  // Menggunakan mock data
+Set di root project (`.env`):
+
+```bash
+VITE_API_BASE_URL=http://localhost:4010/api/v1
 ```
 
-### Real API Mode (Ketika BE ready)
-```javascript
-const USE_MOCK = false  // Menggunakan real API dengan MySQL
-const API_BASE_URL = '/api/v1'  // Base URL untuk real API
-```
+Untuk produksi, arahkan ke API sungguhan Anda (bukan mock-server).
 
 ---
 
@@ -358,16 +353,6 @@ Mock data structure sudah kompatibel dengan MySQL, seharusnya tidak perlu peruba
 
 ---
 
-## Testing Helper
+## Pengujian kontrak API
 
-Mock API menyediakan helper untuk testing:
-
-```javascript
-import { resetMockData, addBalance } from '../services/mockApi'
-
-// Reset ke initial state
-resetMockData()
-
-// Add balance untuk testing
-addBalance(100000)
-```
+Skema OpenAPI dicek terhadap **HTTP** mock-server (`test/openapi-mock-api.test.mjs`). Jalankan server Express (`mock-server/server.js`) tidak diperlukan untuk unit test itu karena tes memakai `supertest` dengan app in-process.

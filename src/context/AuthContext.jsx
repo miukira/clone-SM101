@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { getToken, removeToken, getProfile, getBalance } from '../services/api'
+import {
+  getToken,
+  removeToken,
+  getProfile,
+  getBalance,
+  persistPlayerBalance,
+} from '../services/api'
 
 const AuthContext = createContext()
 
@@ -17,10 +23,11 @@ export function AuthProvider({ children }) {
     const token = getToken()
     if (token) {
       try {
-        // Get user profile
+        // Get user profile — saldo selalu disamakan dengan server lalu di-cache ke localStorage
         const profile = await getProfile()
         setUser(profile)
         setIsAuthenticated(true)
+        if (profile.balance != null) persistPlayerBalance(profile.balance)
       } catch (err) {
         // Token invalid, clear it
         removeToken()
@@ -39,6 +46,7 @@ export function AuthProvider({ children }) {
       referral_code: userData.referral_code
     })
     setIsAuthenticated(true)
+    if (userData.balance != null) persistPlayerBalance(userData.balance)
   }
 
   const logout = () => {
@@ -50,6 +58,7 @@ export function AuthProvider({ children }) {
   const refreshBalance = async () => {
     try {
       const data = await getBalance()
+      if (data.balance != null) persistPlayerBalance(data.balance)
       setUser(prev => prev ? { ...prev, balance: data.balance } : null)
     } catch (err) {
       console.error('Failed to refresh balance:', err)
@@ -58,6 +67,7 @@ export function AuthProvider({ children }) {
 
   // Update balance directly (after bet, deposit, etc.)
   const updateBalance = (newBalance) => {
+    if (newBalance != null) persistPlayerBalance(newBalance)
     setUser(prev => prev ? { ...prev, balance: newBalance } : null)
     console.log(`💰 Balance updated: Rp ${newBalance?.toLocaleString()}`)
   }
@@ -66,6 +76,7 @@ export function AuthProvider({ children }) {
     try {
       const profile = await getProfile()
       setUser(profile)
+      if (profile.balance != null) persistPlayerBalance(profile.balance)
     } catch (err) {
       console.error('Failed to refresh profile:', err)
     }
