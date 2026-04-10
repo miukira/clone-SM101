@@ -14,11 +14,6 @@ import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 import { mapConfigBannersToPromoSlides } from '../utils/mapHomePromoBanners.js'
 import { useWebsite } from '../context/WebsiteContext'
 
-// Import promo banner images
-import welcomeBonus from '../assets/banners/welcome-bonus.webp'
-import bonusDeposit from '../assets/banners/popup-deposit-imlek.webp'
-import bannerBaru from '../assets/banners/banner-baru.webp'
-// Static config fallback - will be overridden by API data
 import {
   slotProviders,
   sportsProviders,
@@ -307,40 +302,6 @@ function MobileCategoryTab({ category, active, onClick }) {
   )
 }
 
-/** Fallback slider bila `config.banner` dari API kosong */
-const STATIC_PROMO_SLIDES = [
-  {
-    id: 'static-1',
-    link: '/promo',
-    titleLine1: 'WELCOME BONUS',
-    titleLine2: 'NEW MEMBER 100%',
-    description: 'Dapatkan bonus deposit pertama hingga 1.000.000 IDR',
-    tag: '🎁 PROMO SPESIAL',
-    gradient: 'from-[#1a1a40] via-[#15153a] to-[#0d0d25]',
-    image: publicAssetUrl(welcomeBonus),
-  },
-  {
-    id: 'static-2',
-    link: '/promo',
-    titleLine1: 'BONUS DEPOSIT',
-    titleLine2: 'HARIAN 10%',
-    description: 'Nikmati bonus deposit harian 10% setiap hari untuk semua game slot',
-    tag: '🔥 BONUS HARIAN',
-    gradient: 'from-[#1a2a1a] via-[#15251a] to-[#0d1a0d]',
-    image: publicAssetUrl(bonusDeposit),
-  },
-  {
-    id: 'static-3',
-    link: '/promo',
-    titleLine1: 'CASHBACK MINGGUAN',
-    titleLine2: 'HINGGA 15%',
-    description: 'Nikmati cashback setiap minggu tanpa syarat turnover',
-    tag: '💰 CASHBACK',
-    gradient: 'from-[#2a1a1a] via-[#251515] to-[#1a0d0d]',
-    image: publicAssetUrl(bannerBaru),
-  },
-]
-
 function openBannerLink(link, navigate) {
   const l = (link || '/promo').trim()
   if (/^https?:\/\//i.test(l)) {
@@ -364,15 +325,15 @@ function HomeAboutBlurb() {
   )
 }
 
-// Promo Banner — prioritas `config.banner` dari GET /info, lalu fallback statis
+// Promo Banner — `config.banner` dari GET /info; kosong → banner default `public/banners/banner-1.webp`
 function PromoBanner() {
   const navigate = useNavigate()
-  const { banners: apiBanners, title: siteTitle } = useWebsite()
+  const { banners: apiBanners, title: siteTitle, loading: websiteLoading } = useWebsite()
 
-  const slides = useMemo(() => {
-    const fromApi = mapConfigBannersToPromoSlides(apiBanners, siteTitle)
-    return fromApi.length > 0 ? fromApi : STATIC_PROMO_SLIDES
-  }, [apiBanners, siteTitle])
+  const slides = useMemo(
+    () => mapConfigBannersToPromoSlides(apiBanners, siteTitle),
+    [apiBanners, siteTitle],
+  )
 
   const [currentSlide, setCurrentSlide] = useState(0)
 
@@ -381,11 +342,23 @@ function PromoBanner() {
   }, [slides.length])
 
   useEffect(() => {
+    if (slides.length === 0) return undefined
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
     return () => clearInterval(timer)
   }, [slides.length])
+
+  if (websiteLoading) {
+    return (
+      <div
+        className="relative rounded-xl md:rounded-2xl overflow-hidden min-h-[180px] md:min-h-[240px] lg:min-h-[280px] xl:min-h-[320px] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] animate-pulse border border-[#2a2a2a]/60"
+        aria-hidden
+      />
+    )
+  }
+
+  if (slides.length === 0) return null
 
   const banner = slides[currentSlide]
 
@@ -901,8 +874,6 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={logout}
-        mobileCurrentPage="home"
-        hamburgerGradientIdSuffix="providers"
         showQuickDeposit={isAuthenticated}
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
@@ -973,7 +944,7 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
       </div>
       
       {/* Mobile */}
-      <div className="md:hidden pt-[60px] pb-20">
+      <div className="md:hidden pt-[130px] pb-20">
         <div className="px-3">
           {/* Back + Title */}
           <div className="flex items-center gap-3 py-4">
@@ -1154,8 +1125,6 @@ export default function HomePageChrome() {
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={logout}
-        mobileCurrentPage="home"
-        hamburgerGradientIdSuffix="home"
         showQuickDeposit={isAuthenticated}
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
@@ -1312,7 +1281,7 @@ export default function HomePageChrome() {
       </main>
 
       {/* ==================== MOBILE VIEW ==================== */}
-      <main className="md:hidden pt-[60px] pb-20 relative z-10">
+      <main className="md:hidden pt-[130px] pb-20 relative z-10">
         <div className="px-3">
           
           {/* Marquee Text - Running */}

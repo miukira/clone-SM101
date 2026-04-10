@@ -704,11 +704,8 @@ const mockWebsiteConfig = {
     testimoni: { icon: '/icons/testimoni.svg', link: 'https://t.me/pusattogel_testimoni' },
     livechat: { icon: '/icons/livechat.svg', link: '#livechat' }
   },
-  banner: [
-    { id: 'banner-1', image: '/banners/banner-1.webp', link: '/promo' },
-    { id: 'banner-2', image: '/banners/banner-2.webp', link: '/promo' },
-    { id: 'banner-3', image: '/banners/banner-3.webp', link: '/promo' }
-  ],
+  // Kosong: FE home memakai banner default (`mapHomePromoBanners` → public/banners/banner-1.webp)
+  banner: [],
   rtp: { icon: '/icons/rtp.svg', link: '/rtp' },
   popup: {
     deposit_success: '/popups/deposit-success.svg',
@@ -1120,8 +1117,8 @@ router.post('/change-password', (req, res) => {
   res.json({ message: 'success' })
 })
 
-// GET /deposit/status
-router.get('/deposit/status', (req, res) => {
+// GET /deposit-status (OpenAPI)
+router.get('/deposit-status', (req, res) => {
   const user = verifyToken(req)
   if (!user) return res.status(401).json({ message: 'please login' })
   const deposit_id = Number(req.query.deposit_id)
@@ -1137,7 +1134,7 @@ router.get('/deposit/status', (req, res) => {
     return res.json({ status: 'success', deposit_id: rec.deposit_id, amount: rec.amount })
   }
   if (rec.status === 'failed') {
-    return res.json({ status: 'failed', deposit_id: rec.deposit_id, amount: rec.amount })
+    return res.json({ status: 'fails', deposit_id: rec.deposit_id, amount: rec.amount })
   }
   return res.json({ status: 'pending', deposit_id: rec.deposit_id, amount: rec.amount })
 })
@@ -1194,8 +1191,8 @@ router.post('/deposit', (req, res) => {
   }
 })
 
-// GET /withdraw/status
-router.get('/withdraw/status', (req, res) => {
+// GET /withdraw-status (OpenAPI)
+router.get('/withdraw-status', (req, res) => {
   const user = verifyToken(req)
   if (!user) return res.status(401).json({ message: 'please login' })
   const withdraw_id = Number(req.query.withdraw_id)
@@ -1211,7 +1208,7 @@ router.get('/withdraw/status', (req, res) => {
     return res.json({ status: 'success', withdraw_id: rec.withdraw_id, amount: rec.amount })
   }
   if (rec.status === 'failed') {
-    return res.json({ status: 'failed', withdraw_id: rec.withdraw_id, amount: rec.amount })
+    return res.json({ status: 'fails', withdraw_id: rec.withdraw_id, amount: rec.amount })
   }
   return res.json({ status: 'pending', withdraw_id: rec.withdraw_id, amount: rec.amount })
 })
@@ -1264,8 +1261,10 @@ router.get('/user-referral', (req, res) => {
   })
 })
 
-// GET /user-promo
+// GET /user-promo (OpenAPI: BearerAuth)
 router.get('/user-promo', (req, res) => {
+  const user = verifyToken(req)
+  if (!user) return res.status(401).json({ message: 'please login' })
   res.json(mockPromoCodes)
 })
 
@@ -1285,10 +1284,13 @@ router.get('/info', (req, res) => {
   })
 })
 
-// GET /website - sesuai Swagger (dengan domain query param)
+// GET /website — OpenAPI: query `domain` wajib
 router.get('/website', (req, res) => {
-  const { domain } = req.query
-  console.log(`📡 GET /website${domain ? `?domain=${domain}` : ''}`)
+  const domain = req.query.domain != null ? String(req.query.domain).trim() : ''
+  if (!domain) {
+    return res.status(400).json({ message: 'domain is required' })
+  }
+  console.log(`📡 GET /website?domain=${domain}`)
   console.log('✅ Response:', JSON.stringify(mockWebsiteConfig, null, 2))
   res.json(mockWebsiteConfig)
 })

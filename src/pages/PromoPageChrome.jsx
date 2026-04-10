@@ -251,8 +251,6 @@ export default function PromoPageChrome() {
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={logout}
-        mobileCurrentPage="promo"
-        hamburgerGradientIdSuffix="promo"
         showQuickDeposit={isAuthenticated}
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
@@ -309,7 +307,7 @@ export default function PromoPageChrome() {
       </main>
       
       {/* Mobile View */}
-      <main className="md:hidden pt-[60px] pb-24 relative z-10">
+      <main className="md:hidden pt-[130px] pb-24 relative z-10">
         <div className="px-3">
           {/* Page Title */}
           <div className="flex items-center gap-3 py-4">

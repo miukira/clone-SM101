@@ -14,7 +14,8 @@ import {
   createWithdraw,
   getDepositStatus,
   getWithdrawStatus,
-  changePassword
+  changePassword,
+  persistPlayerBalance,
 } from '../services/api'
 import {
   LS_PENDING_DEPOSIT,
@@ -265,7 +266,7 @@ function DepositContent({
           setPending(null)
           setStatusHint('')
           onRefreshBalance()
-        } else if (s.status === 'failed') {
+        } else if (s.status === 'fails') {
           localStorage.removeItem(LS_PENDING_DEPOSIT)
           setPending(null)
           setStatusHint('')
@@ -514,7 +515,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
           setPending(null)
           setStatusHint('')
           onRefreshBalance()
-        } else if (s.status === 'failed') {
+        } else if (s.status === 'fails') {
           localStorage.removeItem(LS_PENDING_WITHDRAW)
           setPending(null)
           setStatusHint('')
@@ -1159,13 +1160,6 @@ function MissionContent() {
   )
 }
 
-// ============ MOBILE MENU ICONS ============
-const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-)
-
 // ============ MAIN DASHBOARD COMPONENT ============
 
 export default function MemberDashboardChrome() {
@@ -1174,7 +1168,6 @@ export default function MemberDashboardChrome() {
   const { user, logout, isAuthenticated } = useAuth()
   
   const [activeMenu, setActiveMenu] = useState(section || 'deposit')
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // API Data States
   const [profile, setProfile] = useState(null)
@@ -1209,6 +1202,7 @@ export default function MemberDashboardChrome() {
         
         setProfile(profileRes)
         setBalance(balanceRes.balance)
+        if (balanceRes.balance != null) persistPlayerBalance(balanceRes.balance)
         setBalanceMutations(mutationsRes)
         setBankList(banksRes)
         setPromoCodes(promoRes)
@@ -1229,6 +1223,7 @@ export default function MemberDashboardChrome() {
     try {
       const balanceRes = await getBalance()
       setBalance(balanceRes.balance)
+      if (balanceRes.balance != null) persistPlayerBalance(balanceRes.balance)
     } catch (err) {
       console.error('Error refreshing balance:', err)
     }
@@ -1266,11 +1261,6 @@ export default function MemberDashboardChrome() {
     setActiveMenu(id)
     navigate(`/member/${id}`)
   }, [navigate])
-
-  const handleMenuSelect = (id) => {
-    setIsMobileMenuOpen(false)
-    goToMemberSection(id)
-  }
 
   const handleLogout = () => {
     logout()
@@ -1340,16 +1330,12 @@ export default function MemberDashboardChrome() {
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={handleLogout}
-        mobileCurrentPage="home"
-        hamburgerGradientIdSuffix="member"
         desktopNav={null}
         balanceOverride={balance}
         onBalanceRefresh={refreshBalanceWithSpin}
         balanceRefreshSpinning={balanceRefreshing}
         showQuickDeposit
         onQuickDeposit={() => goToMemberSection('deposit')}
-        useCustomMobileDrawer
-        onHamburgerClick={() => setIsMobileMenuOpen(true)}
       />
 
       {/* ==================== NAVIGATION MENU BAR ==================== */}
@@ -1391,92 +1377,11 @@ export default function MemberDashboardChrome() {
         </div>
       </nav>
 
-      {/* ==================== MOBILE MENU OVERLAY ==================== */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[60]">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          
-          {/* Sidebar */}
-          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-[#0a0a0a] border-r border-[#1a1a1a] overflow-y-auto animate-slide-in">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 themed-border-bottom">
-              <span className="text-lg font-bold text-white">Menu</span>
-              <button 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 text-[#808080] hover:text-white"
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            
-            {/* Wallet Info - Mobile */}
-            <div className="p-4 themed-border-bottom bg-[#111]">
-              <div className="flex justify-between text-xs font-bold text-[#808080] mb-2">
-                <span>Wallet Type</span>
-                <span>Jumlah</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-xs text-[#C0C0C0]">Dompet Utama</span>
-                <span className="text-xs text-white font-bold">IDR {balance?.toLocaleString() || '0'}</span>
-              </div>
-              <div className="flex justify-between items-center py-1">
-                <span className="text-xs text-[#C0C0C0]">Rollover</span>
-                <span className="text-xs text-white font-bold">IDR 0</span>
-              </div>
-            </div>
-            
-            {/* Menu Items */}
-            <nav className="p-3 space-y-1">
-              {menuItems.map(item => {
-                const Icon = item.icon
-                const isActive = activeMenu === item.id
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleMenuSelect(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all ${
-                      isActive
-                        ? 'bg-gradient-to-r from-[#E0E0E0] via-[#C0C0C0] to-[#A0A0A0] text-[#1a1a1a]'
-                        : 'text-[#C0C0C0] hover:bg-[#1a1a1a]'
-                    }`}
-                  >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                      isActive 
-                        ? 'bg-[#1a1a1a]/20' 
-                        : 'bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] border border-[#3a3a3a]'
-                    }`}>
-                      <Icon />
-                    </div>
-                    <span className="text-xs font-bold tracking-wide">
-                      {item.label}
-                    </span>
-                  </button>
-                )
-              })}
-            </nav>
-            
-            {/* Logout */}
-            <div className="p-4 themed-border-top">
-              <button 
-                onClick={handleLogout}
-                className="w-full py-3 text-center text-[#808080] hover:text-white text-sm font-medium transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </aside>
-        </div>
-      )}
-
       {/* ==================== MAIN LAYOUT (satu renderContent — mobile & desktop) ==================== */}
       <div className="pt-[108px] md:pt-[116px] lg:pt-[128px] pb-4 lg:pb-0">
-        <div className="flex max-w-[1600px] mx-auto">
-          <aside className="hidden md:block w-48 lg:w-56 flex-shrink-0 bg-[#0a0a0a] border-r border-[#1a1a1a] p-3">
-            <nav className="space-y-1">
+        <div className="flex flex-col md:flex-row max-w-[1600px] mx-auto">
+          <aside className="w-full md:w-48 lg:w-56 flex-shrink-0 bg-[#0a0a0a] border-b md:border-b-0 md:border-r border-[#1a1a1a] p-2 md:p-3">
+            <nav className="flex flex-row md:flex-col gap-1 md:gap-0 md:space-y-1 overflow-x-auto hide-scrollbar pb-1 md:pb-0 md:overflow-visible">
               {menuItems.map(item => {
                 const Icon = item.icon
                 const isActive = activeMenu === item.id
@@ -1485,20 +1390,20 @@ export default function MemberDashboardChrome() {
                     key={item.id}
                     type="button"
                     onClick={() => goToMemberSection(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-left transition-all ${
+                    className={`shrink-0 min-w-[118px] md:min-w-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-2.5 md:px-3 py-2 md:py-3 rounded-lg text-left transition-all ${
                       isActive
                         ? 'bg-gradient-to-r from-[#E0E0E0] via-[#C0C0C0] to-[#A0A0A0] text-[#1a1a1a]'
                         : 'text-[#C0C0C0] hover:bg-[#1a1a1a]'
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       isActive
                         ? 'bg-[#1a1a1a]/20'
                         : 'bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] border border-[#3a3a3a]'
                     }`}>
                       <Icon />
                     </div>
-                    <span className="text-xs font-bold tracking-wide">
+                    <span className="text-[10px] md:text-xs font-bold tracking-wide line-clamp-2">
                       {item.label}
                     </span>
                   </button>
@@ -1552,16 +1457,8 @@ export default function MemberDashboardChrome() {
       {/* ==================== FOOTER ==================== */}
       <FooterChrome />
 
-      {/* Animation styles */}
+      {/* Scrollbar helper (horizontal menu strip) */}
       <style>{`
-        @keyframes slideIn {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
-        }
-        .animate-slide-in {
-          animation: slideIn 0.3s ease-out;
-        }
-        
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
         }

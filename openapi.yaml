@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Go Member API
+  title: Go Member API 
   description: |
     API documentation for Go Member - A casino/gaming platform management system.
 
@@ -16,6 +16,13 @@ info:
     ```json
     {
       "message": "error description"
+    }
+    ```
+
+    ### Unauthorized (401)
+    ```json
+    {
+      "message": "invalid token"
     }
     ```
 
@@ -50,10 +57,10 @@ tags:
     description: Website configuration endpoints
   - name: Game
     description: Game provider endpoints
+  - name: Theme
+    description: Seasonal UI theme (WebsiteConfig.theme)
   - name: Lottery
     description: Lottery betting endpoints
-  - name: Admin
-    description: Mock / dev tooling (normalize brand assets, local mock server)
 
 paths:
   /login:
@@ -453,6 +460,72 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/DepositEwallet'
                   - $ref: '#/components/schemas/DepositQris'
+              examples:
+                ewallet:
+                  value:
+                    deposit_id: 123456
+                    type: e-wallet
+                    name: gopay
+                    account: user1
+                    number: "081577784445"
+                    amount: 50000
+                qris:
+                  value:
+                    deposit_id: 123457
+                    type: qris
+                    name: qris
+                    account: qris
+                    number: "1111111111111111"
+                    amount: 50000
+                    qr_raw: dbqwudeue723562ge2362eg2ue627eg2eey27eg
+        '400':
+          description: Has pending deposit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: have pending deposit
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /deposit-status:
+    get:
+      tags:
+        - User
+      summary: Check deposit status
+      description: Check the status of a deposit request
+      operationId: checkDepositStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: deposit_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 123456
+      responses:
+        '200':
+          description: Deposit status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionStatus'
+              examples:
+                success:
+                  value:
+                    status: success
+                pending:
+                  value:
+                    status: pending
+                fails:
+                  value:
+                    status: fails
         '400':
           description: Has pending deposit
           content:
@@ -497,6 +570,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WithdrawResponse'
+              example:
+                withdraw_id: 123456
+                type: e-wallet
+                name: gopay
+                account: user1
+                number: "081577784445"
+                amount: 50000
+        '400':
+          description: Has pending withdraw
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: have pending withdraw
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /withdraw-status:
+    get:
+      tags:
+        - User
+      summary: Check withdraw status
+      description: Check the status of a withdraw request
+      operationId: checkWithdrawStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: withdraw_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          example: 123456
+      responses:
+        '200':
+          description: Withdraw status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionStatus'
+              examples:
+                success:
+                  value:
+                    status: success
+                pending:
+                  value:
+                    status: pending
+                fails:
+                  value:
+                    status: fails
         '400':
           description: Has pending withdraw
           content:
@@ -555,6 +683,8 @@ paths:
       summary: Get user promo codes
       description: Retrieve list of available promo codes for deposit
       operationId: getUserPromo
+      security:
+        - BearerAuth: []
       responses:
         '200':
           description: List of promo codes
@@ -590,10 +720,10 @@ paths:
       parameters:
         - name: domain
           in: query
-          required: false
+          required: true
           schema:
             type: string
-          description: Domain untuk konfigurasi website spesifik
+          example: website1.com
       responses:
         '200':
           description: Website configuration
@@ -716,7 +846,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Game URL returned
+          description: Game URL retrieved successfully
           content:
             application/json:
               schema:
@@ -725,7 +855,7 @@ paths:
                   game_url:
                     type: string
                     format: uri
-                    example: https://game.domainprovider.com/play.do?token=128e2eg2uegeueg2eug
+                    example: https://game.providerdomain.com/play
         '400':
           description: Bad request
           content:
@@ -846,7 +976,7 @@ paths:
       tags:
         - Game
       summary: Get togel providers
-      description: Retrieve list of active togel/lottery providers
+      description: Retrieve list of active togel / lottery game providers
       operationId: getTogelProviders
       responses:
         '200':
@@ -868,7 +998,7 @@ paths:
     get:
       tags:
         - Game
-      summary: Get arcade providers
+      summary: Get arcade game providers
       description: Retrieve list of active arcade game providers
       operationId: getArcadeProviders
       responses:
@@ -891,8 +1021,8 @@ paths:
     get:
       tags:
         - Game
-      summary: Get crush providers
-      description: Retrieve list of active crush game providers
+      summary: Get crash / crush game providers
+      description: Retrieve list of active crash-style (crush) game providers
       operationId: getCrushProviders
       responses:
         '200':
@@ -915,7 +1045,7 @@ paths:
       tags:
         - Game
       summary: Get esports providers
-      description: Retrieve list of active esports game providers
+      description: Retrieve list of active esports betting providers
       operationId: getEsportsProviders
       responses:
         '200':
@@ -938,7 +1068,7 @@ paths:
       tags:
         - Game
       summary: Get poker providers
-      description: Retrieve list of active poker providers
+      description: Retrieve list of active poker game providers
       operationId: getPokerProviders
       responses:
         '200':
@@ -960,8 +1090,8 @@ paths:
     get:
       tags:
         - Game
-      summary: Get cockfight providers
-      description: Retrieve list of active cockfight providers
+      summary: Get cockfight / sabung ayam providers
+      description: Retrieve list of active cockfight live providers
       operationId: getCockfightProviders
       responses:
         '200':
@@ -972,6 +1102,66 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /theme:
+    get:
+      tags:
+        - Theme
+      summary: Get current UI theme
+      description: Returns seasonal theme and background colors from website configuration (public).
+      operationId: getTheme
+      responses:
+        '200':
+          description: Current theme settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeSettings'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+    post:
+      tags:
+        - Theme
+      summary: Update UI theme (authenticated)
+      description: Partially update theme fields stored for the site. Requires Bearer token.
+      operationId: updateTheme
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeUpdateRequest'
+      responses:
+        '200':
+          description: Theme updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: success
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: please login
         '500':
           description: Internal server error
           content:
@@ -1007,14 +1197,6 @@ paths:
                   message:
                     type: string
                     example: success
-                  new_balance:
-                    type: integer
-                    format: int64
-                    description: Saldo user setelah potong total pay
-                  total_bet:
-                    type: integer
-                    format: int64
-                    description: Total pay yang dipotong (jumlah bet.pay semua baris)
         '400':
           description: Market closed or bad request
           content:
@@ -1087,10 +1269,8 @@ paths:
         - name: type
           in: query
           required: true
-          description: Tipe taruhan untuk konteks UI (bbfs = halaman BBFS; respons prize tetap berisi 4d/3d/2d)
           schema:
             type: string
-            enum: [4d, 3d, 2d, bbfs]
           example: 4d
       responses:
         '200':
@@ -1119,86 +1299,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
-  /admin/normalize-brand-card:
-    post:
-      tags:
-        - Admin
-      summary: Normalize provider brand card (mock)
-      description: |
-        **Mock server only.** Upload character and logo images; the server resizes and composites them to a fixed **290×180** WebP (same layout as animated brand cards) and writes to  
-        `public/animated-brand/{category}/{category}-{id}.webp`.
-
-        Form field `options` is an optional JSON **string** (object) passed to the Sharp pipeline, e.g.  
-        `{"logoWidthMultiplier":1.2,"logoMacBlackToWhite":true}`.
-
-        If the mock server sets env `BRAND_CARD_ADMIN_KEY`, send header **`X-Admin-Key`** with that value; otherwise the endpoint is open (local dev).
-      operationId: adminNormalizeBrandCard
-      parameters:
-        - name: X-Admin-Key
-          in: header
-          required: false
-          schema:
-            type: string
-          description: Required when `BRAND_CARD_ADMIN_KEY` is set on the mock server.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - character
-                - logo
-                - category
-                - id
-              properties:
-                character:
-                  type: string
-                  format: binary
-                  description: Character image (any reasonable size; PNG/WebP/JPEG).
-                logo:
-                  type: string
-                  format: binary
-                  description: Logo image (any reasonable size).
-                category:
-                  type: string
-                  description: URL-safe slug (folder name), e.g. `slot`, `casino`, `crush`.
-                  example: slot
-                id:
-                  type: string
-                  description: URL-safe slug for the file stem (without repeating category), e.g. `slot-partner-11` → file `slot-slot-partner-11.webp`.
-                  example: slot-partner-11
-                options:
-                  type: string
-                  description: Optional JSON object as a string (normalize options such as `logoWidthMultiplier`, `logoLeftFrac`, `logoMacBlackToWhite`, `characterTrim`, `frameIdx`).
-      responses:
-        '200':
-          description: File written under public/animated-brand
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BrandCardNormalizeResponse'
-        '400':
-          description: Missing fields, invalid JSON in options, or bad input
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Missing or wrong X-Admin-Key when server requires it
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                message: Unauthorized
-        '500':
-          description: Normalize or write failed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
 components:
   securitySchemes:
     BearerAuth:
@@ -1214,34 +1314,6 @@ components:
         message:
           type: string
           description: Error message description
-
-    BrandCardNormalizeResponse:
-      type: object
-      required:
-        - ok
-        - relativeUrl
-        - bytes
-        - width
-        - height
-      properties:
-        ok:
-          type: boolean
-          example: true
-        relativeUrl:
-          type: string
-          description: Path relative to site root (Vite public), e.g. served as /animated-brand/...
-          example: /animated-brand/slot/slot-slot-partner-11.webp
-        bytes:
-          type: integer
-          format: int64
-          description: WebP file size in bytes
-          example: 4200
-        width:
-          type: integer
-          example: 290
-        height:
-          type: integer
-          example: 180
 
     InternalError:
       type: object
@@ -1286,10 +1358,6 @@ components:
         deposit_id:
           type: integer
           example: 123456
-        amount:
-          type: integer
-          format: int64
-          example: 50000
         type:
           type: string
           enum: [e-wallet]
@@ -1303,6 +1371,10 @@ components:
         number:
           type: string
           example: "081577784445"
+        amount:
+          type: integer
+          format: int64
+          example: 50000
 
     DepositQris:
       type: object
@@ -1310,21 +1382,26 @@ components:
         deposit_id:
           type: integer
           example: 123457
-        amount:
-          type: integer
-          format: int64
-          example: 50000
         type:
           type: string
           enum: [qris]
           example: qris
+        name:
+          type: string
+          example: qris
+        account:
+          type: string
+          example: qris
+        number:
+          type: string
+          example: "1111111111111111"
+        amount:
+          type: integer
+          format: int64
+          example: 50000
         qr_raw:
           type: string
-          description: EMV QRIS payload — encode sebagai barcode QR untuk pembayaran
-          example: "00020101021126570011ID.CO.QRIS.WWW..."
-        raw:
-          type: string
-          description: Alias kompatibilitas untuk qr_raw (isi sama)
+          description: QRIS raw data string
           example: dbqwudeue723562ge2362eg2ue627eg2eey27eg
 
     WithdrawResponse:
@@ -1333,10 +1410,6 @@ components:
         withdraw_id:
           type: integer
           example: 123456
-        amount:
-          type: integer
-          format: int64
-          example: 50000
         type:
           type: string
           enum: [e-wallet]
@@ -1350,6 +1423,19 @@ components:
         number:
           type: string
           example: "081577784445"
+        amount:
+          type: integer
+          format: int64
+          example: 50000
+
+    TransactionStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, pending, fails]
+          description: Transaction status
+          example: success
 
     ReferralData:
       type: object
@@ -1449,9 +1535,6 @@ components:
         about:
           type: string
           example: casino website
-        footer_promo:
-          $ref: '#/components/schemas/FooterPromoConfig'
-          description: Teks blok promo di footer; gunakan token literal PUSATTOGEL untuk nama brand (diganti title di client)
         logo:
           type: string
           format: uri
@@ -1469,8 +1552,7 @@ components:
             - "<script>console.log('hello. script2');</script>"
         google_verification:
           type: string
-          format: uri
-          example: https://cdn1.casinocdn.com/icon.ico
+          example: fhufudw7284hr8ry38
         meta_tag:
           type: array
           items:
@@ -1482,85 +1564,28 @@ components:
           $ref: '#/components/schemas/Contact'
         banner:
           type: array
-          description: >
-            Slider promo di home. Minimal id + image. Opsional: link (internal atau URL),
-            title_line1, title_line2, description, tag, gradient (Tailwind classes).
           items:
             type: object
             properties:
               id:
                 type: string
-                format: uuid
-                example: djdgdjg-238782-dhwuh-eywiey
+                description: Slug atau UUID string (mock memakai banner-1, banner-2, …)
+                example: banner-1
               image:
                 type: string
-                format: uri
-                example: https://gambarku.com/gambar1.jpg
+                description: Path relatif atau URL absolut
+                example: /banners/banner-1.webp
               link:
                 type: string
-                description: Path app (mis. /promo) atau URL absolut; default /promo
                 example: /promo
-              title_line1:
-                type: string
-                example: WELCOME BONUS
-              title_line2:
-                type: string
-                example: NEW MEMBER 100%
-              description:
-                type: string
-              tag:
-                type: string
-                example: "🎁 PROMO"
-              gradient:
-                type: string
-                description: Kelas gradient Tailwind untuk aksen (opsional)
-                example: "from-[#1a1a40] via-[#15153a] to-[#0d0d25]"
         rtp:
           $ref: '#/components/schemas/LinkResource'
         popup:
           $ref: '#/components/schemas/PopupConfig'
         theme:
           $ref: '#/components/schemas/ThemeConfig'
-        footer_promo:
-          $ref: '#/components/schemas/FooterPromoConfig'
-          description: >
-            Teks blok promo di footer. Gunakan literal PUSATTOGEL sebagai placeholder
-            nama brand; frontend menggantinya dengan config.title.
         maintenance:
           $ref: '#/components/schemas/MaintenanceConfig'
-
-    FooterPromoConfig:
-      type: object
-      description: Konten footer promo (heading, intro, daftar baris, penutup)
-      properties:
-        heading:
-          type: string
-          example: DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL
-        intro:
-          type: string
-        lines:
-          type: array
-          items:
-            type: string
-        outro:
-          type: string
-
-    MaintenanceConfig:
-      type: object
-      properties:
-        status:
-          type: boolean
-          example: false
-          description: True jika sistem dalam maintenance
-        message:
-          type: string
-          example: Sistem sedang dalam perbaikan
-          description: Pesan yang ditampilkan saat maintenance
-        expected_end:
-          type: string
-          format: date-time
-          example: "2026-03-18T00:00:00Z"
-          description: Estimasi waktu selesai maintenance
 
     Contact:
       type: object
@@ -1669,14 +1694,15 @@ components:
       properties:
         id:
           type: integer
+          format: int64
           example: 1
         name:
           type: string
           example: Gate Of Olympus
         image:
           type: string
-          format: uri
           nullable: true
+          description: URL absolut, path relatif, atau null bila tidak ada gambar
           example: https://game.providerdomain.com/image/1.png
 
     Provider:
@@ -1684,30 +1710,48 @@ components:
       properties:
         provider_id:
           type: integer
-          example: 1001
+          example: 1003
         name:
           type: string
-          example: pragmatic-play
+          example: pgsoft
         image:
           type: string
           format: uri
-          description: URL logo/gambar provider
-          example: https://provider.com/logo/pragmatic-play.png
-        badge:
-          type: object
-          nullable: true
-          description: Label promo pada kartu provider (opsional)
-          properties:
-            type:
-              type: string
-              enum: [hot, new, top]
+          example: https://provider.com/logo/pgsoft.png
+
+    ThemeSettings:
+      type: object
+      description: Seasonal UI theme slice from website configuration
+      properties:
+        season:
+          type: string
+          example: christmas
+        background_color:
+          type: string
+          example: '#0a1628'
+        background_image:
+          type: string
+          description: Relative path or absolute URL for background image
+          example: /bg-casino-2.webp
+        border_color:
+          type: string
+          example: '#1E90FF'
+
+    ThemeUpdateRequest:
+      type: object
+      description: Partial theme update; all fields optional
+      properties:
+        season:
+          type: string
+        background_color:
+          type: string
+        background_image:
+          type: string
+        border_color:
+          type: string
 
     BetRequest:
       type: object
-      description: |
-        Satu baris taruhan. BBFS mengirim banyak objek (4D/3D/2D per kombinasi).
-        Backend harus menghitung kemenangan memakai `prize` (multiplier efektif) dan `discount`
-        konsisten dengan `pay` vs `amount` (lihat frontend togelDiscount).
       required:
         - market
         - type
@@ -1727,11 +1771,9 @@ components:
           example: 4D
         prize:
           type: integer
-          description: Multiplier hadiah efektif untuk baris ini (penuh jika discount false; dikurangi proporsional diskon pasaran jika discount true)
           example: 9000
         discount:
           type: boolean
-          description: true jika pemain memilih mode diskon; false = bayar penuh & multiplier penuh
           example: false
         number:
           type: string
@@ -1740,12 +1782,10 @@ components:
         amount:
           type: integer
           format: int64
-          description: Nominal taruhan per baris (basis sebelum potong diskon di UI)
           example: 100
         pay:
           type: integer
           format: int64
-          description: Jumlah dipotong dari saldo untuk baris ini (setelah diskon jika dipakai)
           example: 100
         position:
           type: string
@@ -1844,3 +1884,18 @@ components:
           type: string
           format: color
           example: "#000000"
+
+    MaintenanceConfig:
+      type: object
+      properties:
+        status:
+          type: boolean
+          example: false
+        cs_link:
+          type: string
+          format: uri
+          example: https://livechat.com/direct/wydwuyd
+        estimated_time:
+          type: string
+          format: date-time
+          example: 2026-01-01 17:30

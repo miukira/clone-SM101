@@ -119,8 +119,6 @@ export default function ReferralPageChrome() {
         isAuthenticated={isAuthenticated}
         user={user}
         onLogout={logout}
-        mobileCurrentPage="referral"
-        hamburgerGradientIdSuffix="referral"
         showQuickDeposit={isAuthenticated}
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
@@ -159,7 +157,7 @@ export default function ReferralPageChrome() {
       </main>
       
       {/* Mobile View */}
-      <main className="md:hidden pt-[60px] pb-24 relative z-10">
+      <main className="md:hidden pt-[130px] pb-24 relative z-10">
         <div className="px-3 py-4">
           {/* Page Title - Mobile */}
           <div className="flex items-center gap-3 mb-4">

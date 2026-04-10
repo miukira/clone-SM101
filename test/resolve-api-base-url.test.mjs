@@ -5,49 +5,35 @@ import {
   trimTrailingSlash,
 } from '../src/utils/resolveApiBaseUrl.js'
 
-const FALLBACKS = {
-  'mock-direct': null,
-  'mock-server': 'http://localhost:4010/api/v1',
-  'real': '/api/v1',
-}
+const DEFAULT_DEV = 'http://localhost:4010/api/v1'
 
-describe('VITE_API_BASE_URL — resolveApiBaseUrl (.env / Vite)', () => {
-  test('mock-direct selalu null walau env di-set', () => {
+describe('resolveApiBaseUrl — VITE_API_BASE_URL + fallback', () => {
+  test('pakai env bila di-set', () => {
     assert.equal(
-      resolveApiBaseUrl('mock-direct', 'http://api.example/v1', FALLBACKS),
-      null,
-    )
-  })
-
-  test('mock-server: pakai env bila VITE_API_BASE_URL ada', () => {
-    assert.equal(
-      resolveApiBaseUrl('mock-server', 'http://localhost:9999/api/v1', FALLBACKS),
+      resolveApiBaseUrl('http://localhost:9999/api/v1', DEFAULT_DEV),
       'http://localhost:9999/api/v1',
     )
   })
 
-  test('mock-server: fallback bila env kosong / undefined', () => {
-    assert.equal(resolveApiBaseUrl('mock-server', undefined, FALLBACKS), FALLBACKS['mock-server'])
-    assert.equal(resolveApiBaseUrl('mock-server', '', FALLBACKS), FALLBACKS['mock-server'])
-    assert.equal(resolveApiBaseUrl('mock-server', '   ', FALLBACKS), FALLBACKS['mock-server'])
+  test('fallback bila env kosong / undefined / whitespace', () => {
+    assert.equal(resolveApiBaseUrl(undefined, DEFAULT_DEV), DEFAULT_DEV)
+    assert.equal(resolveApiBaseUrl('', DEFAULT_DEV), DEFAULT_DEV)
+    assert.equal(resolveApiBaseUrl('   ', DEFAULT_DEV), DEFAULT_DEV)
   })
 
-  test('real: pakai env absolut bila di-set', () => {
+  test('path relatif sebagai fallback', () => {
+    assert.equal(resolveApiBaseUrl(undefined, '/api/v1'), '/api/v1')
+  })
+
+  test('trim trailing slash dari env', () => {
     assert.equal(
-      resolveApiBaseUrl('real', 'http://localhost:8080/api/v1', FALLBACKS),
-      'http://localhost:8080/api/v1',
-    )
-  })
-
-  test('real: fallback path relatif bila env tidak di-set', () => {
-    assert.equal(resolveApiBaseUrl('real', undefined, FALLBACKS), '/api/v1')
-  })
-
-  test('trim trailing slash dari env (VITE_)', () => {
-    assert.equal(
-      resolveApiBaseUrl('real', 'http://host/api/v1/', FALLBACKS),
+      resolveApiBaseUrl('http://host/api/v1/', DEFAULT_DEV),
       'http://host/api/v1',
     )
+  })
+
+  test('trim trailing slash dari fallback', () => {
+    assert.equal(resolveApiBaseUrl('', 'http://x/y//'), 'http://x/y')
   })
 })
 
