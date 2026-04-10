@@ -1,6 +1,8 @@
 // API Service - Wrapper untuk mock atau real API
 import * as mockApi from './mockApi'
 import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
+import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
+import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
 
 // ============================================
 // KONFIGURASI API
@@ -9,16 +11,23 @@ import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
 // - mock-direct: Panggil mockApi langsung (tidak muncul di Network tab)
 // - mock-server: HTTP request ke mock server localhost:4010 (muncul di Network tab)
 // - real: HTTP request ke real backend
+//
+// Base URL HTTP: set di .env sebagai VITE_API_BASE_URL (tanpa trailing slash).
+// Jika kosong / tidak di-set, dipakai fallback per mode di bawah.
 const API_MODE = 'mock-server'
 
-// URL untuk masing-masing mode
+// Fallback bila VITE_API_BASE_URL tidak di-set (.env)
 const API_URLS = {
   'mock-direct': null,
   'mock-server': 'http://localhost:4010/api/v1',
-  'real': '/api/v1'
+  'real': '/api/v1',
 }
 
-const API_BASE_URL = API_URLS[API_MODE]
+const API_BASE_URL = resolveApiBaseUrl(
+  API_MODE,
+  import.meta.env.VITE_API_BASE_URL,
+  API_URLS,
+)
 
 /** Key utama; legacy `token` selaras OpenAPI / backend lain */
 const LS_TOKEN = 'pusattogel-token'
@@ -218,9 +227,9 @@ export const getUserPromo = () => {
 // ============================================
 export const getInfo = () => {
   if (useMockDirect) {
-    return withAssets(mockApi.getInfo())
+    return withAssets(mockApi.getInfo()).then(normalizeWebsiteInfoResponse)
   }
-  return apiCall('/info')
+  return apiCall('/info').then(normalizeWebsiteInfoResponse)
 }
 
 export const getWebsite = () => {
@@ -294,6 +303,20 @@ export const getArcadeProviders = () => {
     return withAssets(mockApi.getArcadeProviders())
   }
   return apiCall('/arcade')
+}
+
+export const getCrushProviders = () => {
+  if (useMockDirect) {
+    return withAssets(mockApi.getCrushProviders())
+  }
+  return apiCall('/crush')
+}
+
+export const getEsportsProviders = () => {
+  if (useMockDirect) {
+    return withAssets(mockApi.getEsportsProviders())
+  }
+  return apiCall('/esports')
 }
 
 export const getPokerProviders = () => {

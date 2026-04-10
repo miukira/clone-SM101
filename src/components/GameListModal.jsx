@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react'
 import { playGame, getToken } from '../services/api'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
+import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 import { useGameList } from '../hooks/useProviders'
 
 // Loading Spinner
@@ -20,21 +22,42 @@ function LoadingSpinner() {
 // Game schema dari Swagger: { id, name, image }
 function GameCard({ game, onPlay, isLoading }) {
   const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
+  /** 0: game / default file; 1: paksa default; 2: placeholder 🎮 */
+  const [heroTier, setHeroTier] = useState(0)
+  const gameImage = normalizeImageUrl(game.image)
+
+  useEffect(() => {
+    setHeroTier(0)
+    setImageLoaded(false)
+  }, [game.id, gameImage])
+
+  const gameHeroUrl =
+    heroTier === 0
+      ? publicAssetUrl(gameImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      : heroTier === 1
+        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        : null
+
+  const handleGameImgError = () => {
+    setHeroTier((t) => {
+      if (t === 0 && gameImage) return 1
+      return 2
+    })
+  }
 
   return (
     <div className="group relative bg-gradient-to-b from-[#1a1a1a] to-[#0d0d0d] rounded-xl overflow-hidden border border-[#2a2a2a] hover:border-[#444] transition-all duration-300 hover:shadow-lg hover:shadow-white/5">
       {/* Game Image */}
       <div className="relative aspect-[4/3] bg-[#111] overflow-hidden">
-        {!imageError && game.image ? (
+        {gameHeroUrl ? (
           <img
-            src={publicAssetUrl(game.image)}
+            src={gameHeroUrl}
             alt={game.name}
             className={`w-full h-full object-cover transition-all duration-500 ${
               imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             } group-hover:scale-110`}
             onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
+            onError={handleGameImgError}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a]">
@@ -113,6 +136,10 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
 
   if (!isOpen) return null
 
+  const providerThumb =
+    normalizeImageUrl(provider?.logoImg) ?? normalizeImageUrl(provider?.characterImg)
+  const headerLogoSrc = publicAssetUrl(providerThumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
+
   return (
     <>
       {/* Backdrop */}
@@ -127,13 +154,20 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[#333] bg-gradient-to-r from-[#1a1a1a] via-[#222] to-[#1a1a1a]">
           <div className="flex items-center gap-4">
             {/* Provider Logo */}
-            {(provider?.logoImg || provider?.characterImg) && (
-              <img
-                src={publicAssetUrl(provider.logoImg || provider.characterImg)}
-                alt={provider.name}
-                className="h-8 sm:h-10 w-auto object-contain"
-              />
-            )}
+            <img
+              src={headerLogoSrc}
+              alt={provider?.name || 'Provider'}
+              className="h-8 sm:h-10 w-auto object-contain"
+              onError={(e) => {
+                const el = e.currentTarget
+                if (!el.dataset.fallbackTried) {
+                  el.dataset.fallbackTried = '1'
+                  el.src = publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+                } else {
+                  el.style.display = 'none'
+                }
+              }}
+            />
             <div>
               <h2 className="text-sm sm:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
                 {provider?.name || 'Game List'}

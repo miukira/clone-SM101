@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
+import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 
 /**
  * Kartu provider — satu gambar penuh (API: image → logoImg & characterImg sama).
@@ -20,9 +22,30 @@ export default function ProviderCard({
   provider_id = null,
 }) {
   const [isHovered, setIsHovered] = useState(false)
+  /** 0: API URL atau default file; 1: paksa default file (API gagal load); 2: placeholder 🎰 */
+  const [heroTier, setHeroTier] = useState(0)
 
-  const heroSrc = logoImg ?? characterImg ?? null
+  const heroSrc = normalizeImageUrl(logoImg) ?? normalizeImageUrl(characterImg) ?? null
+  const overlayResolved = normalizeImageUrl(overlayImg)
   const alt = logoAlt || characterImgAlt
+
+  useEffect(() => {
+    setHeroTier(0)
+  }, [heroSrc])
+
+  const heroImageUrl =
+    heroTier === 0
+      ? publicAssetUrl(heroSrc ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      : heroTier === 1
+        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        : null
+
+  const handleHeroError = () => {
+    setHeroTier((t) => {
+      if (t === 0 && heroSrc) return 1
+      return 2
+    })
+  }
 
   const glowColorMap = {
     white: 'from-white/[0.06]',
@@ -75,11 +98,12 @@ export default function ProviderCard({
               className={`absolute inset-0 z-[0] bg-gradient-radial ${glowColorMap[glowColor] || glowColorMap.white} to-transparent blur-2xl ${glowColorHoverMap[glowColorHover] || glowColorHoverMap.white} transition-all duration-700`}
             />
 
-            {/* Satu gambar full */}
-            {heroSrc != null ? (
+            {/* Satu gambar full — kosong/404 → default /logo.png → 🎰 */}
+            {heroImageUrl ? (
               <img
-                src={publicAssetUrl(heroSrc)}
+                src={heroImageUrl}
                 alt={alt}
+                onError={handleHeroError}
                 className={`absolute inset-0 z-[2] h-full w-full object-cover object-center transition-transform duration-500 ease-out ${
                   isHovered ? 'scale-[1.04]' : 'scale-100'
                 }`}
@@ -89,10 +113,13 @@ export default function ProviderCard({
             )}
 
             {/* Overlay efek (mis. petir) — opsional */}
-            {overlayImg && heroSrc != null && (
+            {overlayResolved && heroSrc != null && heroTier === 0 && (
               <img
-                src={publicAssetUrl(overlayImg)}
+                src={publicAssetUrl(overlayResolved)}
                 alt=""
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
                 className={`pointer-events-none absolute inset-0 z-[3] h-full w-full object-cover object-center mix-blend-screen opacity-90 ${
                   isHovered ? `${animationPrefix}-overlay-active` : `${animationPrefix}-overlay-idle`
                 }`}

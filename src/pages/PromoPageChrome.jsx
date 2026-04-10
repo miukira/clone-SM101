@@ -11,6 +11,8 @@ import {
   SportsIconChrome,
   FishingIconChrome,
   ArcadeIconChrome,
+  CrushIconChrome,
+  EsportsIconChrome,
   PokerIconChrome,
   CockFightingIconChrome,
   PromoIconChrome,
@@ -19,6 +21,7 @@ import {
   AccountIconChrome,
 } from '../components/IconsChrome'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
@@ -49,6 +52,8 @@ const categories = [
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome },
   { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome },
+  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome },
+  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome },
   { id: 'poker', name: 'POKER', icon: PokerIconChrome },
   { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome },
 ]
@@ -200,8 +205,8 @@ export default function PromoPageChrome() {
           }
           
           // Map image - handle null/empty dari MySQL, gunakan fallback
-          let image = promo.image
-          if (!image || image === '' || (image.startsWith('http') && !image.includes('localhost'))) {
+          let image = normalizeImageUrl(promo.image)
+          if (!image || (image.startsWith('http') && !image.includes('localhost'))) {
             // Jika image null/empty atau URL external yang mungkin 404, gunakan fallback
             const imageKeys = Object.keys(imageMap)
             const imageKey = imageKeys[index % imageKeys.length]

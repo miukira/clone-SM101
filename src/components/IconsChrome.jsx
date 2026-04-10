@@ -110,6 +110,38 @@ export const ArcadeIconChrome = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+export const CrushIconChrome = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path
+      d="M24 8 L30 20 L30 30 L27 36 L21 36 L18 30 L18 20 Z"
+      fill={S.body}
+      stroke={S.stroke}
+      strokeWidth="0.5"
+    />
+    <path d="M24 10 L27 18 L21 18 Z" fill={S.bodyAlt} stroke={S.detail} strokeWidth="0.35"/>
+    <ellipse cx="24" cy="25" rx="5" ry="6" fill="#707070" stroke={S.dark} strokeWidth="0.5"/>
+    <path d="M14 22 L8 28 L14 31 Z" fill={S.detail} stroke={S.stroke} strokeWidth="0.35"/>
+    <path d="M34 22 L40 28 L34 31 Z" fill={S.detail} stroke={S.stroke} strokeWidth="0.35"/>
+    <path
+      d="M20 36 L18 42 L22 40 L24 43 L26 40 L30 42 L28 36 Z"
+      fill={S.dark}
+      stroke={S.stroke}
+      strokeWidth="0.35"
+    />
+  </svg>
+);
+
+export const EsportsIconChrome = ({ size = 24, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <rect x="6" y="18" width="36" height="20" rx="10" fill={S.body} stroke={S.stroke} strokeWidth="0.5"/>
+    <rect x="14" y="22" width="3" height="10" rx="1" fill={S.dark}/>
+    <rect x="10.5" y="25.5" width="10" height="3" rx="1" fill={S.dark}/>
+    <circle cx="31" cy="24" r="3" fill={S.detail}/>
+    <circle cx="36" cy="28" r="3" fill={S.bodyAlt}/>
+    <path d="M24 8 L27 13 L33 14 L28.5 18 L29.5 24 L24 21 L18.5 24 L19.5 18 L15 14 L21 13 Z" fill={S.bodyAlt} stroke={S.stroke} strokeWidth="0.35"/>
+  </svg>
+);
+
 export const PokerIconChrome = ({ size = 24, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     {/* Card back */}
@@ -253,6 +285,8 @@ export default {
   LotteryIconChrome,
   FishingIconChrome,
   ArcadeIconChrome,
+  CrushIconChrome,
+  EsportsIconChrome,
   PokerIconChrome,
   CockFightingIconChrome,
   PromoIconChrome,

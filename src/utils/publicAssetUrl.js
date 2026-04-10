@@ -12,13 +12,15 @@ function trimSlash(s) {
 }
 
 export function publicAssetUrl(path) {
-  if (path == null || path === '') return path
+  if (path == null) return null
   if (typeof path !== 'string') return path
-  if (/^(https?:|data:|blob:)/i.test(path)) return path
+  const trimmed = path.trim()
+  if (trimmed === '') return null
+  if (/^(https?:|data:|blob:)/i.test(trimmed)) return trimmed
 
-  const normalized = path.startsWith('/') ? path : `/${path}`
+  const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
 
-  const base = trimSlash(import.meta.env.VITE_PUBLIC_ASSET_BASE_URL || '')
+  const base = trimSlash(import.meta.env?.VITE_PUBLIC_ASSET_BASE_URL || '')
   if (base) return `${base}${normalized}`
 
   if (typeof window !== 'undefined' && window.location?.origin) {

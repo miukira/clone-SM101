@@ -52,6 +52,8 @@ tags:
     description: Game provider endpoints
   - name: Lottery
     description: Lottery betting endpoints
+  - name: Admin
+    description: Mock / dev tooling (normalize brand assets, local mock server)
 
 paths:
   /login:
@@ -885,6 +887,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
+  /crush:
+    get:
+      tags:
+        - Game
+      summary: Get crush providers
+      description: Retrieve list of active crush game providers
+      operationId: getCrushProviders
+      responses:
+        '200':
+          description: List of crush providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /esports:
+    get:
+      tags:
+        - Game
+      summary: Get esports providers
+      description: Retrieve list of active esports game providers
+      operationId: getEsportsProviders
+      responses:
+        '200':
+          description: List of esports providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
   /poker:
     get:
       tags:
@@ -1071,6 +1119,86 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
+  /admin/normalize-brand-card:
+    post:
+      tags:
+        - Admin
+      summary: Normalize provider brand card (mock)
+      description: |
+        **Mock server only.** Upload character and logo images; the server resizes and composites them to a fixed **290×180** WebP (same layout as animated brand cards) and writes to  
+        `public/animated-brand/{category}/{category}-{id}.webp`.
+
+        Form field `options` is an optional JSON **string** (object) passed to the Sharp pipeline, e.g.  
+        `{"logoWidthMultiplier":1.2,"logoMacBlackToWhite":true}`.
+
+        If the mock server sets env `BRAND_CARD_ADMIN_KEY`, send header **`X-Admin-Key`** with that value; otherwise the endpoint is open (local dev).
+      operationId: adminNormalizeBrandCard
+      parameters:
+        - name: X-Admin-Key
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Required when `BRAND_CARD_ADMIN_KEY` is set on the mock server.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - character
+                - logo
+                - category
+                - id
+              properties:
+                character:
+                  type: string
+                  format: binary
+                  description: Character image (any reasonable size; PNG/WebP/JPEG).
+                logo:
+                  type: string
+                  format: binary
+                  description: Logo image (any reasonable size).
+                category:
+                  type: string
+                  description: URL-safe slug (folder name), e.g. `slot`, `casino`, `crush`.
+                  example: slot
+                id:
+                  type: string
+                  description: URL-safe slug for the file stem (without repeating category), e.g. `slot-partner-11` → file `slot-slot-partner-11.webp`.
+                  example: slot-partner-11
+                options:
+                  type: string
+                  description: Optional JSON object as a string (normalize options such as `logoWidthMultiplier`, `logoLeftFrac`, `logoMacBlackToWhite`, `characterTrim`, `frameIdx`).
+      responses:
+        '200':
+          description: File written under public/animated-brand
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandCardNormalizeResponse'
+        '400':
+          description: Missing fields, invalid JSON in options, or bad input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Missing or wrong X-Admin-Key when server requires it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Unauthorized
+        '500':
+          description: Normalize or write failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   securitySchemes:
     BearerAuth:
@@ -1086,6 +1214,34 @@ components:
         message:
           type: string
           description: Error message description
+
+    BrandCardNormalizeResponse:
+      type: object
+      required:
+        - ok
+        - relativeUrl
+        - bytes
+        - width
+        - height
+      properties:
+        ok:
+          type: boolean
+          example: true
+        relativeUrl:
+          type: string
+          description: Path relative to site root (Vite public), e.g. served as /animated-brand/...
+          example: /animated-brand/slot/slot-slot-partner-11.webp
+        bytes:
+          type: integer
+          format: int64
+          description: WebP file size in bytes
+          example: 4200
+        width:
+          type: integer
+          example: 290
+        height:
+          type: integer
+          example: 180
 
     InternalError:
       type: object
@@ -1326,6 +1482,9 @@ components:
           $ref: '#/components/schemas/Contact'
         banner:
           type: array
+          description: >
+            Slider promo di home. Minimal id + image. Opsional: link (internal atau URL),
+            title_line1, title_line2, description, tag, gradient (Tailwind classes).
           items:
             type: object
             properties:
@@ -1337,6 +1496,25 @@ components:
                 type: string
                 format: uri
                 example: https://gambarku.com/gambar1.jpg
+              link:
+                type: string
+                description: Path app (mis. /promo) atau URL absolut; default /promo
+                example: /promo
+              title_line1:
+                type: string
+                example: WELCOME BONUS
+              title_line2:
+                type: string
+                example: NEW MEMBER 100%
+              description:
+                type: string
+              tag:
+                type: string
+                example: "🎁 PROMO"
+              gradient:
+                type: string
+                description: Kelas gradient Tailwind untuk aksen (opsional)
+                example: "from-[#1a1a40] via-[#15153a] to-[#0d0d25]"
         rtp:
           $ref: '#/components/schemas/LinkResource'
         popup:

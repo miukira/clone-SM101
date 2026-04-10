@@ -6,11 +6,14 @@ import {
   getTogelProviders,
   getFishProviders,
   getArcadeProviders,
+  getCrushProviders,
+  getEsportsProviders,
   getPokerProviders,
   getCockfightProviders,
   getGameList as apiGetGameList,
 } from '../services/api'
 import { transformProviderData } from '../utils/transformProviderApi.js'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl.js'
 
 export { transformProviderData }
 
@@ -22,6 +25,8 @@ const fetchers = {
   togel: getTogelProviders,
   fishing: getFishProviders,
   arcade: getArcadeProviders,
+  crush: getCrushProviders,
+  esports: getEsportsProviders,
   poker: getPokerProviders,
   sabung: getCockfightProviders,
 }
@@ -29,7 +34,7 @@ const fetchers = {
 /**
  * Custom hook to fetch provider data for a given category from the API
  * All data including images comes from API - no more hardcoded static config
- * @param {string} category - The category ID (slots, sports, casino, togel, fishing, arcade, poker, sabung)
+ * @param {string} category - The category ID (slots, sports, casino, togel, fishing, arcade, crush, esports, poker, sabung)
  * @returns {{ providers: Array, loading: boolean, error: Error|null }}
  */
 export function useProviders(category) {
@@ -107,7 +112,12 @@ export function useGameList(providerId) {
           console.log(`   ... dan ${data.length - 5} game lainnya`)
         }
       }
-      setGames(data || [])
+      setGames(
+        (data || []).map((g) => ({
+          ...g,
+          image: normalizeImageUrl(g.image),
+        })),
+      )
     } catch (err) {
       console.error(`Error fetching game list for provider ${providerId}:`, err)
       setError(err)

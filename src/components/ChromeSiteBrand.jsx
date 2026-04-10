@@ -35,7 +35,15 @@ export default function ChromeSiteBrand({
 
   const rowClass = `flex items-center gap-2 min-w-0 ${className}`.trim()
 
-  const img = <img src={logo} alt={title} className={imgClass} />
+  const img = (
+    <img
+      key={logo ?? 'brand'}
+      src={logo || undefined}
+      alt={title}
+      className={imgClass}
+      decoding="async"
+    />
+  )
   const label = <span className={titleClass}>{title}</span>
 
   if (!wrapper) {

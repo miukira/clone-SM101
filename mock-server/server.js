@@ -9,6 +9,9 @@ const cors = require('cors')
 const swaggerUi = require('swagger-ui-express')
 const YAML = require('yamljs')
 const path = require('path')
+const fs = require('fs')
+const multer = require('multer')
+const { pathToFileURL } = require('url')
 
 const providerMockAnimatedImages = require(path.join(
   __dirname,
@@ -18,6 +21,31 @@ const pImg = (providerId) => providerMockAnimatedImages[String(providerId)]
 
 const app = express()
 const PORT = 4010
+
+const uploadBrandCard = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 },
+})
+
+function safeBrandSlug(s, maxLen = 96) {
+  if (s == null || typeof s !== 'string') return ''
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, maxLen)
+}
+
+function requireBrandCardAdmin(req, res, next) {
+  const key = process.env.BRAND_CARD_ADMIN_KEY
+  if (!key) return next()
+  if (req.get('x-admin-key') !== key) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  next()
+}
 
 // Middleware
 app.use(cors())
@@ -115,6 +143,37 @@ const mockSlotProviders = [
   { provider_id: 1021, name: 'fastspin', image: pImg(1021) },
   { provider_id: 1022, name: 'dragoonsoft', image: pImg(1022) },
   { provider_id: 1023, name: 'nagagames', image: pImg(1023) },
+  { provider_id: 1024, name: 'slot-partner-1', image: pImg(1024) },
+  { provider_id: 1025, name: 'slot-partner-2', image: pImg(1025) },
+  { provider_id: 1026, name: 'slot-partner-3', image: pImg(1026) },
+  { provider_id: 1027, name: 'slot-partner-4', image: pImg(1027) },
+  { provider_id: 1028, name: 'slot-partner-5', image: pImg(1028) },
+  { provider_id: 1029, name: 'slot-partner-6', image: pImg(1029) },
+  { provider_id: 1030, name: 'slot-partner-7', image: pImg(1030) },
+  { provider_id: 1031, name: 'slot-partner-8', image: pImg(1031) },
+  { provider_id: 1032, name: 'slot-partner-9', image: pImg(1032) },
+  { provider_id: 1033, name: 'slot-partner-10', image: pImg(1033) },
+  { provider_id: 1034, name: 'slot-partner-11', image: pImg(1034) },
+  { provider_id: 1035, name: 'slot-partner-12', image: pImg(1035) },
+  { provider_id: 1036, name: 'slot-partner-13', image: pImg(1036) },
+  { provider_id: 1037, name: 'slot-partner-14', image: pImg(1037) },
+  { provider_id: 1038, name: 'slot-partner-15', image: pImg(1038) },
+  { provider_id: 1039, name: 'slot-partner-16', image: pImg(1039) },
+  { provider_id: 1040, name: 'slot-partner-17', image: pImg(1040) },
+  { provider_id: 1041, name: 'slot-partner-18', image: pImg(1041) },
+  { provider_id: 1042, name: 'slot-partner-19', image: pImg(1042) },
+  { provider_id: 1043, name: 'slot-partner-20', image: pImg(1043) },
+  { provider_id: 1044, name: 'slot-partner-21', image: pImg(1044) },
+  { provider_id: 1045, name: 'slot-partner-22', image: pImg(1045) },
+  { provider_id: 1046, name: 'slot-partner-23', image: pImg(1046) },
+  { provider_id: 1047, name: 'slot-partner-24', image: pImg(1047) },
+  { provider_id: 1048, name: 'slot-partner-25', image: pImg(1048) },
+  { provider_id: 1049, name: 'slot-partner-26', image: pImg(1049) },
+  { provider_id: 1050, name: 'slot-partner-27', image: pImg(1050) },
+  { provider_id: 1051, name: 'slot-partner-28', image: pImg(1051) },
+  { provider_id: 1052, name: 'slot-partner-29', image: pImg(1052) },
+  { provider_id: 1053, name: 'slot-partner-30', image: pImg(1053) },
+  { provider_id: 1054, name: 'slot-partner-31', image: pImg(1054) },
 ]
 
 // ============ FISH PROVIDERS (2xxx) ============
@@ -126,6 +185,9 @@ const mockFishProviders = [
   { provider_id: 2005, name: 'dragoon-fishing', image: pImg(2005) },
   { provider_id: 2006, name: 'cq9-fishing', image: pImg(2006) },
   { provider_id: 2007, name: 'fachai-fishing', image: pImg(2007) },
+  { provider_id: 2008, name: 'brand-bt-gaming', image: pImg(2008) },
+  { provider_id: 2009, name: 'brand-v-plus', image: pImg(2009) },
+  { provider_id: 2010, name: 'brand-ka-gaming', image: pImg(2010) },
 ]
 
 // ============ CASINO PROVIDERS (3xxx) ============
@@ -144,6 +206,15 @@ const mockCasinoProviders = [
   { provider_id: 3012, name: 'asia-gaming', image: pImg(3012) },
   { provider_id: 3013, name: 'wcasino', image: pImg(3013) },
   { provider_id: 3014, name: 'gameplay-interactive', image: pImg(3014) },
+  { provider_id: 3015, name: 'ezugi', image: pImg(3015) },
+  { provider_id: 3016, name: 'a-star', image: pImg(3016) },
+  { provider_id: 3017, name: 'grand-live', image: pImg(3017) },
+  { provider_id: 3019, name: 'lucky-heart-live', image: pImg(3019) },
+  { provider_id: 3020, name: 'casinogame', image: pImg(3020) },
+  { provider_id: 3021, name: 'dream-gaming', image: pImg(3021) },
+  { provider_id: 3022, name: 'mac88', image: pImg(3022) },
+  { provider_id: 3023, name: 'sexy-gaming', image: pImg(3023) },
+  { provider_id: 3018, name: 'microgaming-live', image: pImg(3018) },
 ]
 
 // ============ SPORTSBOOK PROVIDERS (4xxx) ============
@@ -153,6 +224,9 @@ const mockSportsbookProviders = [
   { provider_id: 4003, name: 'afb777-sports', image: pImg(4003) },
   { provider_id: 4004, name: 'bti', image: pImg(4004) },
   { provider_id: 4005, name: 'betpanda', image: pImg(4005) },
+  { provider_id: 4006, name: 'cmd368', image: pImg(4006) },
+  { provider_id: 4007, name: 'lucky-sports-plus', image: pImg(4007) },
+  { provider_id: 4008, name: 'united-gaming', image: pImg(4008) },
 ]
 
 // ============ TOGEL PROVIDERS (5xxx) ============
@@ -172,6 +246,32 @@ const mockArcadeProviders = [
   { provider_id: 6002, name: 'kingmidas-arcade', image: pImg(6002) },
   { provider_id: 6003, name: 'sbobet-arcade', image: pImg(6003) },
   { provider_id: 6004, name: 'spribe-arcade', image: pImg(6004) },
+  { provider_id: 6005, name: 'brand-arc-jdb', image: pImg(6005) },
+  { provider_id: 6006, name: 'brand-arc-cq9', image: pImg(6006) },
+  { provider_id: 6007, name: 'brand-arc-fachai', image: pImg(6007) },
+  { provider_id: 6008, name: 'brand-arc-rich88', image: pImg(6008) },
+  { provider_id: 6009, name: 'brand-arc-askmeslot', image: pImg(6009) },
+  { provider_id: 6010, name: 'brand-arc-six', image: pImg(6010) },
+]
+
+// ============ CRUSH PROVIDERS (9xxx) ============
+const mockCrushProviders = [
+  { provider_id: 9001, name: 'crush-rocket-1', image: pImg(9001) },
+  { provider_id: 9002, name: 'crush-rocket-2', image: pImg(9002) },
+  { provider_id: 9003, name: 'crush-rocket-3', image: pImg(9003) },
+  { provider_id: 9004, name: 'crush-rocket-4', image: pImg(9004) },
+  { provider_id: 9005, name: 'crush-rocket-5', image: pImg(9005) },
+  { provider_id: 9006, name: 'crush-rocket-6', image: pImg(9006) },
+  { provider_id: 9007, name: 'crush-rocket-7', image: pImg(9007) },
+  { provider_id: 9008, name: 'crush-rocket-8', image: pImg(9008) },
+  { provider_id: 9009, name: 'crush-rocket-9', image: pImg(9009) },
+]
+
+// ============ ESPORTS PROVIDERS (91xx) ============
+const mockEsportsProviders = [
+  { provider_id: 9101, name: 'ia-esports', image: pImg(9101) },
+  { provider_id: 9102, name: 'sbobetesports', image: pImg(9102) },
+  { provider_id: 9103, name: 'hp-gaming', image: pImg(9103) },
 ]
 
 // ============ POKER PROVIDERS (7xxx) ============
@@ -265,6 +365,37 @@ const mockGames = {
   '1023': [ // nagagames
     { id: 59, name: 'Naga Treasure', image: null },
   ],
+  '1024': [{ id: 60, name: 'Slot Partner 1', image: null }],
+  '1025': [{ id: 61, name: 'Slot Partner 2', image: null }],
+  '1026': [{ id: 62, name: 'Slot Partner 3', image: null }],
+  '1027': [{ id: 63, name: 'Slot Partner 4', image: null }],
+  '1028': [{ id: 64, name: 'Slot Partner 5', image: null }],
+  '1029': [{ id: 65, name: 'Slot Partner 6', image: null }],
+  '1030': [{ id: 66, name: 'Slot Partner 7', image: null }],
+  '1031': [{ id: 67, name: 'Slot Partner 8', image: null }],
+  '1032': [{ id: 68, name: 'Slot Partner 9', image: null }],
+  '1033': [{ id: 69, name: 'Slot Partner 10', image: null }],
+  '1034': [{ id: 70, name: 'Slot Partner 11', image: null }],
+  '1035': [{ id: 71, name: 'Slot Partner 12', image: null }],
+  '1036': [{ id: 72, name: 'Slot Partner 13', image: null }],
+  '1037': [{ id: 73, name: 'Slot Partner 14', image: null }],
+  '1038': [{ id: 74, name: 'Slot Partner 15', image: null }],
+  '1039': [{ id: 75, name: 'Slot Partner 16', image: null }],
+  '1040': [{ id: 76, name: 'Slot Partner 17', image: null }],
+  '1041': [{ id: 77, name: 'Slot Partner 18', image: null }],
+  '1042': [{ id: 78, name: 'Slot Partner 19', image: null }],
+  '1043': [{ id: 79, name: 'Slot Partner 20', image: null }],
+  '1044': [{ id: 80, name: 'Slot Partner 21', image: null }],
+  '1045': [{ id: 81, name: 'Slot Partner 22', image: null }],
+  '1046': [{ id: 82, name: 'Slot Partner 23', image: null }],
+  '1047': [{ id: 83, name: 'Slot Partner 24', image: null }],
+  '1048': [{ id: 84, name: 'Slot Partner 25', image: null }],
+  '1049': [{ id: 85, name: 'Slot Partner 26', image: null }],
+  '1050': [{ id: 86, name: 'Slot Partner 27', image: null }],
+  '1051': [{ id: 87, name: 'Slot Partner 28', image: null }],
+  '1052': [{ id: 88, name: 'Slot Partner 29', image: null }],
+  '1053': [{ id: 89, name: 'Slot Partner 30', image: null }],
+  '1054': [{ id: 90, name: 'Slot Partner 31', image: null }],
 
   // ===== FISH GAMES (2xxx) =====
   '2001': [ // microgaming-fishing
@@ -290,6 +421,15 @@ const mockGames = {
   ],
   '2007': [ // fachai-fishing
     { id: 115, name: 'FA Chai Fishing', image: null },
+  ],
+  '2008': [ // brand-bt-gaming
+    { id: 116, name: 'BT Gaming Fishing', image: null },
+  ],
+  '2009': [ // brand-v-plus
+    { id: 117, name: 'V Plus Fishing', image: null },
+  ],
+  '2010': [ // brand-ka-gaming
+    { id: 118, name: 'KA Gaming Fishing', image: null },
   ],
 
   // ===== CASINO (3xxx) =====
@@ -336,6 +476,33 @@ const mockGames = {
   '3014': [ // gameplay-interactive
     { id: 220, name: 'GI Baccarat', image: null },
   ],
+  '3015': [ // ezugi
+    { id: 221, name: 'Ezugi Baccarat', image: null },
+  ],
+  '3016': [ // a-star
+    { id: 222, name: 'A Star Baccarat', image: null },
+  ],
+  '3017': [ // grand-live
+    { id: 223, name: 'Grand Live Baccarat', image: null },
+  ],
+  '3018': [ // microgaming-live
+    { id: 224, name: 'Microgaming Live Roulette', image: null },
+  ],
+  '3019': [ // lucky-heart-live
+    { id: 225, name: 'Lucky Heart Baccarat', image: null },
+  ],
+  '3020': [ // casinogame
+    { id: 226, name: 'Casinogame Baccarat', image: null },
+  ],
+  '3021': [ // dream-gaming
+    { id: 227, name: 'DreamGaming Baccarat', image: null },
+  ],
+  '3022': [ // mac88
+    { id: 228, name: 'MAC88 Baccarat', image: null },
+  ],
+  '3023': [ // sexy-gaming
+    { id: 229, name: 'Sexy Gaming Baccarat', image: null },
+  ],
 
   // ===== SPORTSBOOK (4xxx) =====
   '4001': [ // sbobet
@@ -352,6 +519,15 @@ const mockGames = {
   ],
   '4005': [ // betpanda
     { id: 304, name: 'Betpanda Sports', image: null },
+  ],
+  '4006': [ // cmd368
+    { id: 305, name: 'CMD368 Sports', image: null },
+  ],
+  '4007': [ // lucky-sports-plus
+    { id: 306, name: 'Lucky Sports', image: null },
+  ],
+  '4008': [ // united-gaming
+    { id: 307, name: 'United Gaming Sports', image: null },
   ],
 
   // ===== TOGEL (5xxx) =====
@@ -392,6 +568,40 @@ const mockGames = {
     { id: 611, name: 'Mines', image: null },
     { id: 612, name: 'Plinko', image: null },
   ],
+  '6005': [ // brand-arc-jdb
+    { id: 613, name: 'JDB Arcade', image: null },
+  ],
+  '6006': [ // brand-arc-cq9
+    { id: 614, name: 'CQ9 Arcade', image: null },
+  ],
+  '6007': [ // brand-arc-fachai
+    { id: 615, name: 'FA Chai Arcade', image: null },
+  ],
+  '6008': [ // brand-arc-rich88
+    { id: 616, name: 'Rich88 Arcade', image: null },
+  ],
+  '6009': [ // brand-arc-askmeslot
+    { id: 617, name: 'AskMeSlot Arcade', image: null },
+  ],
+  '6010': [ // brand-arc-six
+    { id: 618, name: 'Arcade', image: null },
+  ],
+
+  // ===== CRUSH (9xxx) =====
+  '9001': [{ id: 901, name: 'Crush Game 1', image: null }],
+  '9002': [{ id: 902, name: 'Crush Game 2', image: null }],
+  '9003': [{ id: 903, name: 'Crush Game 3', image: null }],
+  '9004': [{ id: 904, name: 'Crush Game 4', image: null }],
+  '9005': [{ id: 905, name: 'Crush Game 5', image: null }],
+  '9006': [{ id: 906, name: 'Crush Game 6', image: null }],
+  '9007': [{ id: 907, name: 'Crush Game 7', image: null }],
+  '9008': [{ id: 908, name: 'Crush Game 8', image: null }],
+  '9009': [{ id: 909, name: 'Crush Game 9', image: null }],
+
+  // ===== ESPORTS (91xx) =====
+  '9101': [{ id: 911, name: 'IA Esports', image: null }],
+  '9102': [{ id: 912, name: 'SBOBET Esports', image: null }],
+  '9103': [{ id: 913, name: '100HP Gaming', image: null }],
 
   // ===== POKER (7xxx) =====
   '7001': [ // millionaire-poker
@@ -1140,6 +1350,20 @@ router.get('/arcade', (req, res) => {
   res.json(mockArcadeProviders)
 })
 
+// GET /crush
+router.get('/crush', (req, res) => {
+  console.log('📡 GET /crush')
+  console.log('✅ Response:', JSON.stringify(mockCrushProviders, null, 2))
+  res.json(mockCrushProviders)
+})
+
+// GET /esports
+router.get('/esports', (req, res) => {
+  console.log('📡 GET /esports')
+  console.log('✅ Response:', JSON.stringify(mockEsportsProviders, null, 2))
+  res.json(mockEsportsProviders)
+})
+
 // GET /poker
 router.get('/poker', (req, res) => {
   console.log('📡 GET /poker')
@@ -1318,6 +1542,130 @@ router.post('/__e2e/reset-transactions', (req, res) => {
   res.json({ ok: true })
 })
 
+const BANNER_OPTIONAL_KEYS = [
+  'title_line1',
+  'title_line2',
+  'titleLine1',
+  'titleLine2',
+  'description',
+  'tag',
+  'gradient',
+]
+
+function sanitizeMockBannerArray(arr) {
+  return arr.map((b, i) => {
+    if (!b || typeof b !== 'object' || Array.isArray(b)) {
+      return { id: `banner-${i + 1}`, image: '', link: '/promo' }
+    }
+    const item = {
+      id: b.id != null ? String(b.id) : `banner-${i + 1}`,
+      image: b.image != null ? String(b.image) : '',
+      link: b.link != null ? String(b.link) : '/promo',
+    }
+    for (const k of BANNER_OPTIONAL_KEYS) {
+      if (b[k] != null && String(b[k]).trim() !== '') item[k] = String(b[k])
+    }
+    return item
+  })
+}
+
+/**
+ * PATCH partial `about` + `banner` di memori — GET /info langsung mengikuti.
+ * Dev/mock only. Jika BRAND_CARD_ADMIN_KEY diset, kirim header X-Admin-Key.
+ */
+router.patch('/__mock/website-config', requireBrandCardAdmin, (req, res) => {
+  const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {}
+  const { about, banner } = body
+
+  if (about !== undefined) {
+    if (typeof about !== 'string') {
+      return res.status(400).json({ message: 'about must be a string' })
+    }
+    mockWebsiteConfig.about = about
+  }
+  if (banner !== undefined) {
+    if (!Array.isArray(banner)) {
+      return res.status(400).json({ message: 'banner must be an array' })
+    }
+    mockWebsiteConfig.banner = sanitizeMockBannerArray(banner)
+  }
+
+  if (about === undefined && banner === undefined) {
+    return res.status(400).json({ message: 'provide at least one of: about, banner' })
+  }
+
+  res.json({
+    ok: true,
+    config: {
+      about: mockWebsiteConfig.about,
+      banner: mockWebsiteConfig.banner,
+    },
+  })
+})
+
+/**
+ * POST multipart: character, logo (files) + category, id (fields). Optional: options (JSON string).
+ * Menulis WebP 290×180 ke public/animated-brand/{category}/{category}-{id}.webp
+ * Set BRAND_CARD_ADMIN_KEY + header X-Admin-Key untuk membatasi akses.
+ */
+router.post(
+  '/admin/normalize-brand-card',
+  requireBrandCardAdmin,
+  uploadBrandCard.fields([
+    { name: 'character', maxCount: 1 },
+    { name: 'logo', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const category = safeBrandSlug(req.body?.category || '')
+      const id = safeBrandSlug(req.body?.id || '')
+      if (!category || !id) {
+        return res.status(400).json({
+          message: 'category and id are required (URL-safe slug, e.g. slot + slot-partner-11)',
+        })
+      }
+      const charFile = req.files?.character?.[0]
+      const logoFile = req.files?.logo?.[0]
+      if (!charFile?.buffer || !logoFile?.buffer) {
+        return res.status(400).json({ message: 'multipart files "character" and "logo" are required' })
+      }
+
+      let options = {}
+      if (req.body?.options && typeof req.body.options === 'string') {
+        try {
+          options = JSON.parse(req.body.options)
+          if (options == null || typeof options !== 'object' || Array.isArray(options)) options = {}
+        } catch {
+          return res.status(400).json({ message: 'options must be valid JSON object string' })
+        }
+      }
+
+      const modUrl = pathToFileURL(path.join(__dirname, '../scripts/lib/brandCardNormalize.mjs')).href
+      const { normalizeBrandCardToWebp, BRAND_CARD } = await import(modUrl)
+      const webp = await normalizeBrandCardToWebp(charFile.buffer, logoFile.buffer, options)
+
+      const projectRoot = path.join(__dirname, '..')
+      const outDir = path.join(projectRoot, 'public', 'animated-brand', category)
+      const fileName = `${category}-${id}.webp`
+      fs.mkdirSync(outDir, { recursive: true })
+      const outPath = path.join(outDir, fileName)
+      fs.writeFileSync(outPath, webp)
+
+      const relativeUrl = `/animated-brand/${category}/${fileName}`
+      return res.json({
+        ok: true,
+        relativeUrl,
+        bytes: webp.length,
+        width: BRAND_CARD.CARD_W,
+        height: BRAND_CARD.CARD_H,
+      })
+    } catch (e) {
+      console.error('normalize-brand-card:', e)
+      return res.status(500).json({ message: e?.message || 'normalize failed' })
+    }
+  }
+)
+
 // Mount router
 app.use('/api/v1', router)
 
@@ -1326,12 +1674,16 @@ app.get('/', (req, res) => {
   res.redirect('/docs')
 })
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n🚀 Mock API Server running!`)
-  console.log(`   API:     http://localhost:${PORT}/api/v1`)
-  console.log(`   Swagger: http://localhost:${PORT}/docs`)
-  console.log(`\n📝 Test Credentials:`)
-  console.log(`   Username: user1`)
-  console.log(`   Password: 123\n`)
-})
+// Start server hanya saat dijalankan langsung (bukan saat di-import untuk tes)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Mock API Server running!`)
+    console.log(`   API:     http://localhost:${PORT}/api/v1`)
+    console.log(`   Swagger: http://localhost:${PORT}/docs`)
+    console.log(`\n📝 Test Credentials:`)
+    console.log(`   Username: user1`)
+    console.log(`   Password: 123\n`)
+  })
+}
+
+module.exports = { app }

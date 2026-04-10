@@ -11,6 +11,14 @@ const animatedMap = JSON.parse(
 )
 
 describe('Provider API response → ProviderCard props', () => {
+  it('image string kosong dari API → logoImg/characterImg null (hindari src="")', () => {
+    const [card] = transformProviderData([
+      { provider_id: 1, name: 'x', image: '', badge: null },
+    ])
+    assert.equal(card.logoImg, null)
+    assert.equal(card.characterImg, null)
+  })
+
   it('transformProviderData memetakan provider_id, name, image, badge', () => {
     const rows = [
       {
@@ -48,18 +56,37 @@ describe('Provider API response → ProviderCard props', () => {
   })
 
   it('arcade: JSON mock mengarah ke animated-brand/arcade', () => {
-    for (const id of ['6001', '6002', '6003', '6004']) {
+    const arcadeIds = ['6001', '6002', '6003', '6004', '6005', '6006', '6007', '6008', '6009', '6010']
+    for (const id of arcadeIds) {
       const url = animatedMap[id]
       assert.ok(url, `missing ${id}`)
       assert.match(url, /animated-brand\/arcade\//)
     }
-    const list = [6001, 6002, 6003, 6004].map((provider_id) => ({
-      provider_id,
-      name: `provider-${provider_id}`,
-      image: animatedMap[String(provider_id)],
+    const list = arcadeIds.map((id) => ({
+      provider_id: Number(id),
+      name: `provider-${id}`,
+      image: animatedMap[id],
     }))
     const cards = transformProviderData(list)
-    assert.equal(cards.length, 4)
+    assert.equal(cards.length, arcadeIds.length)
     cards.forEach((c) => assert.match(c.logoImg, /animated-brand\/arcade\//))
+  })
+
+  it('crush: JSON mock mengarah ke animated-brand/crush', () => {
+    const crushIds = ['9001', '9002', '9003', '9004', '9005', '9006', '9007', '9008', '9009']
+    for (const id of crushIds) {
+      const url = animatedMap[id]
+      assert.ok(url, `missing ${id}`)
+      assert.match(url, /animated-brand\/crush\//)
+    }
+  })
+
+  it('esports: JSON mock mengarah ke animated-brand/esports', () => {
+    const esportsIds = ['9101', '9102', '9103']
+    for (const id of esportsIds) {
+      const url = animatedMap[id]
+      assert.ok(url, `missing ${id}`)
+      assert.match(url, /animated-brand\/esports\//)
+    }
   })
 })
