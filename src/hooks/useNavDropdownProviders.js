@@ -6,6 +6,8 @@ import {
   getTogelProviders,
   getFishProviders,
   getArcadeProviders,
+  getCrushProviders,
+  getEsportsProviders,
   getPokerProviders,
   getCockfightProviders,
 } from '../services/api'
@@ -16,6 +18,8 @@ import {
   togelProviders,
   fishingProviders,
   arcadeProviders,
+  crushProviders,
+  esportsProviders,
   pokerProviders,
   cockfightProviders,
 } from '../config/providers'
@@ -28,6 +32,8 @@ const CATEGORY_IDS = [
   'togel',
   'fishing',
   'arcade',
+  'crush',
+  'esports',
   'poker',
   'sabung',
 ]
@@ -39,6 +45,8 @@ const fetchers = {
   togel: getTogelProviders,
   fishing: getFishProviders,
   arcade: getArcadeProviders,
+  crush: getCrushProviders,
+  esports: getEsportsProviders,
   poker: getPokerProviders,
   sabung: getCockfightProviders,
 }
@@ -50,6 +58,8 @@ const staticByCategory = {
   togel: togelProviders,
   fishing: fishingProviders,
   arcade: arcadeProviders,
+  crush: crushProviders,
+  esports: esportsProviders,
   poker: pokerProviders,
   sabung: cockfightProviders,
 }

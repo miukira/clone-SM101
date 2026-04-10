@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ProviderCard from '../components/ProviderCard'
 import FooterChrome from '../components/FooterChrome'
@@ -9,6 +9,10 @@ import { useProviders } from '../hooks/useProviders'
 import { useNavDropdownProviders } from '../hooks/useNavDropdownProviders'
 import { useLotteryResults, parseResultToNumbers, MARKET_DISPLAY_NAMES } from '../hooks/useLottery'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
+import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
+import { mapConfigBannersToPromoSlides } from '../utils/mapHomePromoBanners.js'
+import { useWebsite } from '../context/WebsiteContext'
 
 // Import promo banner images
 import welcomeBonus from '../assets/banners/welcome-bonus.webp'
@@ -22,6 +26,8 @@ import {
   togelProviders,
   fishingProviders,
   arcadeProviders,
+  crushProviders,
+  esportsProviders,
   pokerProviders,
   cockfightProviders,
 } from '../config/providers'
@@ -34,6 +40,8 @@ import {
   LotteryIconChrome,
   FishingIconChrome,
   ArcadeIconChrome,
+  CrushIconChrome,
+  EsportsIconChrome,
   PokerIconChrome,
   CockFightingIconChrome,
   HomeIconChrome,
@@ -82,6 +90,8 @@ const headerMenuItems = [
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
   { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome, providers: arcadeProviders },
+  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome, providers: crushProviders },
+  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome, providers: esportsProviders },
   { id: 'poker', name: 'POKER', icon: PokerIconChrome, providers: pokerProviders },
   { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome, providers: cockfightProviders },
   { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, isPage: true, path: '/promo' },
@@ -96,6 +106,8 @@ const categories = [
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
   { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome, providers: arcadeProviders },
+  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome, providers: crushProviders },
+  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome, providers: esportsProviders },
   { id: 'poker', name: 'POKER', icon: PokerIconChrome, providers: pokerProviders },
   { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome, providers: cockfightProviders },
 ]
@@ -295,55 +307,96 @@ function MobileCategoryTab({ category, active, onClick }) {
   )
 }
 
-// Promo Banner Component - Responsive with Styled Slider
+/** Fallback slider bila `config.banner` dari API kosong */
+const STATIC_PROMO_SLIDES = [
+  {
+    id: 'static-1',
+    link: '/promo',
+    titleLine1: 'WELCOME BONUS',
+    titleLine2: 'NEW MEMBER 100%',
+    description: 'Dapatkan bonus deposit pertama hingga 1.000.000 IDR',
+    tag: '🎁 PROMO SPESIAL',
+    gradient: 'from-[#1a1a40] via-[#15153a] to-[#0d0d25]',
+    image: publicAssetUrl(welcomeBonus),
+  },
+  {
+    id: 'static-2',
+    link: '/promo',
+    titleLine1: 'BONUS DEPOSIT',
+    titleLine2: 'HARIAN 10%',
+    description: 'Nikmati bonus deposit harian 10% setiap hari untuk semua game slot',
+    tag: '🔥 BONUS HARIAN',
+    gradient: 'from-[#1a2a1a] via-[#15251a] to-[#0d1a0d]',
+    image: publicAssetUrl(bonusDeposit),
+  },
+  {
+    id: 'static-3',
+    link: '/promo',
+    titleLine1: 'CASHBACK MINGGUAN',
+    titleLine2: 'HINGGA 15%',
+    description: 'Nikmati cashback setiap minggu tanpa syarat turnover',
+    tag: '💰 CASHBACK',
+    gradient: 'from-[#2a1a1a] via-[#251515] to-[#1a0d0d]',
+    image: publicAssetUrl(bannerBaru),
+  },
+]
+
+function openBannerLink(link, navigate) {
+  const l = (link || '/promo').trim()
+  if (/^https?:\/\//i.test(l)) {
+    window.open(l, '_blank', 'noopener,noreferrer')
+  } else {
+    navigate(l.startsWith('/') ? l : `/${l}`)
+  }
+}
+
+/** Teks `config.about` dari API — sama sumber dengan footer */
+function HomeAboutBlurb() {
+  const { about } = useWebsite()
+  const text = about?.trim()
+  if (!text) return null
+  return (
+    <section className="mb-4 md:mb-6" aria-label="Tentang situs">
+      <p className="text-[10px] md:text-xs text-[#909090] leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
+        {text}
+      </p>
+    </section>
+  )
+}
+
+// Promo Banner — prioritas `config.banner` dari GET /info, lalu fallback statis
 function PromoBanner() {
+  const navigate = useNavigate()
+  const { banners: apiBanners, title: siteTitle } = useWebsite()
+
+  const slides = useMemo(() => {
+    const fromApi = mapConfigBannersToPromoSlides(apiBanners, siteTitle)
+    return fromApi.length > 0 ? fromApi : STATIC_PROMO_SLIDES
+  }, [apiBanners, siteTitle])
+
   const [currentSlide, setCurrentSlide] = useState(0)
-  
-  const banners = [
-    {
-      titleLine1: 'WELCOME BONUS',
-      titleLine2: 'NEW MEMBER 100%',
-      description: 'Dapatkan bonus deposit pertama hingga 1.000.000 IDR',
-      tag: '🎁 PROMO SPESIAL',
-      gradient: 'from-[#1a1a40] via-[#15153a] to-[#0d0d25]',
-      image: publicAssetUrl(welcomeBonus),
-    },
-    {
-      titleLine1: 'BONUS DEPOSIT',
-      titleLine2: 'HARIAN 10%',
-      description: 'Nikmati bonus deposit harian 10% setiap hari untuk semua game slot',
-      tag: '🔥 BONUS HARIAN',
-      gradient: 'from-[#1a2a1a] via-[#15251a] to-[#0d1a0d]',
-      image: publicAssetUrl(bonusDeposit),
-    },
-    {
-      titleLine1: 'CASHBACK MINGGUAN',
-      titleLine2: 'HINGGA 15%',
-      description: 'Nikmati cashback setiap minggu tanpa syarat turnover',
-      tag: '💰 CASHBACK',
-      gradient: 'from-[#2a1a1a] via-[#251515] to-[#1a0d0d]',
-      image: publicAssetUrl(bannerBaru),
-    },
-  ]
-  
-  // Auto slide
+
+  useEffect(() => {
+    setCurrentSlide(0)
+  }, [slides.length])
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % banners.length)
+      setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
     return () => clearInterval(timer)
-  }, [banners.length])
-  
-  const banner = banners[currentSlide]
-  
+  }, [slides.length])
+
+  const banner = slides[currentSlide]
+
   return (
     <div className="relative rounded-xl md:rounded-2xl overflow-hidden">
       {/* Banner Content */}
       <div className={`relative min-h-[180px] md:min-h-[240px] lg:min-h-[280px] xl:min-h-[320px]`}>
         {/* Full background image */}
         <div className="absolute inset-0 overflow-hidden">
-          <img 
-            src={publicAssetUrl(banner.image)} 
+          <img
+            src={banner.image}
             alt=""
             className="w-full h-full object-cover object-center transition-opacity duration-500"
           />
@@ -375,10 +428,18 @@ function PromoBanner() {
           
           {/* Buttons */}
           <div className="flex gap-2 md:gap-3">
-            <button className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] md:text-sm font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg tracking-wider">
+            <button
+              type="button"
+              onClick={() => openBannerLink(banner.link, navigate)}
+              className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] md:text-sm font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg tracking-wider"
+            >
               CLAIM SEKARANG
             </button>
-            <button className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg text-white/80 text-[10px] md:text-sm font-bold hover:bg-white/20 transition-all tracking-wider hidden md:block">
+            <button
+              type="button"
+              onClick={() => navigate('/promo')}
+              className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg text-white/80 text-[10px] md:text-sm font-bold hover:bg-white/20 transition-all tracking-wider hidden md:block"
+            >
               SYARAT & KETENTUAN
             </button>
           </div>
@@ -387,7 +448,7 @@ function PromoBanner() {
       
       {/* Slide Indicators */}
       <div className="absolute bottom-3 md:bottom-4 lg:bottom-5 left-1/2 -translate-x-1/2 flex gap-1.5 md:gap-2">
-        {banners.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentSlide(i)}
@@ -402,13 +463,13 @@ function PromoBanner() {
       
       {/* Navigation Arrows - Desktop only */}
       <button 
-        onClick={() => setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)}
+        onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
         className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 backdrop-blur rounded-full items-center justify-center text-white hover:bg-black/70 transition-all"
       >
         ‹
       </button>
       <button 
-        onClick={() => setCurrentSlide((prev) => (prev + 1) % banners.length)}
+        onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
         className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 backdrop-blur rounded-full items-center justify-center text-white hover:bg-black/70 transition-all"
       >
         ›
@@ -515,20 +576,40 @@ function JackpotCounter({ isMobile = false }) {
 // Mobile Provider Card - Compact Grid Style with Animation
 function MobileProviderCard({ provider }) {
   const [isHovered, setIsHovered] = useState(false)
-  
+  /** 0: API / default file; 1: paksa default; 2: 🎰 */
+  const [heroTier, setHeroTier] = useState(0)
+
   if (!provider) return null
-  
+
   // Handle badge - can be object {type: 'hot'} or string 'HOT'
   const badgeType = typeof provider.badge === 'object' ? provider.badge?.type : provider.badge
   const isHot = badgeType === 'hot' || badgeType === 'HOT'
   const isNew = badgeType === 'new' || badgeType === 'NEW'
-  
-  const characterImage = provider.characterImg
-  const logoImage = provider.logoImg
-  const heroImage = logoImage || characterImage
+
+  const characterImage = normalizeImageUrl(provider.characterImg)
+  const logoImage = normalizeImageUrl(provider.logoImg)
+  const heroImage = logoImage ?? characterImage
   const showCornerLogo =
     Boolean(logoImage && characterImage && logoImage !== characterImage)
   const name = provider.name || provider.logoAlt || 'Provider'
+
+  useEffect(() => {
+    setHeroTier(0)
+  }, [heroImage])
+
+  const mobileHeroUrl =
+    heroTier === 0
+      ? publicAssetUrl(heroImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      : heroTier === 1
+        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        : null
+
+  const handleMobileHeroError = () => {
+    setHeroTier((t) => {
+      if (t === 0 && heroImage) return 1
+      return 2
+    })
+  }
 
   return (
     <div 
@@ -551,14 +632,12 @@ function MobileProviderCard({ provider }) {
       
       {/* Satu gambar penuh (API: logo & character sama URL → tanpa overlay ganda) */}
       <div className="relative h-32 overflow-hidden bg-gradient-to-b from-[#252525] to-[#1a1a1a]">
-        {heroImage ? (
+        {mobileHeroUrl ? (
           <img
-            src={publicAssetUrl(heroImage)}
+            src={mobileHeroUrl}
             alt={name}
             className={`w-full h-full object-cover object-center transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
-            onError={(e) => {
-              e.target.style.display = 'none'
-            }}
+            onError={handleMobileHeroError}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl opacity-30">🎰</div>
@@ -649,6 +728,28 @@ function MobileBottomNav() {
 
 // ============ MINI PROVIDER CARD (shortcut) ============
 function MiniProviderCard({ provider, isActive, onClick }) {
+  const thumb =
+    normalizeImageUrl(provider.logoImg) ?? normalizeImageUrl(provider.characterImg)
+  const [thumbTier, setThumbTier] = useState(0)
+
+  useEffect(() => {
+    setThumbTier(0)
+  }, [thumb])
+
+  const miniThumbUrl =
+    thumbTier === 0
+      ? publicAssetUrl(thumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      : thumbTier === 1
+        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        : null
+
+  const handleMiniThumbError = () => {
+    setThumbTier((t) => {
+      if (t === 0 && thumb) return 1
+      return 2
+    })
+  }
+
   return (
     <button
       onClick={onClick}
@@ -662,13 +763,20 @@ function MiniProviderCard({ provider, isActive, onClick }) {
       <div className={`w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-300 ${
         isActive ? 'bg-[#1a1a1a] ring-1 ring-[#444]' : 'bg-[#111] group-hover:bg-[#1a1a1a]'
       }`}>
-        <img
-          src={publicAssetUrl(provider.logoImg || provider.characterImg)}
-          alt={provider.name}
-          className={`max-w-[90%] max-h-[90%] object-contain transition-all duration-300 ${
-            isActive ? 'brightness-125 drop-shadow-[0_0_4px_rgba(192,192,192,0.3)]' : 'brightness-75 group-hover:brightness-100'
-          }`}
-        />
+        {miniThumbUrl ? (
+          <img
+            src={miniThumbUrl}
+            alt={provider.name}
+            onError={handleMiniThumbError}
+            className={`max-w-[90%] max-h-[90%] object-contain transition-all duration-300 ${
+              isActive ? 'brightness-125 drop-shadow-[0_0_4px_rgba(192,192,192,0.3)]' : 'brightness-75 group-hover:brightness-100'
+            }`}
+          />
+        ) : (
+          <span className="text-lg opacity-40" aria-hidden>
+            🎰
+          </span>
+        )}
       </div>
       <span className={`text-[8px] font-bold tracking-wider truncate max-w-full transition-colors ${
         isActive ? 'text-[#E0E0E0]' : 'text-[#606060] group-hover:text-[#A0A0A0]'
@@ -1078,7 +1186,8 @@ export default function HomePageChrome() {
           <section className="mb-6">
             <PromoBanner />
           </section>
-          
+          <HomeAboutBlurb />
+
           {/* LIVE JACKPOT - Desktop */}
           <section className="mb-6 pb-6 themed-border-bottom">
             <JackpotCounter isMobile={false} />
@@ -1215,7 +1324,8 @@ export default function HomePageChrome() {
           <section className="mb-3">
             <PromoBanner />
           </section>
-          
+          <HomeAboutBlurb />
+
           {/* Togel Results - Horizontal Scroll */}
           <section className="mb-3">
             <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2">

@@ -61,7 +61,9 @@ export function WebsiteProvider({ children }) {
       link.rel = 'icon'
       document.head.appendChild(link)
     }
-    link.href = publicAssetUrl(faviconUrl)
+    const href = publicAssetUrl(faviconUrl)
+    if (!href) return
+    link.href = href
     console.log('🎨 Favicon updated:', faviconUrl)
   }
 
@@ -92,8 +94,11 @@ export function WebsiteProvider({ children }) {
   const banners = config.banner || []
   const theme = config.theme || {}
   const contact = config.contact || {}
-  const logo = publicAssetUrl(config.logo || '/logo.png')
-  const title = config.title || 'PUSATTOGEL'
+  const rawLogo = config.logo != null ? String(config.logo).trim() : ''
+  const logo = publicAssetUrl(rawLogo !== '' ? rawLogo : '/logo.png')
+  const title = (config.title != null && String(config.title).trim() !== ''
+    ? String(config.title).trim()
+    : null) || 'PUSATTOGEL'
   const about = config.about || ''
   const footerPromo = config.footer_promo ?? null
 

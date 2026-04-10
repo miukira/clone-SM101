@@ -367,6 +367,37 @@ const mockSlotProviders = [
   { provider_id: 1021, name: 'fastspin', image: pImg(1021) },
   { provider_id: 1022, name: 'dragoonsoft', image: pImg(1022) },
   { provider_id: 1023, name: 'nagagames', image: pImg(1023) },
+  { provider_id: 1024, name: 'slot-partner-1', image: pImg(1024) },
+  { provider_id: 1025, name: 'slot-partner-2', image: pImg(1025) },
+  { provider_id: 1026, name: 'slot-partner-3', image: pImg(1026) },
+  { provider_id: 1027, name: 'slot-partner-4', image: pImg(1027) },
+  { provider_id: 1028, name: 'slot-partner-5', image: pImg(1028) },
+  { provider_id: 1029, name: 'slot-partner-6', image: pImg(1029) },
+  { provider_id: 1030, name: 'slot-partner-7', image: pImg(1030) },
+  { provider_id: 1031, name: 'slot-partner-8', image: pImg(1031) },
+  { provider_id: 1032, name: 'slot-partner-9', image: pImg(1032) },
+  { provider_id: 1033, name: 'slot-partner-10', image: pImg(1033) },
+  { provider_id: 1034, name: 'slot-partner-11', image: pImg(1034) },
+  { provider_id: 1035, name: 'slot-partner-12', image: pImg(1035) },
+  { provider_id: 1036, name: 'slot-partner-13', image: pImg(1036) },
+  { provider_id: 1037, name: 'slot-partner-14', image: pImg(1037) },
+  { provider_id: 1038, name: 'slot-partner-15', image: pImg(1038) },
+  { provider_id: 1039, name: 'slot-partner-16', image: pImg(1039) },
+  { provider_id: 1040, name: 'slot-partner-17', image: pImg(1040) },
+  { provider_id: 1041, name: 'slot-partner-18', image: pImg(1041) },
+  { provider_id: 1042, name: 'slot-partner-19', image: pImg(1042) },
+  { provider_id: 1043, name: 'slot-partner-20', image: pImg(1043) },
+  { provider_id: 1044, name: 'slot-partner-21', image: pImg(1044) },
+  { provider_id: 1045, name: 'slot-partner-22', image: pImg(1045) },
+  { provider_id: 1046, name: 'slot-partner-23', image: pImg(1046) },
+  { provider_id: 1047, name: 'slot-partner-24', image: pImg(1047) },
+  { provider_id: 1048, name: 'slot-partner-25', image: pImg(1048) },
+  { provider_id: 1049, name: 'slot-partner-26', image: pImg(1049) },
+  { provider_id: 1050, name: 'slot-partner-27', image: pImg(1050) },
+  { provider_id: 1051, name: 'slot-partner-28', image: pImg(1051) },
+  { provider_id: 1052, name: 'slot-partner-29', image: pImg(1052) },
+  { provider_id: 1053, name: 'slot-partner-30', image: pImg(1053) },
+  { provider_id: 1054, name: 'slot-partner-31', image: pImg(1054) },
 ]
 
 // ============ FISH PROVIDERS (2xxx) ============
@@ -378,6 +409,9 @@ const mockFishProviders = [
   { provider_id: 2005, name: 'dragoon-fishing', image: pImg(2005) },
   { provider_id: 2006, name: 'cq9-fishing', image: pImg(2006) },
   { provider_id: 2007, name: 'fachai-fishing', image: pImg(2007) },
+  { provider_id: 2008, name: 'brand-bt-gaming', image: pImg(2008) },
+  { provider_id: 2009, name: 'brand-v-plus', image: pImg(2009) },
+  { provider_id: 2010, name: 'brand-ka-gaming', image: pImg(2010) },
 ]
 
 // ============ CASINO PROVIDERS (3xxx) ============
@@ -396,6 +430,15 @@ const mockCasinoProviders = [
   { provider_id: 3012, name: 'asia-gaming', image: pImg(3012) },
   { provider_id: 3013, name: 'wcasino', image: pImg(3013) },
   { provider_id: 3014, name: 'gameplay-interactive', image: pImg(3014) },
+  { provider_id: 3015, name: 'ezugi', image: pImg(3015) },
+  { provider_id: 3016, name: 'a-star', image: pImg(3016) },
+  { provider_id: 3017, name: 'grand-live', image: pImg(3017) },
+  { provider_id: 3019, name: 'lucky-heart-live', image: pImg(3019) },
+  { provider_id: 3020, name: 'casinogame', image: pImg(3020) },
+  { provider_id: 3021, name: 'dream-gaming', image: pImg(3021) },
+  { provider_id: 3022, name: 'mac88', image: pImg(3022) },
+  { provider_id: 3023, name: 'sexy-gaming', image: pImg(3023) },
+  { provider_id: 3018, name: 'microgaming-live', image: pImg(3018) },
 ]
 
 // ============ SPORTSBOOK PROVIDERS (4xxx) ============
@@ -405,6 +448,9 @@ const mockSportsbookProviders = [
   { provider_id: 4003, name: 'afb777-sports', image: pImg(4003) },
   { provider_id: 4004, name: 'bti', image: pImg(4004) },
   { provider_id: 4005, name: 'betpanda', image: pImg(4005) },
+  { provider_id: 4006, name: 'cmd368', image: pImg(4006) },
+  { provider_id: 4007, name: 'lucky-sports-plus', image: pImg(4007) },
+  { provider_id: 4008, name: 'united-gaming', image: pImg(4008) },
 ]
 
 // ============ TOGEL PROVIDERS (5xxx) ============
@@ -424,6 +470,32 @@ const mockArcadeProviders = [
   { provider_id: 6002, name: 'kingmidas-arcade', image: pImg(6002) },
   { provider_id: 6003, name: 'sbobet-arcade', image: pImg(6003) },
   { provider_id: 6004, name: 'spribe-arcade', image: pImg(6004) },
+  { provider_id: 6005, name: 'brand-arc-jdb', image: pImg(6005) },
+  { provider_id: 6006, name: 'brand-arc-cq9', image: pImg(6006) },
+  { provider_id: 6007, name: 'brand-arc-fachai', image: pImg(6007) },
+  { provider_id: 6008, name: 'brand-arc-rich88', image: pImg(6008) },
+  { provider_id: 6009, name: 'brand-arc-askmeslot', image: pImg(6009) },
+  { provider_id: 6010, name: 'brand-arc-six', image: pImg(6010) },
+]
+
+// ============ CRUSH PROVIDERS (9xxx) ============
+const mockCrushProviders = [
+  { provider_id: 9001, name: 'crush-rocket-1', image: pImg(9001) },
+  { provider_id: 9002, name: 'crush-rocket-2', image: pImg(9002) },
+  { provider_id: 9003, name: 'crush-rocket-3', image: pImg(9003) },
+  { provider_id: 9004, name: 'crush-rocket-4', image: pImg(9004) },
+  { provider_id: 9005, name: 'crush-rocket-5', image: pImg(9005) },
+  { provider_id: 9006, name: 'crush-rocket-6', image: pImg(9006) },
+  { provider_id: 9007, name: 'crush-rocket-7', image: pImg(9007) },
+  { provider_id: 9008, name: 'crush-rocket-8', image: pImg(9008) },
+  { provider_id: 9009, name: 'crush-rocket-9', image: pImg(9009) },
+]
+
+// ============ ESPORTS PROVIDERS (91xx) ============
+const mockEsportsProviders = [
+  { provider_id: 9101, name: 'ia-esports', image: pImg(9101) },
+  { provider_id: 9102, name: 'sbobetesports', image: pImg(9102) },
+  { provider_id: 9103, name: 'hp-gaming', image: pImg(9103) },
 ]
 
 // ============ POKER PROVIDERS (7xxx) ============
@@ -529,6 +601,37 @@ const mockGames = {
   '1023': [ // nagagames
     { game_id: 59, provider_id: 1023, name: 'naga-treasure', display_name: 'Naga Treasure', image: null, rtp: 96.5 },
   ],
+  '1024': [ { game_id: 60, provider_id: 1024, name: 'slot-partner-1', display_name: 'Slot Partner 1', image: null, rtp: 96.5 } ],
+  '1025': [ { game_id: 61, provider_id: 1025, name: 'slot-partner-2', display_name: 'Slot Partner 2', image: null, rtp: 96.5 } ],
+  '1026': [ { game_id: 62, provider_id: 1026, name: 'slot-partner-3', display_name: 'Slot Partner 3', image: null, rtp: 96.5 } ],
+  '1027': [ { game_id: 63, provider_id: 1027, name: 'slot-partner-4', display_name: 'Slot Partner 4', image: null, rtp: 96.5 } ],
+  '1028': [ { game_id: 64, provider_id: 1028, name: 'slot-partner-5', display_name: 'Slot Partner 5', image: null, rtp: 96.5 } ],
+  '1029': [ { game_id: 65, provider_id: 1029, name: 'slot-partner-6', display_name: 'Slot Partner 6', image: null, rtp: 96.5 } ],
+  '1030': [ { game_id: 66, provider_id: 1030, name: 'slot-partner-7', display_name: 'Slot Partner 7', image: null, rtp: 96.5 } ],
+  '1031': [ { game_id: 67, provider_id: 1031, name: 'slot-partner-8', display_name: 'Slot Partner 8', image: null, rtp: 96.5 } ],
+  '1032': [ { game_id: 68, provider_id: 1032, name: 'slot-partner-9', display_name: 'Slot Partner 9', image: null, rtp: 96.5 } ],
+  '1033': [ { game_id: 69, provider_id: 1033, name: 'slot-partner-10', display_name: 'Slot Partner 10', image: null, rtp: 96.5 } ],
+  '1034': [ { game_id: 70, provider_id: 1034, name: 'slot-partner-11', display_name: 'Slot Partner 11', image: null, rtp: 96.5 } ],
+  '1035': [ { game_id: 71, provider_id: 1035, name: 'slot-partner-12', display_name: 'Slot Partner 12', image: null, rtp: 96.5 } ],
+  '1036': [ { game_id: 72, provider_id: 1036, name: 'slot-partner-13', display_name: 'Slot Partner 13', image: null, rtp: 96.5 } ],
+  '1037': [ { game_id: 73, provider_id: 1037, name: 'slot-partner-14', display_name: 'Slot Partner 14', image: null, rtp: 96.5 } ],
+  '1038': [ { game_id: 74, provider_id: 1038, name: 'slot-partner-15', display_name: 'Slot Partner 15', image: null, rtp: 96.5 } ],
+  '1039': [ { game_id: 75, provider_id: 1039, name: 'slot-partner-16', display_name: 'Slot Partner 16', image: null, rtp: 96.5 } ],
+  '1040': [ { game_id: 76, provider_id: 1040, name: 'slot-partner-17', display_name: 'Slot Partner 17', image: null, rtp: 96.5 } ],
+  '1041': [ { game_id: 77, provider_id: 1041, name: 'slot-partner-18', display_name: 'Slot Partner 18', image: null, rtp: 96.5 } ],
+  '1042': [ { game_id: 78, provider_id: 1042, name: 'slot-partner-19', display_name: 'Slot Partner 19', image: null, rtp: 96.5 } ],
+  '1043': [ { game_id: 79, provider_id: 1043, name: 'slot-partner-20', display_name: 'Slot Partner 20', image: null, rtp: 96.5 } ],
+  '1044': [ { game_id: 80, provider_id: 1044, name: 'slot-partner-21', display_name: 'Slot Partner 21', image: null, rtp: 96.5 } ],
+  '1045': [ { game_id: 81, provider_id: 1045, name: 'slot-partner-22', display_name: 'Slot Partner 22', image: null, rtp: 96.5 } ],
+  '1046': [ { game_id: 82, provider_id: 1046, name: 'slot-partner-23', display_name: 'Slot Partner 23', image: null, rtp: 96.5 } ],
+  '1047': [ { game_id: 83, provider_id: 1047, name: 'slot-partner-24', display_name: 'Slot Partner 24', image: null, rtp: 96.5 } ],
+  '1048': [ { game_id: 84, provider_id: 1048, name: 'slot-partner-25', display_name: 'Slot Partner 25', image: null, rtp: 96.5 } ],
+  '1049': [ { game_id: 85, provider_id: 1049, name: 'slot-partner-26', display_name: 'Slot Partner 26', image: null, rtp: 96.5 } ],
+  '1050': [ { game_id: 86, provider_id: 1050, name: 'slot-partner-27', display_name: 'Slot Partner 27', image: null, rtp: 96.5 } ],
+  '1051': [ { game_id: 87, provider_id: 1051, name: 'slot-partner-28', display_name: 'Slot Partner 28', image: null, rtp: 96.5 } ],
+  '1052': [ { game_id: 88, provider_id: 1052, name: 'slot-partner-29', display_name: 'Slot Partner 29', image: null, rtp: 96.5 } ],
+  '1053': [ { game_id: 89, provider_id: 1053, name: 'slot-partner-30', display_name: 'Slot Partner 30', image: null, rtp: 96.5 } ],
+  '1054': [ { game_id: 90, provider_id: 1054, name: 'slot-partner-31', display_name: 'Slot Partner 31', image: null, rtp: 96.5 } ],
 
   // ===== FISH GAMES (2xxx) =====
   '2001': [ // microgaming-fishing
@@ -554,6 +657,15 @@ const mockGames = {
   ],
   '2007': [ // fachai-fishing
     { game_id: 115, provider_id: 2007, name: 'fachai-fishing', display_name: 'FA Chai Fishing', image: null, rtp: null },
+  ],
+  '2008': [ // brand-bt-gaming
+    { game_id: 116, provider_id: 2008, name: 'bt-gaming-fish', display_name: 'BT Gaming Fishing', image: null, rtp: null },
+  ],
+  '2009': [ // brand-v-plus
+    { game_id: 117, provider_id: 2009, name: 'v-plus-fish', display_name: 'V Plus Fishing', image: null, rtp: null },
+  ],
+  '2010': [ // brand-ka-gaming
+    { game_id: 118, provider_id: 2010, name: 'ka-gaming-fish', display_name: 'KA Gaming Fishing', image: null, rtp: null },
   ],
 
   // ===== CASINO (3xxx) =====
@@ -600,6 +712,33 @@ const mockGames = {
   '3014': [ // gameplay-interactive
     { game_id: 220, provider_id: 3014, name: 'gi-baccarat', display_name: 'GI Baccarat', image: null, rtp: null },
   ],
+  '3015': [ // ezugi
+    { game_id: 221, provider_id: 3015, name: 'ezugi-baccarat', display_name: 'Ezugi Baccarat', image: null, rtp: null },
+  ],
+  '3016': [ // a-star
+    { game_id: 222, provider_id: 3016, name: 'a-star-baccarat', display_name: 'A Star Baccarat', image: null, rtp: null },
+  ],
+  '3017': [ // grand-live
+    { game_id: 223, provider_id: 3017, name: 'grand-live-baccarat', display_name: 'Grand Live Baccarat', image: null, rtp: null },
+  ],
+  '3018': [ // microgaming-live
+    { game_id: 224, provider_id: 3018, name: 'mg-live-roulette', display_name: 'Microgaming Live Roulette', image: null, rtp: null },
+  ],
+  '3019': [ // lucky-heart-live
+    { game_id: 225, provider_id: 3019, name: 'lucky-heart-baccarat', display_name: 'Lucky Heart Baccarat', image: null, rtp: null },
+  ],
+  '3020': [ // casinogame
+    { game_id: 226, provider_id: 3020, name: 'casinogame-baccarat', display_name: 'Casinogame Baccarat', image: null, rtp: null },
+  ],
+  '3021': [ // dream-gaming
+    { game_id: 227, provider_id: 3021, name: 'dream-baccarat', display_name: 'DreamGaming Baccarat', image: null, rtp: null },
+  ],
+  '3022': [ // mac88
+    { game_id: 228, provider_id: 3022, name: 'mac88-baccarat', display_name: 'MAC88 Baccarat', image: null, rtp: null },
+  ],
+  '3023': [ // sexy-gaming
+    { game_id: 229, provider_id: 3023, name: 'sexy-baccarat', display_name: 'Sexy Gaming Baccarat', image: null, rtp: null },
+  ],
 
   // ===== SPORTSBOOK (4xxx) =====
   '4001': [ // sbobet
@@ -616,6 +755,15 @@ const mockGames = {
   ],
   '4005': [ // betpanda
     { game_id: 304, provider_id: 4005, name: 'betpanda-sports', display_name: 'Betpanda Sports', image: null, rtp: null },
+  ],
+  '4006': [ // cmd368
+    { game_id: 305, provider_id: 4006, name: 'cmd368-sports', display_name: 'CMD368 Sports', image: null, rtp: null },
+  ],
+  '4007': [ // lucky-sports-plus
+    { game_id: 306, provider_id: 4007, name: 'lucky-sports', display_name: 'Lucky Sports', image: null, rtp: null },
+  ],
+  '4008': [ // united-gaming
+    { game_id: 307, provider_id: 4008, name: 'united-gaming-sports', display_name: 'United Gaming Sports', image: null, rtp: null },
   ],
 
   // ===== TOGEL (5xxx) =====
@@ -655,6 +803,64 @@ const mockGames = {
     { game_id: 610, provider_id: 6004, name: 'aviator', display_name: 'Aviator', image: null, rtp: 97.0 },
     { game_id: 611, provider_id: 6004, name: 'mines', display_name: 'Mines', image: null, rtp: 97.0 },
     { game_id: 612, provider_id: 6004, name: 'plinko', display_name: 'Plinko', image: null, rtp: 97.0 },
+  ],
+  '6005': [ // brand-arc-jdb
+    { game_id: 613, provider_id: 6005, name: 'jdb-arcade', display_name: 'JDB Arcade', image: null, rtp: null },
+  ],
+  '6006': [ // brand-arc-cq9
+    { game_id: 614, provider_id: 6006, name: 'cq9-arcade', display_name: 'CQ9 Arcade', image: null, rtp: null },
+  ],
+  '6007': [ // brand-arc-fachai
+    { game_id: 615, provider_id: 6007, name: 'fachai-arcade', display_name: 'FA Chai Arcade', image: null, rtp: null },
+  ],
+  '6008': [ // brand-arc-rich88
+    { game_id: 616, provider_id: 6008, name: 'rich88-arcade', display_name: 'Rich88 Arcade', image: null, rtp: null },
+  ],
+  '6009': [ // brand-arc-askmeslot
+    { game_id: 617, provider_id: 6009, name: 'askmeslot-arcade', display_name: 'AskMeSlot Arcade', image: null, rtp: null },
+  ],
+  '6010': [ // brand-arc-six
+    { game_id: 618, provider_id: 6010, name: 'arcade-extra', display_name: 'Arcade', image: null, rtp: null },
+  ],
+
+  // ===== CRUSH (9xxx) =====
+  '9001': [
+    { game_id: 901, provider_id: 9001, name: 'crush-game-1', display_name: 'Crush Game 1', image: null, rtp: null },
+  ],
+  '9002': [
+    { game_id: 902, provider_id: 9002, name: 'crush-game-2', display_name: 'Crush Game 2', image: null, rtp: null },
+  ],
+  '9003': [
+    { game_id: 903, provider_id: 9003, name: 'crush-game-3', display_name: 'Crush Game 3', image: null, rtp: null },
+  ],
+  '9004': [
+    { game_id: 904, provider_id: 9004, name: 'crush-game-4', display_name: 'Crush Game 4', image: null, rtp: null },
+  ],
+  '9005': [
+    { game_id: 905, provider_id: 9005, name: 'crush-game-5', display_name: 'Crush Game 5', image: null, rtp: null },
+  ],
+  '9006': [
+    { game_id: 906, provider_id: 9006, name: 'crush-game-6', display_name: 'Crush Game 6', image: null, rtp: null },
+  ],
+  '9007': [
+    { game_id: 907, provider_id: 9007, name: 'crush-game-7', display_name: 'Crush Game 7', image: null, rtp: null },
+  ],
+  '9008': [
+    { game_id: 908, provider_id: 9008, name: 'crush-game-8', display_name: 'Crush Game 8', image: null, rtp: null },
+  ],
+  '9009': [
+    { game_id: 909, provider_id: 9009, name: 'crush-game-9', display_name: 'Crush Game 9', image: null, rtp: null },
+  ],
+
+  // ===== ESPORTS (91xx) =====
+  '9101': [
+    { game_id: 911, provider_id: 9101, name: 'ia-esports', display_name: 'IA Esports', image: null, rtp: null },
+  ],
+  '9102': [
+    { game_id: 912, provider_id: 9102, name: 'sbobetesports', display_name: 'SBOBET Esports', image: null, rtp: null },
+  ],
+  '9103': [
+    { game_id: 913, provider_id: 9103, name: 'hp-gaming', display_name: '100HP Gaming', image: null, rtp: null },
   ],
 
   // ===== POKER (7xxx) =====
@@ -1613,6 +1819,28 @@ export const getArcadeProviders = async () => {
   console.log('📡 GET /arcade')
   console.log('✅ Response:', mockArcadeProviders)
   return mockArcadeProviders
+}
+
+/**
+ * GET /crush
+ * Response: Provider[]
+ */
+export const getCrushProviders = async () => {
+  await delay(500)
+  console.log('📡 GET /crush')
+  console.log('✅ Response:', mockCrushProviders)
+  return mockCrushProviders
+}
+
+/**
+ * GET /esports
+ * Response: Provider[]
+ */
+export const getEsportsProviders = async () => {
+  await delay(500)
+  console.log('📡 GET /esports')
+  console.log('✅ Response:', mockEsportsProviders)
+  return mockEsportsProviders
 }
 
 /**

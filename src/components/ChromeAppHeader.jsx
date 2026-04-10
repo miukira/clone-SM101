@@ -10,6 +10,8 @@ import {
   SportsIconChrome,
   FishingIconChrome,
   ArcadeIconChrome,
+  CrushIconChrome,
+  EsportsIconChrome,
   PokerIconChrome,
   CockFightingIconChrome,
   PromoIconChrome,
@@ -33,6 +35,8 @@ const gameCategories = [
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome },
   { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome },
+  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome },
+  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome },
   { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome },
   { id: 'poker', name: 'POKER', icon: PokerIconChrome },
 ]
