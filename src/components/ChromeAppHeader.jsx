@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ChromeSiteBrand from './ChromeSiteBrand'
+import { getStoredPlayerBalance } from '../services/api'
 
 /**
  * Desktop nav tabs for Promo / Referral (no provider mega-dropdown).
@@ -79,8 +80,14 @@ export default function ChromeAppHeader({
     }
   }
 
-  const displayBalance =
-    balanceOverride != null && balanceOverride !== undefined ? balanceOverride : user?.balance
+  // Urutan: override halaman → cache LS (sumber tampilan utama; hindari saldo 0 dari context saat transisi) → context
+  let displayBalance = balanceOverride
+  if (displayBalance == null || displayBalance === undefined) {
+    displayBalance = getStoredPlayerBalance()
+  }
+  if (displayBalance == null || displayBalance === undefined) {
+    displayBalance = user?.balance
+  }
   const balanceStr =
     displayBalance != null && displayBalance !== undefined
       ? Number(displayBalance).toLocaleString('id-ID')
@@ -174,7 +181,7 @@ export default function ChromeAppHeader({
                           <button
                             type="button"
                             onClick={() => {
-                              navigate('/member')
+                              navigate('/member/profile')
                               setShowUserMenu(false)
                             }}
                             className="w-full px-4 py-2.5 text-left text-xs text-[#C0C0C0] hover:bg-[#2a2a2a] transition-colors flex items-center gap-3"
@@ -183,7 +190,7 @@ export default function ChromeAppHeader({
                               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                               <circle cx="12" cy="7" r="4" />
                             </svg>
-                            Dashboard
+                            Profile
                           </button>
                           <button
                             type="button"

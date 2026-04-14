@@ -1534,6 +1534,7 @@ components:
           example: website1
         about:
           type: string
+          description: Short site tagline or description (e.g. footer intro). Long structured promo lists are frontend-only, not an API field.
           example: casino website
         logo:
           type: string

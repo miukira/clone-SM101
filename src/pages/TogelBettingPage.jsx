@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useTogelBetting } from '../hooks/useLottery'
 import { useAuth } from '../context/AuthContext'
+import { getStoredPlayerBalance } from '../services/api'
 import AuthModal from '../components/AuthModal'
 import { expandBbfsLines, countBbfsByKind } from '../utils/bbfsExpand'
 import {
@@ -455,7 +456,9 @@ export default function TogelBettingPage() {
             {isAuthenticated ? (
               <div className="text-right">
                 <p className="text-xs text-[#505050]">Saldo</p>
-                <p className="text-[#C0C0C0] font-bold text-sm">Rp {user?.balance?.toLocaleString() || '0'}</p>
+                <p className="text-[#C0C0C0] font-bold text-sm">
+                  Rp {(user?.balance ?? getStoredPlayerBalance() ?? 0).toLocaleString()}
+                </p>
               </div>
             ) : (
               <button

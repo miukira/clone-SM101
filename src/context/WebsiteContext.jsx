@@ -100,7 +100,6 @@ export function WebsiteProvider({ children }) {
     ? String(config.title).trim()
     : null) || 'PUSATTOGEL'
   const about = config.about || ''
-  const footerPromo = config.footer_promo ?? null
 
   const value = {
     loading,
@@ -124,7 +123,6 @@ export function WebsiteProvider({ children }) {
     logo,
     title,
     about,
-    footerPromo,
   }
 
   return (
