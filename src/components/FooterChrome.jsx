@@ -1,6 +1,6 @@
 // FooterChrome.jsx - Reusable footer component for Chrome theme
 
-import { useMemo, Fragment } from 'react'
+import { Fragment } from 'react'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { useWebsite } from '../context/WebsiteContext'
 import ChromeSiteBrand from './ChromeSiteBrand'
@@ -42,42 +42,6 @@ const gameProviders = gameProvidersRaw.map((p) => ({
 }))
 
 const BRAND_TOKEN = 'PUSATTOGEL'
-
-/** Default footer promo (dipakai jika API tidak mengirim footer_promo lengkap) */
-const DEFAULT_FOOTER_PROMO = {
-  heading: 'DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL',
-  intro:
-    'KAMI JUGA AKAN SELALU MEMBERIKAN UPDATE AN PROMO YANG MENARIK UNTUK SEMUA PARA PEMAIN / MEMBER DI PUSATTOGEL DENGAN REWARD HADIAH YANG TENTUNYA SANGAT BESAR DAN BISA DI DAPATKAN OLEH SEMUA PARA MEMBER DI SINI, BERIKUT DAFTAR PROMONYA :',
-  lines: [
-    'EVENT PROMOSI LOMBA PANJAT TO PUSATTOGEL',
-    'PROMO BONUS EXTRA AJAK TEMAN 10% (AWAL DEPOSITO PERTAMA)',
-    'PROMO BONUS AKUN LEVEL SULTAN PUSATTOGEL',
-    'EVENT PROMOSI SILVER & GOLDEN TICKET LUCKY SPIN',
-    'BONUS SALDO GRATIS / FREEBET 30, 50 , 100K',
-    'BONUS EXTRA DOWNLOAD APLIKASI DAPAT FREECHIP GRATIS RP.5.000',
-    'EVENT PROMO SPACEMAN BONUS BERLIMPAH',
-    'PROMO MIX SPORT TARUHAN OLAHRAGA PUSATTOGEL',
-    'EVENT PROMO BONUS ULANG TAHUN',
-    'BONUS NEW MEMBER 50%',
-    'BONUS CASHBACK MINGGUAN 0,5% SETIAP HARI SELASA',
-    'BONUS CASHBACK SPORTBET 0.25%',
-    'BONUS REFERRAL 0,3%',
-    'BONUS DEPOSIT PULSA TANPA POTONGAN',
-    'EVENT VIP PRAGMATIC PLAY & PG SOFT',
-  ],
-  outro:
-    'DENGAN REWARD PROMO TERBAIK YANG KAMI BERIKAN TENTU SAJA HAL INI AKAN MENJADI SALAH SATU PILIHAN TERBAIK MENGAPA ANDA MEMILIH PUSATTOGEL SEBAGAI SITUS PENYEDIA GAME ONLINE TERPERCAYA. AYO TUNGGU APALAGI MARI BERGABUNG SEKARANG JUGA BERSAMA PUSATTOGEL.',
-}
-
-function resolveFooterPromo(api, fallback) {
-  if (!api || typeof api !== 'object') return fallback
-  return {
-    heading: typeof api.heading === 'string' && api.heading.trim() ? api.heading : fallback.heading,
-    intro: typeof api.intro === 'string' && api.intro.trim() ? api.intro : fallback.intro,
-    lines: Array.isArray(api.lines) && api.lines.length > 0 ? api.lines : fallback.lines,
-    outro: typeof api.outro === 'string' && api.outro.trim() ? api.outro : fallback.outro,
-  }
-}
 
 /** Ganti token PUSATTOGEL dengan title; kemunculan nama brand diberi warna emas */
 function interleaveBrand(text, title) {
@@ -299,37 +263,18 @@ const bankItems = [
 ]
 
 export default function FooterChrome() {
-  const { title, about, footerPromo } = useWebsite()
-  const promo = useMemo(() => resolveFooterPromo(footerPromo, DEFAULT_FOOTER_PROMO), [footerPromo])
-  const promoLines = useMemo(
-    () => promo.lines.map((line) => line.split(BRAND_TOKEN).join(title)),
-    [promo.lines, title]
-  )
-  const headingText = useMemo(() => promo.heading.split(BRAND_TOKEN).join(title), [promo.heading, title])
+  const { title, about } = useWebsite()
+  const aboutText = about?.trim() ?? ''
 
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
-      {/* Promo Section */}
+      {/* Teks footer dari `config.about` (GET /info) — token PUSATTOGEL → title */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
-        {about ? (
-          <p className="text-[10px] sm:text-xs text-[#909090] mb-4 leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
-            {about}
+        {aboutText ? (
+          <p className="whitespace-pre-line text-[10px] sm:text-xs text-[#909090] leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
+            {interleaveBrand(aboutText, title)}
           </p>
         ) : null}
-        <h3 className="text-sm sm:text-base font-bold text-[#fbbf24] mb-4 tracking-wider">{headingText}</h3>
-        <p className="text-[10px] sm:text-xs text-[#808080] mb-4 leading-relaxed">
-          {interleaveBrand(promo.intro, title)}
-        </p>
-        <ul className="space-y-1 mb-4">
-          {promoLines.map((line, i) => (
-            <li key={i} className="text-[10px] sm:text-xs text-[#606060]">
-              {line}
-            </li>
-          ))}
-        </ul>
-        <p className="text-[10px] sm:text-xs text-[#808080] leading-relaxed">
-          {interleaveBrand(promo.outro, title)}
-        </p>
       </section>
 
       {/* Game Providers Section */}

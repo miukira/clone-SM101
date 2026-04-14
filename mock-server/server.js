@@ -660,32 +660,11 @@ const getRecentWithdrawals = () => {
 
 const mockWebsiteConfig = {
   title: 'PUSATTOGEL',
-  about: 'Platform Alternatif Login Agent Pioneer Resmi Terpercaya',
-  // Footer promo block — gunakan token PUSATTOGEL; frontend mengganti dengan config.title
-  footer_promo: {
-    heading: 'DAFTAR UPDATE PROMO & BONUS TERBARU DI SITUS PUSATTOGEL',
-    intro:
-      'KAMI JUGA AKAN SELALU MEMBERIKAN UPDATE AN PROMO YANG MENARIK UNTUK SEMUA PARA PEMAIN / MEMBER DI PUSATTOGEL DENGAN REWARD HADIAH YANG TENTUNYA SANGAT BESAR DAN BISA DI DAPATKAN OLEH SEMUA PARA MEMBER DI SINI, BERIKUT DAFTAR PROMONYA :',
-    lines: [
-      'EVENT PROMOSI LOMBA PANJAT TO PUSATTOGEL',
-      'PROMO BONUS EXTRA AJAK TEMAN 10% (AWAL DEPOSITO PERTAMA)',
-      'PROMO BONUS AKUN LEVEL SULTAN PUSATTOGEL',
-      'EVENT PROMOSI SILVER & GOLDEN TICKET LUCKY SPIN',
-      'BONUS SALDO GRATIS / FREEBET 30, 50 , 100K',
-      'BONUS EXTRA DOWNLOAD APLIKASI DAPAT FREECHIP GRATIS RP.5.000',
-      'EVENT PROMO SPACEMAN BONUS BERLIMPAH',
-      'PROMO MIX SPORT TARUHAN OLAHRAGA PUSATTOGEL',
-      'EVENT PROMO BONUS ULANG TAHUN',
-      'BONUS NEW MEMBER 50%',
-      'BONUS CASHBACK MINGGUAN 0,5% SETIAP HARI SELASA',
-      'BONUS CASHBACK SPORTBET 0.25%',
-      'BONUS REFERRAL 0,3%',
-      'BONUS DEPOSIT PULSA TANPA POTONGAN',
-      'EVENT VIP PRAGMATIC PLAY & PG SOFT',
-    ],
-    outro:
-      'DENGAN REWARD PROMO TERBAIK YANG KAMI BERIKAN TENTU SAJA HAL INI AKAN MENJADI SALAH SATU PILIHAN TERBAIK MENGAPA ANDA MEMILIH PUSATTOGEL SEBAGAI SITUS PENYEDIA GAME ONLINE TERPERCAYA. AYO TUNGGU APALAGI MARI BERGABUNG SEKARANG JUGA BERSAMA PUSATTOGEL.',
-  },
+  /** OpenAPI WebsiteConfig.about — teks ringkas footer; blok promo panjang hanya di frontend */
+  about:
+  'Platform Alternatif Login Agent Pioneer Resmi Terpercaya.\n\n' +
+  'Ini paragraf kedua. Bisa lebih dari satu kalimat.\n\n' +
+  'Paragraf ketiga (YAYAYAY atau apa pun).',
   logo: '/logo.png',
   favicon: '/favicon.svg',
   external_script: [

@@ -5,7 +5,16 @@ import {
   getProfile,
   getBalance,
   persistPlayerBalance,
+  getStoredPlayerBalance,
 } from '../services/api'
+
+function resolveUserBalance(profileOrLogin) {
+  if (profileOrLogin?.balance != null && profileOrLogin?.balance !== undefined) {
+    return profileOrLogin.balance
+  }
+  const cached = getStoredPlayerBalance()
+  return cached != null ? cached : undefined
+}
 
 const AuthContext = createContext()
 
@@ -25,9 +34,11 @@ export function AuthProvider({ children }) {
       try {
         // Get user profile — saldo selalu disamakan dengan server lalu di-cache ke localStorage
         const profile = await getProfile()
-        setUser(profile)
+        const balance = resolveUserBalance(profile)
+        const userRow = balance !== undefined ? { ...profile, balance } : profile
+        setUser(userRow)
         setIsAuthenticated(true)
-        if (profile.balance != null) persistPlayerBalance(profile.balance)
+        if (userRow.balance != null) persistPlayerBalance(userRow.balance)
       } catch (err) {
         // Token invalid, clear it
         removeToken()
@@ -39,14 +50,15 @@ export function AuthProvider({ children }) {
   }
 
   const loginSuccess = (userData) => {
+    const balance = resolveUserBalance(userData)
     setUser({
       username: userData.username,
-      balance: userData.balance,
+      balance,
       currency: userData.currency,
       referral_code: userData.referral_code
     })
     setIsAuthenticated(true)
-    if (userData.balance != null) persistPlayerBalance(userData.balance)
+    if (balance != null) persistPlayerBalance(balance)
   }
 
   const logout = () => {
@@ -55,11 +67,14 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false)
   }
 
+  /** Hanya memanggil GET /balance — dipakai tombol refresh; setelah sukses sync context + localStorage */
   const refreshBalance = async () => {
     try {
       const data = await getBalance()
-      if (data.balance != null) persistPlayerBalance(data.balance)
-      setUser(prev => prev ? { ...prev, balance: data.balance } : null)
+      const b = data?.balance
+      if (b == null || b === undefined) return
+      persistPlayerBalance(b)
+      setUser((prev) => (prev ? { ...prev, balance: b } : null))
     } catch (err) {
       console.error('Failed to refresh balance:', err)
     }
@@ -75,8 +90,10 @@ export function AuthProvider({ children }) {
   const refreshProfile = async () => {
     try {
       const profile = await getProfile()
-      setUser(profile)
-      if (profile.balance != null) persistPlayerBalance(profile.balance)
+      const balance = resolveUserBalance(profile)
+      const userRow = balance !== undefined ? { ...profile, balance } : profile
+      setUser(userRow)
+      if (userRow.balance != null) persistPlayerBalance(userRow.balance)
     } catch (err) {
       console.error('Failed to refresh profile:', err)
     }

@@ -129,6 +129,7 @@ export const checkBankNumber = (number) =>
 
 export const getProfile = () => apiCall('/profile')
 
+/** GET /balance — hanya untuk aksi refresh saldo (bukan load pertama halaman). */
 export const getBalance = () => apiCall('/balance')
 
 export const getBalanceMutation = () => apiCall('/balance-mutation')

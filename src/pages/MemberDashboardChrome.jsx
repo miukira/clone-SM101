@@ -16,6 +16,7 @@ import {
   getWithdrawStatus,
   changePassword,
   persistPlayerBalance,
+  getStoredPlayerBalance,
 } from '../services/api'
 import {
   LS_PENDING_DEPOSIT,
@@ -68,29 +69,11 @@ const DepositIcon = () => (
   </svg>
 )
 
-const PendingDepositIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <rect x="3" y="8" width="14" height="11" rx="1.5" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
-    <path d="M3 11h14" stroke="#808080" strokeWidth="1.2"/>
-    <circle cx="17" cy="6" r="4.5" fill="#D0D0D0" stroke="#909090" strokeWidth="0.5"/>
-    <path d="M17 4.2v2.2l1.2 0.8" stroke="#505050" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
 const WithdrawIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
     <rect x="3" y="7" width="16" height="13" rx="2" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
     <path d="M3 10h16" stroke="#808080" strokeWidth="1.5"/>
     <path d="M21 8V2M18 5l3-3 3 3" stroke="#C0C0C0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-)
-
-const PendingIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <circle cx="12" cy="12" r="9" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
-    <circle cx="8" cy="12" r="1.5" fill="#808080"/>
-    <circle cx="12" cy="12" r="1.5" fill="#808080"/>
-    <circle cx="16" cy="12" r="1.5" fill="#808080"/>
   </svg>
 )
 
@@ -140,15 +123,6 @@ const BankIcon = () => (
     <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11" stroke="#808080" strokeWidth="1.5"/>
     <path d="M12 3L2 10h20L12 3z" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
     <circle cx="12" cy="7" r="1.5" fill="#606060"/>
-  </svg>
-)
-
-const MissionIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-    <rect x="4" y="3" width="16" height="18" rx="2" fill="#E0E0E0" stroke="#C0C0C0" strokeWidth="0.5"/>
-    <path d="M8 8h8M8 12h8M8 16h5" stroke="#808080" strokeWidth="1.5" strokeLinecap="round"/>
-    <circle cx="17" cy="17" r="4" fill="#B0B0B0"/>
-    <path d="M15 17l1.5 1.5L19 15" stroke="#E0E0E0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 )
 
@@ -218,8 +192,6 @@ function DepositContent({
   promoCodes,
   userBank,
   onRefreshBalance,
-  menuVariant = 'full',
-  onNavigateToDeposit,
 }) {
   const [activeTab, setActiveTab] = useState('qris')
   const [selectedBank, setSelectedBank] = useState(null)
@@ -229,10 +201,6 @@ function DepositContent({
   const [error, setError] = useState('')
   const [pending, setPending] = useState(() => readStoredPendingDeposit())
   const [statusHint, setStatusHint] = useState('')
-
-  useEffect(() => {
-    setPending(readStoredPendingDeposit())
-  }, [menuVariant])
 
   const tabs = [
     { id: 'qris', label: 'Qris Autopay' },
@@ -370,29 +338,6 @@ function DepositContent({
         </div>
       )}
     </div>
-    )
-  }
-
-  if (menuVariant === 'pending-only') {
-    return (
-      <div className="space-y-4 sm:space-y-6">
-        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit tertunda</h2>
-        <div className="p-4 rounded-lg border border-[#909090]/40 bg-[#d8d8d8]/40 text-sm text-[#3a3a3a]">
-          <p>Tidak ada deposit yang sedang menunggu pembayaran.</p>
-          <p className="mt-2 text-xs text-[#5a5a5a]">
-            Setelah mengirim permintaan deposit, QR dan detail pembayaran bisa Anda lihat di sini atau di menu Deposit.
-          </p>
-        </div>
-        {onNavigateToDeposit ? (
-          <button
-            type="button"
-            onClick={onNavigateToDeposit}
-            className="px-6 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] text-sm font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all"
-          >
-            Buat deposit baru
-          </button>
-        ) : null}
-      </div>
     )
   }
 
@@ -640,35 +585,6 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
           {loading ? 'LOADING...' : 'KIRIM'}
         </button>
       </div>
-    </div>
-  )
-}
-
-function PendingWithdrawContent() {
-  return (
-    <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan Tertunda</h2>
-      
-      <div className="overflow-x-auto rounded-lg border border-[#909090]/30">
-        <table className="w-full min-w-[500px]">
-          <thead className="bg-[#1a1a1a] text-white">
-            <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">No</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Nomor Referensi</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Jumlah (IDR)</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Ke Rekening Bank</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan="4" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                Tidak ada data yang tersedia di tabel
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">Showing 0 To 0 of 0 entries</p>
     </div>
   )
 }
@@ -1132,46 +1048,21 @@ function BankAccountContent({ profile }) {
   )
 }
 
-function MissionContent() {
-  return (
-    <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Misi Anggota</h2>
-      
-      <div className="overflow-x-auto rounded-lg border border-[#909090]/30">
-        <table className="w-full min-w-[500px]">
-          <thead className="bg-[#1a1a1a] text-white">
-            <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Title</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Condition</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Reward</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan="4" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                Tidak ada data yang tersedia di tabel
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
-
 // ============ MAIN DASHBOARD COMPONENT ============
 
 export default function MemberDashboardChrome() {
   const navigate = useNavigate()
   const { section } = useParams()
-  const { user, logout, isAuthenticated } = useAuth()
+  const { user, logout, isAuthenticated, updateBalance } = useAuth()
   
   const [activeMenu, setActiveMenu] = useState(section || 'deposit')
 
   // API Data States
   const [profile, setProfile] = useState(null)
-  const [balance, setBalance] = useState(0)
+  const [balance, setBalance] = useState(() => {
+    const c = getStoredPlayerBalance()
+    return c != null ? c : 0
+  })
   const [balanceMutations, setBalanceMutations] = useState([])
   const [bankList, setBankList] = useState([])
   const [promoCodes, setPromoCodes] = useState([])
@@ -1179,21 +1070,30 @@ export default function MemberDashboardChrome() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (section === 'pending-deposit' || section === 'mission') {
+      navigate('/member/deposit', { replace: true })
+      setActiveMenu('deposit')
+      return
+    }
+    if (section === 'pending') {
+      navigate('/member/withdraw', { replace: true })
+      setActiveMenu('withdraw')
+      return
+    }
     if (section) {
       setActiveMenu(section)
     } else {
       setActiveMenu('deposit')
     }
-  }, [section])
+  }, [section, navigate])
 
   // Fetch all data on mount
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true)
       try {
-        const [profileRes, balanceRes, mutationsRes, banksRes, promoRes, referralRes] = await Promise.all([
+        const [profileRes, mutationsRes, banksRes, promoRes, referralRes] = await Promise.all([
           getProfile(),
-          getBalance(),
           getBalanceMutation(),
           getBankList(),
           getUserPromo(),
@@ -1201,8 +1101,12 @@ export default function MemberDashboardChrome() {
         ])
         
         setProfile(profileRes)
-        setBalance(balanceRes.balance)
-        if (balanceRes.balance != null) persistPlayerBalance(balanceRes.balance)
+        const initialBalance =
+          profileRes.balance != null && profileRes.balance !== undefined
+            ? profileRes.balance
+            : getStoredPlayerBalance()
+        setBalance(initialBalance ?? 0)
+        if (profileRes.balance != null) persistPlayerBalance(profileRes.balance)
         setBalanceMutations(mutationsRes)
         setBankList(banksRes)
         setPromoCodes(promoRes)
@@ -1222,12 +1126,15 @@ export default function MemberDashboardChrome() {
   const refreshBalance = useCallback(async () => {
     try {
       const balanceRes = await getBalance()
-      setBalance(balanceRes.balance)
-      if (balanceRes.balance != null) persistPlayerBalance(balanceRes.balance)
+      const b = balanceRes?.balance
+      if (b == null || b === undefined) return
+      setBalance(b)
+      persistPlayerBalance(b)
+      updateBalance(b)
     } catch (err) {
       console.error('Error refreshing balance:', err)
     }
-  }, [])
+  }, [updateBalance])
 
   const [balanceRefreshing, setBalanceRefreshing] = useState(false)
   const refreshBalanceWithSpin = useCallback(async () => {
@@ -1245,16 +1152,13 @@ export default function MemberDashboardChrome() {
 
   const menuItems = [
     { id: 'deposit', label: 'DEPOSIT', icon: DepositIcon },
-    { id: 'pending-deposit', label: 'DEPOSIT TERTUNDA', icon: PendingDepositIcon },
     { id: 'withdraw', label: 'PENARIKAN', icon: WithdrawIcon },
-    { id: 'pending', label: 'PENARIKAN TERTUNDA', icon: PendingIcon },
     { id: 'history', label: 'RIWAYAT', icon: HistoryIcon },
     { id: 'referral', label: 'REFERRAL', icon: ReferralIcon },
     { id: 'profile', label: 'PROFILE', icon: ProfileIcon },
     { id: 'password', label: 'UBAH PASSWORD', icon: PasswordIcon },
     { id: 'inbox', label: 'KOTAK MASUK', icon: InboxIcon },
     { id: 'bank', label: 'REKENING BANK', icon: BankIcon },
-    { id: 'mission', label: 'MISI ANGGOTA', icon: MissionIcon },
   ]
 
   const goToMemberSection = useCallback((id) => {
@@ -1278,15 +1182,12 @@ export default function MemberDashboardChrome() {
 
     switch (activeMenu) {
       case 'deposit':
-      case 'pending-deposit':
         return (
           <DepositContent
             bankList={bankList}
             promoCodes={promoCodes}
             userBank={profile}
             onRefreshBalance={refreshBalanceWithSpin}
-            menuVariant={activeMenu === 'pending-deposit' ? 'pending-only' : 'full'}
-            onNavigateToDeposit={() => goToMemberSection('deposit')}
           />
         )
       case 'withdraw': 
@@ -1295,14 +1196,12 @@ export default function MemberDashboardChrome() {
           balance={balance}
           onRefreshBalance={refreshBalanceWithSpin}
         />
-      case 'pending': return <PendingWithdrawContent />
       case 'history': return <HistoryContent balanceMutations={balanceMutations} />
       case 'referral': return <ReferralContent referralData={referralData} />
       case 'profile': return <ProfileContent profile={profile} referralCode={user?.referral_code || 'N/A'} />
       case 'password': return <PasswordContent />
       case 'inbox': return <InboxContent />
       case 'bank': return <BankAccountContent profile={profile} />
-      case 'mission': return <MissionContent />
       default:
         return (
           <DepositContent
