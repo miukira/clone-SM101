@@ -104,11 +104,12 @@ const mockBanks = [
   { id: 8, type: 'qris', name: 'QRIS', account: 'PUSATTOGEL', number: '', min_deposit: 10000 },
 ]
 
+// Promotion sesuai OpenAPI: { id, title, image, description }
 const mockPromotions = [
-  { id: 1, title: 'BONUS DEPOSIT HARIAN 10%', image: '/banners/banner-1.webp', description: 'Bonus deposit harian 10% khusus slot', start_date: '2026-01-01', end_date: '2026-12-31', tag: 'DAILY' },
-  { id: 2, title: 'CASHBACK SPORTSBOOK 5%', image: '/banners/banner-2.webp', description: 'Cashback kekalahan sportsbook hingga 5%', start_date: '2026-01-01', end_date: '2026-12-31', tag: 'WEEKLY' },
-  { id: 3, title: 'BONUS NEW MEMBER 30%', image: '/banners/banner-3.webp', description: 'Bonus khusus member baru hingga 30%', start_date: '2026-01-01', end_date: '2026-12-31', tag: 'HOT' },
-  { id: 4, title: 'BONUS REFERRAL 10%', image: '/banners/banner-1.webp', description: 'Bonus referral untuk setiap downline', start_date: '2026-01-01', end_date: '2026-12-31', tag: 'REFERRAL' },
+  { id: 1, title: 'BONUS DEPOSIT HARIAN 10%', image: '/banners/banner-1.webp', description: 'Bonus deposit harian 10% khusus slot' },
+  { id: 2, title: 'CASHBACK SPORTSBOOK 5%', image: '/banners/banner-2.webp', description: 'Cashback kekalahan sportsbook hingga 5%' },
+  { id: 3, title: 'BONUS NEW MEMBER 30%', image: '/banners/banner-3.webp', description: 'Bonus khusus member baru hingga 30%' },
+  { id: 4, title: 'BONUS REFERRAL 10%', image: '/banners/banner-1.webp', description: 'Bonus referral untuk setiap downline' },
 ]
 
 const mockPromoCodes = [
@@ -118,10 +119,10 @@ const mockPromoCodes = [
 ]
 
 // ============ SLOT PROVIDERS (1xxx) ============
-// OpenAPI: { provider_id, name, image } — gambar dari public/animated-brand
+// OpenAPI Provider: { provider_id: integer, name: string, image: string }
 const mockSlotProviders = [
-  { provider_id: 1001, name: 'pragmatic-play', image: pImg(1001), badge: { type: 'hot' } },
-  { provider_id: 1002, name: 'pg-soft', image: pImg(1002), badge: { type: 'new' } },
+  { provider_id: 1001, name: 'pragmatic-play', image: pImg(1001) },
+  { provider_id: 1002, name: 'pg-soft', image: pImg(1002) },
   { provider_id: 1003, name: 'nolimit-city', image: pImg(1003) },
   { provider_id: 1004, name: 'lucky-monaco', image: pImg(1004) },
   { provider_id: 1005, name: 'joker', image: pImg(1005) },
@@ -677,14 +678,18 @@ const mockWebsiteConfig = {
     "<meta name='keywords' content='togel, slot, casino, sportsbook'>",
     "<meta name='author' content='PUSATTOGEL'>"
   ],
+  // Contact sesuai OpenAPI: whatsapp, telegram, testimoni (no livechat)
   contact: {
     whatsapp: { icon: '/icons/whatsapp.svg', link: 'https://wa.me/6281234567890' },
     telegram: { icon: '/icons/telegram.svg', link: 'https://t.me/pusattogel' },
-    testimoni: { icon: '/icons/testimoni.svg', link: 'https://t.me/pusattogel_testimoni' },
-    livechat: { icon: '/icons/livechat.svg', link: '#livechat' }
+    testimoni: { icon: '/icons/testimoni.svg', link: 'https://t.me/pusattogel_testimoni' }
   },
-  // Kosong: FE home memakai banner default (`mapHomePromoBanners` → public/banners/banner-1.webp)
-  banner: [],
+  // Banner sesuai OpenAPI: { id: integer, image: string }
+  banner: [
+    { id: 1, image: '/banners/banner-1.webp' },
+    { id: 2, image: '/banners/banner-2.webp' },
+    { id: 3, image: '/banners/banner-3.webp' },
+  ],
   rtp: { icon: '/icons/rtp.svg', link: '/rtp' },
   popup: {
     deposit_success: '/popups/deposit-success.svg',
@@ -736,11 +741,11 @@ const mockWebsiteConfig = {
     background_image: '/bg-casino-2.webp',
     border_color: '#1E90FF'
   },
-  // MaintenanceConfig sesuai Swagger
+  // MaintenanceConfig sesuai OpenAPI: { status, cs_link, estimated_time }
   maintenance: {
     status: false,
-    message: 'Sistem sedang dalam perbaikan',
-    expected_end: '2026-03-28T10:00:00Z'
+    cs_link: 'https://livechat.com/direct/pusattogel',
+    estimated_time: '2026-03-28 10:00'
   }
 }
 
@@ -977,12 +982,12 @@ router.post('/login', (req, res) => {
     return res.status(400).json({ message: 'invalid password' })
   }
   const token = generateToken(user.id)
-  res.json({ 
-    username: user.username, 
-    balance: user.balance, 
-    currency: user.currency, 
-    referral_code: user.referral_code,
-    token 
+  // OpenAPI: { username, balance, currency, token }
+  res.json({
+    username: user.username,
+    balance: user.balance,
+    currency: user.currency,
+    token
   })
 })
 
@@ -1150,22 +1155,26 @@ router.post('/deposit', (req, res) => {
   })
 
   if (bank.type === 'qris') {
+    // OpenAPI DepositQris: deposit_id, type, name, account, number, amount, qr_raw
     const qr_raw = buildQrisQrRaw(deposit_id, amount)
     res.json({
       deposit_id,
-      amount,
       type: 'qris',
+      name: 'qris',
+      account: 'qris',
+      number: '1111111111111111',
+      amount,
       qr_raw,
-      raw: qr_raw,
     })
   } else {
+    // OpenAPI DepositEwallet: deposit_id, type, name, account, number, amount
     res.json({
       deposit_id,
-      amount,
-      type: 'e-wallet',
+      type: bank.type === 'bank-transfer' ? 'e-wallet' : 'e-wallet',
       name: bank.name,
       account: bank.account,
       number: bank.number,
+      amount,
     })
   }
 })
@@ -1216,13 +1225,14 @@ router.post('/withdraw', (req, res) => {
     createdAt: Date.now(),
   })
 
+  // OpenAPI WithdrawResponse: withdraw_id, type, name, account, number, amount
   res.json({
     withdraw_id,
-    amount,
     type: 'e-wallet',
     name: user.bank_name,
     account: user.bank_account,
     number: user.bank_number,
+    amount,
   })
 })
 
@@ -1247,19 +1257,12 @@ router.get('/user-promo', (req, res) => {
   res.json(mockPromoCodes)
 })
 
-// GET /info - WebsiteInfo (OpenAPI) + Extended data
+// GET /info - WebsiteInfo sesuai OpenAPI
 router.get('/info', (req, res) => {
   res.json({
-    // === WebsiteInfo (OpenAPI) ===
     notification: mockWebsiteInfo.notification,
     lottery_result: mockWebsiteInfo.lottery_result,
-    withdraw_list: getRecentWithdrawals(),
-    
-    // === Extended untuk Frontend ===
-    config: mockWebsiteConfig,
-    banks: mockBanks,
-    referral: mockReferralInfo,
-    promotions: mockPromotions
+    withdraw_list: getRecentWithdrawals()
   })
 })
 
