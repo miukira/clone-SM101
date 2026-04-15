@@ -1,0 +1,10 @@
+---
+description: openapi.yaml must not be edited by the agent
+alwaysApply: true
+---
+
+# OpenAPI file is read-only
+
+Do **not** modify `openapi.yaml` in this project. Treat it as the frozen contract.
+
+If behavior, mock server, or tests disagree with the spec, change **application code**, **mock-server**, or **tests**—never this YAML file unless the user explicitly overrides this rule in writing.

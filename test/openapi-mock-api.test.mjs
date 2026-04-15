@@ -93,14 +93,12 @@ describe('OpenAPI — mock server (/api/v1) selaras openapi.yaml', () => {
   })
 
   describe('Website (publik)', () => {
-    it('GET /info → WebsiteInfo + extended fields', async () => {
+    it('GET /info → WebsiteInfo (sesuai OpenAPI)', async () => {
       const res = await agent.get(`${BASE}/info`).expect(200)
       assertResponseMatchesOpenApi(spec, '/info', 'get', 200, res.body)
       assert.ok(Array.isArray(res.body.notification))
       assert.ok(Array.isArray(res.body.lottery_result))
       assert.ok(Array.isArray(res.body.withdraw_list))
-      assert.ok(res.body.config && typeof res.body.config === 'object')
-      assert.ok(Array.isArray(res.body.banks))
     })
 
     it('GET /website tanpa domain → 400', async () => {
@@ -135,30 +133,31 @@ describe('OpenAPI — mock server (/api/v1) selaras openapi.yaml', () => {
       assert.ok(res.body[0].id != null && res.body[0].title)
     })
 
-    it('GET /theme → ThemeSettings', async () => {
+    it('GET /theme → mock extension (tidak ada di openapi.yaml)', async () => {
       const res = await agent.get(`${BASE}/theme`).expect(200)
-      assertResponseMatchesOpenApi(spec, '/theme', 'get', 200, res.body)
+      assert.ok(res.body && typeof res.body === 'object')
       assert.ok(typeof res.body.season === 'string')
       assert.ok(typeof res.body.background_color === 'string')
     })
   })
 
   describe('Game providers (GET array Provider)', () => {
-    for (const apiPath of [
-      '/slot',
-      '/fish',
-      '/casino',
-      '/sportsbook',
-      '/togel',
-      '/arcade',
-      '/crush',
-      '/esports',
-      '/poker',
-      '/cockfight',
-    ]) {
+    // Hanya path yang ada di openapi.yaml (mock punya route ekstra: /togel, /arcade, …)
+    for (const apiPath of ['/slot', '/fish', '/casino', '/sportsbook']) {
       it(`GET ${apiPath} → 200 array`, async () => {
         const res = await agent.get(`${BASE}${apiPath}`).expect(200)
         assertResponseMatchesOpenApi(spec, apiPath, 'get', 200, res.body)
+        assert.ok(Array.isArray(res.body))
+        assert.ok(res.body.length > 0)
+        assert.ok(res.body[0].provider_id != null && res.body[0].name)
+      })
+    }
+  })
+
+  describe('Game providers — route mock di luar OpenAPI', () => {
+    for (const apiPath of ['/togel', '/arcade', '/crush', '/esports', '/poker', '/cockfight']) {
+      it(`GET ${apiPath} → 200 array (tanpa validasi skema OpenAPI)`, async () => {
+        const res = await agent.get(`${BASE}${apiPath}`).expect(200)
         assert.ok(Array.isArray(res.body))
         assert.ok(res.body.length > 0)
         assert.ok(res.body[0].provider_id != null && res.body[0].name)
@@ -235,18 +234,17 @@ describe('OpenAPI — mock server (/api/v1) selaras openapi.yaml', () => {
       assert.ok(res.body.message)
     })
 
-    it('POST /theme 401 tanpa token', async () => {
+    it('POST /theme 401 tanpa token (mock; bukan path OpenAPI)', async () => {
       const res = await request(app).post(`${BASE}/theme`).send({ season: 'none' }).expect(401)
       assertErrorBodyMatchesOpenApi(spec, res.body)
     })
 
-    it('POST /theme 200 (Bearer)', async () => {
+    it('POST /theme 200 (Bearer) — mock; bukan path OpenAPI', async () => {
       const res = await agent
         .post(`${BASE}/theme`)
         .set('Authorization', `Bearer ${token}`)
         .send({ border_color: '#1E90FF' })
         .expect(200)
-      assertResponseMatchesOpenApi(spec, '/theme', 'post', 200, res.body)
       assert.equal(res.body.message, 'success')
     })
 

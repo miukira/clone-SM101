@@ -5,7 +5,6 @@ import FooterChrome from '../components/FooterChrome'
 import AuthModal from '../components/AuthModal'
 import GameListModal from '../components/GameListModal'
 import { useAuth } from '../context/AuthContext'
-import { useProviders } from '../hooks/useProviders'
 import { useNavDropdownProviders } from '../hooks/useNavDropdownProviders'
 import { useLotteryResults, parseResultToNumbers, MARKET_DISPLAY_NAMES } from '../hooks/useLottery'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
@@ -831,10 +830,10 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
   // Game modal state
   const [gameModalOpen, setGameModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
-  
-  // Fetch providers from API
-  const { providers: apiProviders, loading: providersLoading } = useProviders(category)
-  
+
+  // Pakai data dari cache bersama (sudah di-prefetch oleh useNavDropdownProviders)
+  const apiProviders = dropdownProvidersByCategory[category] ?? []
+
   // Use API data if available, otherwise fallback to static config
   const categoryProviders = apiProviders.length > 0 ? apiProviders : cat.providers
   
@@ -1040,11 +1039,14 @@ export default function HomePageChrome() {
   const [gameModalOpen, setGameModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
 
-  const { providersByCategory: dropdownProvidersByCategory } = useNavDropdownProviders()
+  const { providersByCategory: dropdownProvidersByCategory, loading: navProvidersLoading } =
+    useNavDropdownProviders()
 
-  // Fetch providers from API
-  const { providers: apiProviders, loading: providersLoading } = useProviders(providerBoxCategory)
-  
+  // Hindari GET /slot (dll.) kedua: pakai cache prefetch dropdown untuk kotak provider di home
+  const apiProviders = dropdownProvidersByCategory[providerBoxCategory] ?? []
+  const providersLoading =
+    navProvidersLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
+
   // Fetch lottery results from API
   const { results: lotteryResults, loading: lotteryLoading } = useLotteryResults()
   

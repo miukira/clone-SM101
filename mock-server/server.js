@@ -1362,6 +1362,18 @@ router.get('/cockfight', (req, res) => {
   res.json(mockCockfightProviders)
 })
 
+/** Respons GET /game-list — OpenAPI Game: id & image string (format uri). */
+function normalizeGamesForOpenApi(games) {
+  return games.map((g) => ({
+    id: String(g.id),
+    name: String(g.name ?? ''),
+    image:
+      typeof g.image === 'string' && g.image.trim() !== ''
+        ? g.image
+        : `https://mock.example/games/${g.id}.png`,
+  }))
+}
+
 // GET /game-list
 router.get('/game-list', (req, res) => {
   const { provider_id } = req.query
@@ -1371,8 +1383,9 @@ router.get('/game-list', (req, res) => {
     console.log('❌ Error: provider not found')
     return res.status(400).json({ message: 'provider not found' })
   }
-  console.log('✅ Response:', JSON.stringify(games, null, 2))
-  res.json(games)
+  const out = normalizeGamesForOpenApi(games)
+  console.log('✅ Response:', JSON.stringify(out, null, 2))
+  res.json(out)
 })
 
 // GET /play - sesuai Swagger: returns { game_url }
@@ -1392,8 +1405,7 @@ router.get('/play', (req, res) => {
     return res.status(400).json({ message: 'provider not found' })
   }
   
-  // Game schema now uses 'id' instead of 'game_id'
-  const game = games.find(g => g.id === parseInt(game_id))
+  const game = games.find((g) => String(g.id) === String(game_id))
   if (!game) {
     console.log('❌ Error: game not found')
     return res.status(400).json({ message: 'game not found' })

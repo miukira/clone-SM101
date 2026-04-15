@@ -57,6 +57,70 @@ function normalizeAuthResponse(data) {
 // ============================================
 // HTTP REQUEST HELPER
 // ============================================
+
+/** Gabungkan GET identik yang overlap (mis. React StrictMode dev) — satu fetch. */
+const getRequestInflight = new Map()
+
+/** Respons GET publik terakhir (per kunci dedupe) — hindari fetch + log dobel bila inflight sudah selesai lalu dipanggil lagi segera. Dikosongkan saat refetch website. */
+const PUBLIC_GET_RESPONSE_MEMO = new Map()
+const PUBLIC_MEMO_TTL_MS = 45_000
+
+export function clearPublicGetResponseMemo() {
+  PUBLIC_GET_RESPONSE_MEMO.clear()
+}
+
+function cloneForMemo(value) {
+  try {
+    return structuredClone(value)
+  } catch {
+    return JSON.parse(JSON.stringify(value))
+  }
+}
+
+/** Samakan `/website?domain=…` agar dedupe tidak pecah (hostname beda huruf / format query). */
+function normalizeWebsiteDedupeEndpoint(endpoint) {
+  if (typeof endpoint !== 'string' || !endpoint.startsWith('/website?')) return endpoint
+  try {
+    const qi = endpoint.indexOf('?')
+    const sp = new URLSearchParams(endpoint.slice(qi + 1))
+    const dom = (sp.get('domain') || 'localhost').toLowerCase()
+    return `/website?domain=${encodeURIComponent(dom)}`
+  } catch {
+    return endpoint
+  }
+}
+
+const PUBLIC_GET_PATHS = new Set([
+  '/slot',
+  '/fish',
+  '/casino',
+  '/togel',
+  '/sportsbook',
+  '/arcade',
+  '/crush',
+  '/esports',
+  '/poker',
+  '/cockfight',
+  '/promo',
+  '/referral',
+])
+
+/**
+ * GET yang hasilnya tidak spesifik Bearer — satu inflight per URL logis (hindari (2) di console & beban dobel).
+ * Tidak memasukkan /profile, /bank-list, /user-promo, dll.
+ */
+function buildGetDedupeKey(endpoint, token) {
+  if (endpoint === '/info') return 'GET|public|/info'
+  if (endpoint.startsWith('/website?')) {
+    return `GET|public|${normalizeWebsiteDedupeEndpoint(endpoint)}`
+  }
+  const pathOnly = endpoint.split('?')[0]
+  if (PUBLIC_GET_PATHS.has(pathOnly)) {
+    return `GET|public|${endpoint}`
+  }
+  return `GET|${token || ''}|${endpoint}`
+}
+
 const apiCall = async (endpoint, options = {}) => {
   const token = getToken()
   const headers = {
@@ -69,27 +133,60 @@ const apiCall = async (endpoint, options = {}) => {
   }
 
   const method = options.method || 'GET'
-  console.log(`📡 API Request: ${method} ${endpoint}`)
-  if (options.body) {
-    console.log(`   📤 Request Body:`, JSON.parse(options.body))
+
+  const useGetDedupe =
+    method === 'GET' &&
+    options.skipGetDedupe !== true &&
+    options.signal == null
+
+  const dedupeKey = useGetDedupe ? buildGetDedupeKey(endpoint, token) : null
+
+  if (dedupeKey?.startsWith('GET|public|')) {
+    const row = PUBLIC_GET_RESPONSE_MEMO.get(dedupeKey)
+    if (row != null && Date.now() - row.t < PUBLIC_MEMO_TTL_MS) {
+      return Promise.resolve(cloneForMemo(row.value))
+    }
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-    // Respons dinamis (logo/banner/config) jangan di-serve dari disk cache HTTP
-    cache: options.cache ?? (method === 'GET' ? 'no-store' : 'default'),
-  })
+  const run = async () => {
+    console.log(`📡 API Request: ${method} ${endpoint}`)
+    if (options.body) {
+      console.log(`   📤 Request Body:`, JSON.parse(options.body))
+    }
 
-  const data = await response.json()
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+      cache: options.cache ?? (method === 'GET' ? 'no-store' : 'default'),
+    })
 
-  if (!response.ok) {
-    console.log(`❌ API Error (${response.status}):`, JSON.stringify(data, null, 2))
-    throw { status: response.status, data }
+    const data = await response.json()
+
+    if (!response.ok) {
+      console.log(`❌ API Error (${response.status}):`, JSON.stringify(data, null, 2))
+      throw { status: response.status, data }
+    }
+
+    console.log(`✅ API Response (${response.status}):`, JSON.stringify(data, null, 2))
+    const out = resolveAssetUrlsDeep(data)
+    if (dedupeKey?.startsWith('GET|public|')) {
+      PUBLIC_GET_RESPONSE_MEMO.set(dedupeKey, { value: cloneForMemo(out), t: Date.now() })
+    }
+    return out
   }
 
-  console.log(`✅ API Response (${response.status}):`, JSON.stringify(data, null, 2))
-  return resolveAssetUrlsDeep(data)
+  if (useGetDedupe) {
+    let p = getRequestInflight.get(dedupeKey)
+    if (!p) {
+      p = run().finally(() => {
+        getRequestInflight.delete(dedupeKey)
+      })
+      getRequestInflight.set(dedupeKey, p)
+    }
+    return p
+  }
+
+  return run()
 }
 
 /** OpenAPI: GET /website membutuhkan query `domain` */
@@ -134,7 +231,7 @@ export const getProfile = () => apiCall('/profile')
 /** GET /balance — hanya untuk aksi refresh saldo (bukan load pertama halaman). */
 export const getBalance = () => apiCall('/balance')
 
-export const getBalanceMutation = () => apiCall('/balance-mutation')
+export const getBalanceMutation = (opts = {}) => apiCall('/balance-mutation', opts)
 
 export const changePassword = (password, new_password) =>
   apiCall('/change-password', {
@@ -160,11 +257,11 @@ export const getDepositStatus = (deposit_id) =>
 export const getWithdrawStatus = (withdraw_id) =>
   apiCall(`/withdraw-status?withdraw_id=${encodeURIComponent(withdraw_id)}`)
 
-export const getUserReferral = (fromdate = null, todate = null) => {
+export const getUserReferral = (fromdate = null, todate = null, opts = {}) => {
   const params = new URLSearchParams()
   if (fromdate) params.append('fromdate', fromdate)
   if (todate) params.append('todate', todate)
-  return apiCall(`/user-referral?${params.toString()}`)
+  return apiCall(`/user-referral?${params.toString()}`, opts)
 }
 
 export const getUserPromo = () => apiCall('/user-promo')
@@ -175,7 +272,7 @@ export const getUserPromo = () => apiCall('/user-promo')
 export const getInfo = () => apiCall('/info').then(normalizeWebsiteInfoResponse)
 
 export const getWebsite = (domain) => {
-  const d = resolveWebsiteDomain(domain)
+  const d = resolveWebsiteDomain(domain).toLowerCase()
   const q = new URLSearchParams({ domain: d })
   return apiCall(`/website?${q}`)
 }

@@ -1,14 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import QRCode from 'react-qr-code'
 import FooterChrome from '../components/FooterChrome'
 import { useAuth } from '../context/AuthContext'
 import {
-  getProfile,
   getBalance,
-  getBalanceMutation,
   getBankList,
-  getUserReferral,
   getUserPromo,
   createDeposit,
   createWithdraw,
@@ -18,10 +15,22 @@ import {
   persistPlayerBalance,
   getStoredPlayerBalance,
 } from '../services/api'
+
+const MemberHistoryPanel = lazy(() => import('./member/MemberHistoryPanel.jsx'))
+const MemberReferralPanel = lazy(() => import('./member/MemberReferralPanel.jsx'))
+
+function MemberTabSuspenseFallback() {
+  return (
+    <div className="flex items-center justify-center h-48">
+      <div className="animate-spin w-8 h-8 border-4 border-[#C0C0C0] border-t-transparent rounded-full" />
+    </div>
+  )
+}
 import {
   LS_PENDING_DEPOSIT,
   LS_PENDING_WITHDRAW,
   PENDING_STATUS_POLL_MS,
+  isTerminalTransactionFailure,
 } from '../constants/pendingTransactions'
 import {
   SlotsIconChrome,
@@ -240,7 +249,7 @@ function DepositContent({
           setPending(null)
           setStatusHint('')
           onRefreshBalance()
-        } else if (s.status === 'fails') {
+        } else if (isTerminalTransactionFailure(s.status)) {
           localStorage.removeItem(LS_PENDING_DEPOSIT)
           setPending(null)
           setStatusHint('')
@@ -380,12 +389,14 @@ function DepositContent({
 
       {/* Form */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Rekening Bank</label>
-          <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
-            {userBank ? `${userBank.bank_name?.toUpperCase()} - ${userBank.bank_number}` : 'Loading...'}
+        {activeTab !== 'qris' ? (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Rekening Bank</label>
+            <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
+              {userBank ? `${userBank.bank_name?.toUpperCase()} - ${userBank.bank_number}` : 'Loading...'}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {activeTab !== 'qris' ? (
           <>
@@ -481,7 +492,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
           setPending(null)
           setStatusHint('')
           onRefreshBalance()
-        } else if (s.status === 'fails') {
+        } else if (isTerminalTransactionFailure(s.status)) {
           localStorage.removeItem(LS_PENDING_WITHDRAW)
           setPending(null)
           setStatusHint('')
@@ -606,200 +617,6 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
           {loading ? 'LOADING...' : 'KIRIM'}
         </button>
       </div>
-    </div>
-  )
-}
-
-function HistoryContent({ balanceMutations }) {
-  const [transactionType, setTransactionType] = useState('')
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
-
-  const filteredMutations = balanceMutations.filter(m => {
-    if (transactionType && m.type !== transactionType) return false
-    return true
-  })
-
-  const typeColors = {
-    'deposit': 'text-green-500',
-    'bonus roling': 'text-blue-400',
-    'bonus cashback': 'text-blue-400',
-    'bonus referral': 'text-blue-400',
-    'withdraw': 'text-red-400',
-    'lottery': 'text-yellow-400',
-    'game': 'text-purple-400',
-  }
-
-  return (
-    <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Riwayat Transaksi</h2>
-      
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Jenis Transaksi</label>
-          <select 
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
-            value={transactionType}
-            onChange={(e) => setTransactionType(e.target.value)}
-          >
-            <option value="">Semua Kategori</option>
-            <option value="deposit">Deposit</option>
-            <option value="withdraw">Withdraw</option>
-            <option value="bonus roling">Bonus Roling</option>
-            <option value="game">Game</option>
-            <option value="lottery">Lottery</option>
-          </select>
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Tanggal</label>
-          <input 
-            type="date" 
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Sampai Tanggal</label>
-          <input 
-            type="date" 
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-          />
-        </div>
-      </div>
-
-      {/* Transaction History Table */}
-      <div className="overflow-x-auto rounded-lg border border-[#909090]/30">
-        <table className="w-full min-w-[600px]">
-          <thead className="bg-[#1a1a1a] text-white">
-            <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">No</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Tipe</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Referensi</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Jumlah</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-medium">Kredit/Debit</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Tanggal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMutations.length > 0 ? filteredMutations.map((mutation, i) => (
-              <tr key={mutation.id} className="border-t border-[#909090]/20">
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#3a3a3a]">{i + 1}</td>
-                <td className={`px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm capitalize ${typeColors[mutation.type] || 'text-[#3a3a3a]'}`}>
-                  {mutation.type}
-                </td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#3a3a3a] font-mono">{mutation.reference}</td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-right text-[#3a3a3a]">
-                  IDR {mutation.amount?.toLocaleString()}
-                </td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-center">
-                  <span className={`px-2 py-1 rounded text-xs ${mutation.balance_type === 'credit' ? 'bg-green-500/20 text-green-600' : 'bg-red-500/20 text-red-600'}`}>
-                    {mutation.balance_type?.toUpperCase()}
-                  </span>
-                </td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#5a5a5a]">{mutation.created_at}</td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan="6" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                  Tidak ada data yang tersedia
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">
-        Showing 1 To {filteredMutations.length} of {filteredMutations.length} entries
-      </p>
-    </div>
-  )
-}
-
-function ReferralContent({ referralData }) {
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
-
-  return (
-    <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Referral</h2>
-      
-      {/* Referral Info */}
-      {referralData?.referral && (
-        <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-4">
-          <p className="text-sm text-[#3a3a3a]">{referralData.referral.description}</p>
-        </div>
-      )}
-
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Rentang Tanggal</label>
-          <input 
-            type="date" 
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Sampai</label>
-          <input 
-            type="date" 
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-          />
-        </div>
-
-        <button className="w-full sm:w-auto px-8 py-2.5 sm:py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all">
-          CARI
-        </button>
-      </div>
-
-      <div className="overflow-x-auto rounded-lg border border-[#909090]/30">
-        <table className="w-full min-w-[700px]">
-          <thead className="bg-[#1a1a1a] text-white">
-            <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">No</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Username</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">First Depo Date</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">First Depo</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Turnover</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Win/Lose</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Komisi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {referralData?.downline?.length > 0 ? referralData.downline.map((dl, i) => (
-              <tr key={i} className="border-t border-[#909090]/20">
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#3a3a3a]">{i + 1}</td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#3a3a3a]">{dl.username}</td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-[#5a5a5a]">{dl.first_depo_date}</td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-right text-[#3a3a3a]">IDR {dl.first_depo_amount?.toLocaleString()}</td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-right text-[#3a3a3a]">IDR {dl.turnover?.toLocaleString()}</td>
-                <td className={`px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-right ${dl.winlose >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  IDR {dl.winlose?.toLocaleString()}
-                </td>
-                <td className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-right text-green-600">IDR {dl.comision?.toLocaleString()}</td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan="7" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                  Tidak ada data downline
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">
-        Showing {referralData?.downline?.length > 0 ? 1 : 0} To {referralData?.downline?.length || 0} of {referralData?.downline?.length || 0} entries
-      </p>
     </div>
   )
 }
@@ -1071,12 +888,29 @@ function BankAccountContent({ profile }) {
 
 // ============ MAIN DASHBOARD COMPONENT ============
 
+const MEMBER_SECTION_IDS = new Set([
+  'deposit',
+  'withdraw',
+  'history',
+  'referral',
+  'profile',
+  'password',
+  'inbox',
+  'bank',
+])
+
 export default function MemberDashboardChrome() {
   const navigate = useNavigate()
   const { section } = useParams()
   const { user, logout, isAuthenticated, updateBalance } = useAuth()
-  
-  const [activeMenu, setActiveMenu] = useState(section || 'deposit')
+
+  /** Satu sumber kebenaran dengan URL — hindari fetch tab (referral/history) saat state & path tidak sinkron */
+  const activeMenu = useMemo(() => {
+    if (section === 'pending-deposit' || section === 'mission') return 'deposit'
+    if (section === 'pending') return 'withdraw'
+    if (section && MEMBER_SECTION_IDS.has(section)) return section
+    return 'deposit'
+  }, [section])
 
   // API Data States
   const [profile, setProfile] = useState(null)
@@ -1084,64 +918,55 @@ export default function MemberDashboardChrome() {
     const c = getStoredPlayerBalance()
     return c != null ? c : 0
   })
-  const [balanceMutations, setBalanceMutations] = useState([])
   const [bankList, setBankList] = useState([])
   const [promoCodes, setPromoCodes] = useState([])
-  const [referralData, setReferralData] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (section === 'pending-deposit' || section === 'mission') {
       navigate('/member/deposit', { replace: true })
-      setActiveMenu('deposit')
       return
     }
     if (section === 'pending') {
       navigate('/member/withdraw', { replace: true })
-      setActiveMenu('withdraw')
       return
-    }
-    if (section) {
-      setActiveMenu(section)
-    } else {
-      setActiveMenu('deposit')
     }
   }, [section, navigate])
 
-  // Fetch all data on mount
+  // Sync profile & balance dari AuthContext ke state lokal (tanpa fetch ulang)
   useEffect(() => {
-    const fetchData = async () => {
+    if (user) {
+      setProfile(user)
+      const bal = user.balance != null ? user.balance : getStoredPlayerBalance()
+      setBalance(bal ?? 0)
+    }
+  }, [user])
+
+  // Fetch bank list & user promo sekali saat authenticated (bukan setiap user berubah)
+  useEffect(() => {
+    let cancelled = false
+    const fetchMemberData = async () => {
       setLoading(true)
       try {
-        const [profileRes, mutationsRes, banksRes, promoRes, referralRes] = await Promise.all([
-          getProfile(),
-          getBalanceMutation(),
+        const [banksRes, promoRes] = await Promise.all([
           getBankList(),
           getUserPromo(),
-          getUserReferral()
         ])
-        
-        setProfile(profileRes)
-        const initialBalance =
-          profileRes.balance != null && profileRes.balance !== undefined
-            ? profileRes.balance
-            : getStoredPlayerBalance()
-        setBalance(initialBalance ?? 0)
-        if (profileRes.balance != null) persistPlayerBalance(profileRes.balance)
-        setBalanceMutations(mutationsRes)
-        setBankList(banksRes)
-        setPromoCodes(promoRes)
-        setReferralData(referralRes)
+        if (!cancelled) {
+          setBankList(banksRes)
+          setPromoCodes(promoRes)
+        }
       } catch (err) {
-        console.error('Error fetching data:', err)
+        console.error('Error fetching member data:', err)
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }
-    
+
     if (isAuthenticated) {
-      fetchData()
+      fetchMemberData()
     }
+    return () => { cancelled = true }
   }, [isAuthenticated])
 
   const refreshBalance = useCallback(async () => {
@@ -1183,7 +1008,6 @@ export default function MemberDashboardChrome() {
   ]
 
   const goToMemberSection = useCallback((id) => {
-    setActiveMenu(id)
     navigate(`/member/${id}`)
   }, [navigate])
 
@@ -1217,8 +1041,18 @@ export default function MemberDashboardChrome() {
           balance={balance}
           onRefreshBalance={refreshBalanceWithSpin}
         />
-      case 'history': return <HistoryContent balanceMutations={balanceMutations} />
-      case 'referral': return <ReferralContent referralData={referralData} />
+      case 'history':
+        return (
+          <Suspense fallback={<MemberTabSuspenseFallback />}>
+            <MemberHistoryPanel />
+          </Suspense>
+        )
+      case 'referral':
+        return (
+          <Suspense fallback={<MemberTabSuspenseFallback />}>
+            <MemberReferralPanel />
+          </Suspense>
+        )
       case 'profile': return <ProfileContent profile={profile} referralCode={user?.referral_code || 'N/A'} />
       case 'password': return <PasswordContent />
       case 'inbox': return <InboxContent />
