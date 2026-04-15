@@ -217,10 +217,16 @@ function DepositContent({
   })
 
   useEffect(() => {
-    if (filteredBanks.length > 0 && !selectedBank) {
+    if (filteredBanks.length === 0) {
+      setSelectedBank(null)
+      return
+    }
+    const stillValid =
+      selectedBank != null && filteredBanks.some((b) => b.id === selectedBank.id)
+    if (!stillValid) {
       setSelectedBank(filteredBanks[0])
     }
-  }, [activeTab, filteredBanks])
+  }, [activeTab, filteredBanks, selectedBank])
 
   useEffect(() => {
     if (!pending?.deposit_id) return undefined
@@ -260,8 +266,16 @@ function DepositContent({
   }, [pending?.deposit_id, onRefreshBalance])
 
   const handleSubmit = async () => {
-    if (!selectedBank || !amount) {
-      setError('Pilih bank dan masukkan jumlah')
+    if (!amount) {
+      setError('Masukkan jumlah')
+      return
+    }
+    if (activeTab !== 'qris' && !selectedBank) {
+      setError('Pilih bank tujuan')
+      return
+    }
+    if (activeTab === 'qris' && !selectedBank) {
+      setError('Metode QRIS tidak tersedia. Coba lagi nanti.')
       return
     }
 
@@ -373,29 +387,36 @@ function DepositContent({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Bank Tujuan</label>
-          <select 
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
-            value={selectedBank?.id || ''}
-            onChange={(e) => setSelectedBank(filteredBanks.find(b => b.id === parseInt(e.target.value)))}
-          >
-            {filteredBanks.map(bank => (
-              <option key={bank.id} value={bank.id}>
-                {bank.name?.toUpperCase()} - {bank.account}
-              </option>
-            ))}
-          </select>
-        </div>
+        {activeTab !== 'qris' ? (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <label className="sm:w-40 text-sm text-[#4a4a4a]">Bank Tujuan</label>
+              <select
+                className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
+                value={selectedBank?.id || ''}
+                onChange={(e) => setSelectedBank(filteredBanks.find((b) => b.id === parseInt(e.target.value, 10)))}
+              >
+                {filteredBanks.map((bank) => (
+                  <option key={bank.id} value={bank.id}>
+                    {bank.name?.toUpperCase()} - {bank.account}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Bank Info */}
-        {selectedBank && (
-          <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-1.5 sm:space-y-2">
-            <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Bank Name</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.name?.toUpperCase()}</span></div>
-            <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Account</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.account}</span></div>
-            <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Number</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.number}</span></div>
-            <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Jumlah Minimum</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {selectedBank.min_deposit?.toLocaleString()}</span></div>
-          </div>
+            {selectedBank ? (
+              <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Bank Name</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.name?.toUpperCase()}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Account</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.account}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Number</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.number}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Jumlah Minimum</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {selectedBank.min_deposit?.toLocaleString()}</span></div>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <p className="text-xs sm:text-sm text-[#5a5a5a]">
+            QRIS Autopay: tidak perlu memilih rekening tujuan. Masukkan nominal lalu kirim — kode QR akan tampil setelahnya.
+          </p>
         )}
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">

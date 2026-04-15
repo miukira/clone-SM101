@@ -77,6 +77,8 @@ const apiCall = async (endpoint, options = {}) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
+    // Respons dinamis (logo/banner/config) jangan di-serve dari disk cache HTTP
+    cache: options.cache ?? (method === 'GET' ? 'no-store' : 'default'),
   })
 
   const data = await response.json()

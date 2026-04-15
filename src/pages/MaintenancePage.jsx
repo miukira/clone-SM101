@@ -3,13 +3,14 @@ import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 export default function MaintenancePage() {
   const { maintenance, logo, title, contact } = useWebsite()
-  
-  const expectedEnd = maintenance.expected_end 
-    ? new Date(maintenance.expected_end) 
+
+  // OpenAPI: estimated_time (format: "2026-01-01 17:30")
+  const estimatedTime = maintenance.estimated_time
+    ? new Date(maintenance.estimated_time.replace(' ', 'T'))
     : null
-  
+
   const formatDate = (date) => {
-    if (!date) return '-'
+    if (!date || isNaN(date.getTime())) return '-'
     return date.toLocaleDateString('id-ID', {
       weekday: 'long',
       year: 'numeric',
@@ -20,6 +21,9 @@ export default function MaintenancePage() {
       timeZoneName: 'short'
     })
   }
+
+  // OpenAPI: cs_link (link ke livechat/customer service)
+  const csLink = maintenance.cs_link || null
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0a0a0a] to-[#1a1a1a] flex items-center justify-center p-4">
@@ -62,15 +66,15 @@ export default function MaintenancePage() {
           </h2>
           
           <p className="text-sm sm:text-base text-[#808080] mb-6 leading-relaxed">
-            {maintenance.message || 'Sistem sedang dalam perbaikan. Mohon maaf atas ketidaknyamanannya.'}
+            Sistem sedang dalam perbaikan. Mohon maaf atas ketidaknyamanannya.
           </p>
 
-          {/* Estimated End Time */}
-          {expectedEnd && (
+          {/* Estimated Time (OpenAPI: estimated_time) */}
+          {estimatedTime && (
             <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl p-4">
               <p className="text-xs text-[#606060] mb-1 tracking-wider">ESTIMASI SELESAI</p>
               <p className="text-sm sm:text-base font-bold text-[#C0C0C0]">
-                {formatDate(expectedEnd)}
+                {formatDate(estimatedTime)}
               </p>
             </div>
           )}
@@ -80,6 +84,20 @@ export default function MaintenancePage() {
         <div className="space-y-3">
           <p className="text-xs text-[#606060] tracking-wider">HUBUNGI KAMI</p>
           <div className="flex justify-center gap-4">
+            {/* OpenAPI: cs_link untuk customer service */}
+            {csLink && (
+              <a
+                href={csLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2.5 bg-purple-600/20 border border-purple-500/30 rounded-lg text-purple-400 text-sm font-medium hover:bg-purple-600/30 transition-all"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 1.33.27 2.59.76 3.74L2 22l6.26-.76C9.41 21.73 10.67 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4 14h-8v-2h8v2zm0-3h-8V9h8v4z"/>
+                </svg>
+                Live Chat
+              </a>
+            )}
             {contact.whatsapp && (
               <a 
                 href={contact.whatsapp.link}

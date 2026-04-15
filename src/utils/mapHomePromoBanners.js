@@ -1,4 +1,4 @@
-import { publicAssetUrl } from './publicAssetUrl.js'
+import { publicAssetUrl, withCacheBust } from './publicAssetUrl.js'
 import { normalizeImageUrl } from './normalizeImageUrl.js'
 
 const GRADIENTS = [
@@ -7,23 +7,16 @@ const GRADIENTS = [
   'from-[#2a1a1a] via-[#251515] to-[#1a0d0d]',
 ]
 
-/** Banner statis di `public/banners` — dipakai bila `config.banner` kosong / tidak ada gambar valid */
+/** Banner default — dipakai bila `config.banner` kosong / tidak ada gambar valid */
 const DEFAULT_CONFIG_BANNERS = [
-  {
-    id: 'default-banner-1',
-    image: '/banners/banner-1.webp',
-    link: '/promo',
-    title_line1: 'PROMO',
-    description: 'Bonus dan promo menarik setiap hari.',
-    tag: '✨ PROMO',
-  },
+  { id: 1, image: '/banners/banner-1.webp' },
 ]
 
 /**
  * Map satu array item banner API → slide PromoBanner (bukan fallback).
  * Item tanpa `image` valid di-skip.
  */
-function mapBannerItemsToSlides(apiBanners, siteTitle) {
+function mapBannerItemsToSlides(apiBanners, siteTitle, assetRev) {
   if (!Array.isArray(apiBanners) || apiBanners.length === 0) return []
 
   const brand = String(siteTitle || 'PROMO').slice(0, 80)
@@ -49,7 +42,7 @@ function mapBannerItemsToSlides(apiBanners, siteTitle) {
 
       return {
         id: String(b.id ?? `banner-${i}`),
-        image: publicAssetUrl(path),
+        image: withCacheBust(publicAssetUrl(path), assetRev),
         link,
         titleLine1,
         titleLine2,
@@ -66,8 +59,8 @@ function mapBannerItemsToSlides(apiBanners, siteTitle) {
  * OpenAPI: { id, image } + optional link. Field opsional teks: title_line1, title_line2, description, tag, gradient.
  * Bila array kosong atau tidak ada satu pun gambar valid → pakai banner default (`public/banners/banner-1.webp`).
  */
-export function mapConfigBannersToPromoSlides(apiBanners, siteTitle = '') {
-  const fromApi = mapBannerItemsToSlides(apiBanners, siteTitle)
+export function mapConfigBannersToPromoSlides(apiBanners, siteTitle = '', assetRev = null) {
+  const fromApi = mapBannerItemsToSlides(apiBanners, siteTitle, assetRev)
   if (fromApi.length > 0) return fromApi
-  return mapBannerItemsToSlides(DEFAULT_CONFIG_BANNERS, siteTitle)
+  return mapBannerItemsToSlides(DEFAULT_CONFIG_BANNERS, siteTitle, assetRev)
 }
