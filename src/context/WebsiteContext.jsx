@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { getInfo, getWebsite, getBankList, getPromo, getReferral } from '../services/api'
 import { publicAssetUrl, withCacheBust } from '../utils/publicAssetUrl'
+import { loadWebsitePublicBundle } from '../utils/websitePublicDataCache.js'
 import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
 
 const WebsiteContext = createContext()
@@ -48,29 +48,22 @@ export function WebsiteProvider({ children }) {
   const [configAssetRev, setConfigAssetRev] = useState(0)
   const externalScriptsRanRef = useRef(false)
 
-  const fetchWebsiteData = useCallback(async () => {
+  const fetchWebsiteData = useCallback(async (opts = {}) => {
+    const force = opts.force === true
     try {
       setLoading(true)
       setError(null)
       console.log('📡 Fetching website data...')
 
-      // Fetch semua data secara paralel sesuai OpenAPI
-      const [infoData, configData, banksData, promoData, referralData] = await Promise.all([
-        getInfo(),           // notification, lottery_result, withdraw_list
-        getWebsite(),        // config (title, logo, banner, etc.)
-        getBankList(),       // banks
-        getPromo(),          // promotions
-        getReferral()        // referral info
-      ])
-
+      const bundle = await loadWebsitePublicBundle({ reset: force })
       const combined = {
-        notification: infoData?.notification || [],
-        lottery_result: infoData?.lottery_result || [],
-        withdraw_list: infoData?.withdraw_list || [],
-        config: configData || {},
-        banks: banksData || [],
-        promotions: promoData || [],
-        referral: referralData || {}
+        notification: bundle.notification || [],
+        lottery_result: bundle.lottery_result || [],
+        withdraw_list: bundle.withdraw_list || [],
+        config: bundle.config || {},
+        banks: [],
+        promotions: [],
+        referral: {},
       }
 
       console.log('✅ Website data loaded:', combined)
@@ -87,6 +80,8 @@ export function WebsiteProvider({ children }) {
   useEffect(() => {
     fetchWebsiteData()
   }, [fetchWebsiteData])
+
+  const refetchWebsite = useCallback(() => fetchWebsiteData({ force: true }), [fetchWebsiteData])
 
   /** Sinkronisasi head: title, favicon, meta_tag, google_verification, external_script */
   useEffect(() => {
@@ -145,7 +140,7 @@ export function WebsiteProvider({ children }) {
   const value = {
     loading,
     error,
-    refetch: fetchWebsiteData,
+    refetch: refetchWebsite,
 
     config,
     notifications,

@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react'
-import { getWebsite } from '../services/api'
+import { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { useWebsite } from './WebsiteContext'
 
 // ============================================
 // THEME OPTIONS (paths → absolute URL)
@@ -105,13 +105,63 @@ export const UI_COLORS = {
 
 const ThemeContext = createContext()
 
+/** Terapkan `WebsiteConfig.theme` dari GET /website (sudah di WebsiteContext). */
+function applyConfigTheme(theme, setters) {
+  if (!theme || typeof theme !== 'object') return
+  const {
+    setSeason,
+    setBgColor,
+    setBgImage,
+    setCustomBgImageUrl,
+    setUiColor,
+  } = setters
+  if (theme.season) setSeason(theme.season)
+  if (theme.background_color) {
+    const matchedBgColor = Object.entries(BG_COLORS).find(
+      ([, val]) => val.value.toLowerCase() === String(theme.background_color).toLowerCase(),
+    )
+    if (matchedBgColor) setBgColor(matchedBgColor[0])
+  }
+  if (theme.background_image) {
+    const bgImageUrl = theme.background_image
+    const matchedBgImage = Object.entries(BG_IMAGES).find(
+      ([, val]) => val.src && val.src === bgImageUrl,
+    )
+    if (matchedBgImage) {
+      setBgImage(matchedBgImage[0])
+      setCustomBgImageUrl(null)
+    } else {
+      setBgImage('custom')
+      setCustomBgImageUrl(bgImageUrl)
+    }
+  }
+  if (theme.border_color) {
+    const colorMap = {
+      '#C0C0C0': 'silver',
+      '#FFD700': 'gold',
+      '#DC143C': 'red',
+      '#1E90FF': 'blue',
+      '#50C878': 'green',
+      '#9966CC': 'purple',
+      '#FF69B4': 'pink',
+    }
+    const matchedColor = Object.entries(colorMap).find(
+      ([hex]) => hex.toLowerCase() === String(theme.border_color).toLowerCase(),
+    )
+    if (matchedColor) setUiColor(matchedColor[1])
+  }
+}
+
 export function ThemeProvider({ children }) {
+  const { config } = useWebsite()
   const [season, setSeason] = useState('none')
   const [bgColor, setBgColor] = useState('default')
   const [bgImage, setBgImage] = useState('none')
   const [customBgImageUrl, setCustomBgImageUrl] = useState(null) // For absolute URLs from server
   const [uiColor, setUiColor] = useState('silver')
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false)
+
+  const lastServerThemeKeyRef = useRef('')
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -128,56 +178,23 @@ export function ThemeProvider({ children }) {
         console.error('Failed to parse saved theme', e)
       }
     }
-
-    // Load from API
-    const loadThemeFromAPI = async () => {
-      try {
-        const config = await getWebsite()
-        if (config.theme) {
-          if (config.theme.season) setSeason(config.theme.season)
-          if (config.theme.background_color) {
-            // Find matching bgColor key
-            const matchedBgColor = Object.entries(BG_COLORS).find(([, val]) =>
-              val.value.toLowerCase() === config.theme.background_color.toLowerCase()
-            )
-            if (matchedBgColor) setBgColor(matchedBgColor[0])
-          }
-          if (config.theme.background_image) {
-            const bgImageUrl = config.theme.background_image
-            const matchedBgImage = Object.entries(BG_IMAGES).find(
-              ([, val]) => val.src && val.src === bgImageUrl
-            )
-            if (matchedBgImage) {
-              setBgImage(matchedBgImage[0])
-              setCustomBgImageUrl(null)
-            } else {
-              setBgImage('custom')
-              setCustomBgImageUrl(bgImageUrl)
-            }
-          }
-          if (config.theme.border_color) {
-            // Map border_color to uiColor
-            const colorMap = {
-              '#C0C0C0': 'silver',
-              '#FFD700': 'gold',
-              '#DC143C': 'red',
-              '#1E90FF': 'blue',
-              '#50C878': 'green',
-              '#9966CC': 'purple',
-              '#FF69B4': 'pink'
-            }
-            const matchedColor = Object.entries(colorMap).find(([hex]) =>
-              hex.toLowerCase() === config.theme.border_color.toLowerCase()
-            )
-            if (matchedColor) setUiColor(matchedColor[1])
-          }
-        }
-      } catch (err) {
-        console.log('Error loading theme from API, using default/localStorage settings', err)
-      }
-    }
-    loadThemeFromAPI()
   }, [])
+
+  // Theme dari WebsiteContext — terapkan hanya saat payload `theme` berubah
+  useEffect(() => {
+    const t = config?.theme
+    if (!t || typeof t !== 'object') return
+    const key = JSON.stringify(t)
+    if (key === lastServerThemeKeyRef.current) return
+    lastServerThemeKeyRef.current = key
+    applyConfigTheme(t, {
+      setSeason,
+      setBgColor,
+      setBgImage,
+      setCustomBgImageUrl,
+      setUiColor,
+    })
+  }, [config?.theme])
 
   // Save to localStorage when theme changes
   useEffect(() => {

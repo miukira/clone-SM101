@@ -1,41 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
-import {
-  getSlotProviders,
-  getSportsbookProviders,
-  getCasinoProviders,
-  getTogelProviders,
-  getFishProviders,
-  getArcadeProviders,
-  getCrushProviders,
-  getEsportsProviders,
-  getPokerProviders,
-  getCockfightProviders,
-  getGameList as apiGetGameList,
-} from '../services/api'
+import { getGameList as apiGetGameList } from '../services/api'
+import { ensureProviderCategory } from '../utils/providerCategoryApiCache.js'
 import { transformProviderData } from '../utils/transformProviderApi.js'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl.js'
 
 export { transformProviderData }
 
-// Map category IDs to their API fetcher functions
-const fetchers = {
-  slots: getSlotProviders,
-  sports: getSportsbookProviders,
-  casino: getCasinoProviders,
-  togel: getTogelProviders,
-  fishing: getFishProviders,
-  arcade: getArcadeProviders,
-  crush: getCrushProviders,
-  esports: getEsportsProviders,
-  poker: getPokerProviders,
-  sabung: getCockfightProviders,
-}
-
 /**
- * Custom hook to fetch provider data for a given category from the API
- * All data including images comes from API - no more hardcoded static config
- * @param {string} category - The category ID (slots, sports, casino, togel, fishing, arcade, crush, esports, poker, sabung)
- * @returns {{ providers: Array, loading: boolean, error: Error|null }}
+ * Data provider untuk satu kategori — memakai cache bersama useNavDropdownProviders
+ * (tidak memanggil GET /slot lagi bila sudah di-prefetch nav).
  */
 export function useProviders(category) {
   const [providers, setProviders] = useState([])
@@ -43,38 +16,28 @@ export function useProviders(category) {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const loadProviders = async () => {
-      setLoading(true)
-      setError(null)
-      
-      const fetchProviderFn = fetchers[category]
-      
-      if (fetchProviderFn) {
-        try {
-          const apiData = await fetchProviderFn()
-          // Log provider response
-          console.log(`📋 Provider Response [${category.toUpperCase()}]: ${apiData.length} item(s)`)
-          apiData.forEach((p, i) => {
-            console.log(`   [${i + 1}] provider_id: ${p.provider_id}, name: "${p.name}", image: "${p.image ?? ''}"`)
-          })
-          // Transform API data to frontend format (images from API)
-          const transformedData = transformProviderData(apiData)
-          setProviders(transformedData)
-        } catch (err) {
-          console.error(`Error fetching ${category} providers:`, err)
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    ensureProviderCategory(category)
+      .then((data) => {
+        if (!cancelled) setProviders(Array.isArray(data) ? data : [])
+      })
+      .catch((err) => {
+        console.error(`Error fetching ${category} providers:`, err)
+        if (!cancelled) {
           setError(err)
           setProviders([])
-        } finally {
-          setLoading(false)
         }
-      } else {
-        console.warn(`Unknown provider category: ${category}`)
-        setProviders([])
-        setLoading(false)
-      }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => {
+      cancelled = true
     }
-    
-    loadProviders()
   }, [category])
 
   return { providers, loading, error }
@@ -106,7 +69,7 @@ export function useGameList(providerId) {
       console.log(`🎮 Game List Response [provider_id: ${providerId}]: ${data?.length || 0} item(s)`)
       if (data && data.length > 0) {
         data.slice(0, 5).forEach((g, i) => {
-          console.log(`   [${i+1}] id: ${g.id}, name: "${g.name}", image: ${g.image || 'null'}`)
+          console.log(`   [${i + 1}] id: ${g.id}, name: "${g.name}", image: ${g.image || 'null'}`)
         })
         if (data.length > 5) {
           console.log(`   ... dan ${data.length - 5} game lainnya`)
