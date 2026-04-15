@@ -6,16 +6,18 @@ import request from 'supertest'
 const require = createRequire(import.meta.url)
 const { app } = require('../mock-server/server.js')
 
+const WEBSITE_QUERY = { domain: 'localhost' }
+
 describe('PATCH /api/v1/__mock/website-config (about + banner)', () => {
   /** @type {{ about: string, banner: unknown[] }} */
   let baseline
 
   before(async () => {
     delete process.env.BRAND_CARD_ADMIN_KEY
-    const res = await request(app).get('/api/v1/info').expect(200)
+    const res = await request(app).get('/api/v1/website').query(WEBSITE_QUERY).expect(200)
     baseline = {
-      about: res.body.config.about,
-      banner: JSON.parse(JSON.stringify(res.body.config.banner)),
+      about: res.body.about,
+      banner: JSON.parse(JSON.stringify(res.body.banner)),
     }
   })
 
@@ -27,7 +29,7 @@ describe('PATCH /api/v1/__mock/website-config (about + banner)', () => {
       .expect(200)
   })
 
-  it('mengubah about; GET /info mengikuti', async () => {
+  it('mengubah about; GET /website mengikuti', async () => {
     const nextAbout = 'Teks about dari PATCH mock __mock/website-config'
     const patch = await request(app)
       .patch('/api/v1/__mock/website-config')
@@ -36,11 +38,11 @@ describe('PATCH /api/v1/__mock/website-config (about + banner)', () => {
     assert.equal(patch.body.ok, true)
     assert.equal(patch.body.config.about, nextAbout)
 
-    const info = await request(app).get('/api/v1/info').expect(200)
-    assert.equal(info.body.config.about, nextAbout)
+    const site = await request(app).get('/api/v1/website').query(WEBSITE_QUERY).expect(200)
+    assert.equal(site.body.about, nextAbout)
   })
 
-  it('mengubah banner; GET /info mengikuti', async () => {
+  it('mengubah banner; GET /website mengikuti', async () => {
     const newBanner = [
       { id: 't1', image: '/banners/banner-1.webp', link: '/promo', title_line1: 'Satu' },
       { id: 't2', image: '/banners/banner-2.webp', link: '/referral' },
@@ -50,14 +52,14 @@ describe('PATCH /api/v1/__mock/website-config (about + banner)', () => {
       .send({ banner: newBanner })
       .expect(200)
 
-    const info = await request(app).get('/api/v1/info').expect(200)
-    assert.equal(info.body.config.banner.length, 2)
-    assert.equal(info.body.config.banner[0].id, 't1')
-    assert.equal(info.body.config.banner[0].title_line1, 'Satu')
-    assert.equal(info.body.config.banner[1].link, '/referral')
+    const site = await request(app).get('/api/v1/website').query(WEBSITE_QUERY).expect(200)
+    assert.equal(site.body.banner.length, 2)
+    assert.equal(site.body.banner[0].id, 't1')
+    assert.equal(site.body.banner[0].title_line1, 'Satu')
+    assert.equal(site.body.banner[1].link, '/referral')
   })
 
-  it('400 bila body kosong (tanpa about maupun banner)', async () => {
+  it('400 bila body kosong (tanpa about, banner, logo, maupun favicon)', async () => {
     const res = await request(app).patch('/api/v1/__mock/website-config').send({}).expect(400)
     assert.ok(typeof res.body.message === 'string')
   })

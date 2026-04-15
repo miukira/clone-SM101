@@ -1559,7 +1559,7 @@ function sanitizeMockBannerArray(arr) {
  */
 router.patch('/__mock/website-config', requireBrandCardAdmin, (req, res) => {
   const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {}
-  const { about, banner } = body
+  const { about, banner, logo, favicon } = body
 
   if (about !== undefined) {
     if (typeof about !== 'string') {
@@ -1573,9 +1573,28 @@ router.patch('/__mock/website-config', requireBrandCardAdmin, (req, res) => {
     }
     mockWebsiteConfig.banner = sanitizeMockBannerArray(banner)
   }
+  if (logo !== undefined) {
+    if (typeof logo !== 'string') {
+      return res.status(400).json({ message: 'logo must be a string' })
+    }
+    mockWebsiteConfig.logo = logo
+  }
+  if (favicon !== undefined) {
+    if (typeof favicon !== 'string') {
+      return res.status(400).json({ message: 'favicon must be a string' })
+    }
+    mockWebsiteConfig.favicon = favicon
+  }
 
-  if (about === undefined && banner === undefined) {
-    return res.status(400).json({ message: 'provide at least one of: about, banner' })
+  if (
+    about === undefined &&
+    banner === undefined &&
+    logo === undefined &&
+    favicon === undefined
+  ) {
+    return res.status(400).json({
+      message: 'provide at least one of: about, banner, logo, favicon',
+    })
   }
 
   res.json({
@@ -1583,6 +1602,8 @@ router.patch('/__mock/website-config', requireBrandCardAdmin, (req, res) => {
     config: {
       about: mockWebsiteConfig.about,
       banner: mockWebsiteConfig.banner,
+      logo: mockWebsiteConfig.logo,
+      favicon: mockWebsiteConfig.favicon,
     },
   })
 })

@@ -11,6 +11,20 @@ function trimSlash(s) {
   return s.replace(/\/$/, '')
 }
 
+/**
+ * Hindari gambar/logo “nyangkut” di cache bila path URL sama tapi file di server diganti.
+ * Dipakai setelah GET /website sukses (satu revision per fetch).
+ */
+export function withCacheBust(url, revision) {
+  if (url == null || url === '') return url
+  if (typeof url !== 'string') return url
+  if (revision == null || revision === '') return url
+  if (/^(data:|blob:)/i.test(url)) return url
+  const key = encodeURIComponent(String(revision))
+  const sep = url.includes('?') ? '&' : '?'
+  return `${url}${sep}_cfg=${key}`
+}
+
 export function publicAssetUrl(path) {
   if (path == null) return null
   if (typeof path !== 'string') return path

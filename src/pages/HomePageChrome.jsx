@@ -328,11 +328,12 @@ function HomeAboutBlurb() {
 // Promo Banner — `config.banner` dari GET /info; kosong → banner default `public/banners/banner-1.webp`
 function PromoBanner() {
   const navigate = useNavigate()
-  const { banners: apiBanners, title: siteTitle, loading: websiteLoading } = useWebsite()
+  const { banners: apiBanners, title: siteTitle, loading: websiteLoading, configAssetRev } =
+    useWebsite()
 
   const slides = useMemo(
-    () => mapConfigBannersToPromoSlides(apiBanners, siteTitle),
-    [apiBanners, siteTitle],
+    () => mapConfigBannersToPromoSlides(apiBanners, siteTitle, configAssetRev || null),
+    [apiBanners, siteTitle, configAssetRev],
   )
 
   const [currentSlide, setCurrentSlide] = useState(0)
