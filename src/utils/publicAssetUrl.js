@@ -11,6 +11,32 @@ function trimSlash(s) {
   return s.replace(/\/$/, '')
 }
 
+function toOriginBase(raw) {
+  if (typeof raw !== 'string') return ''
+  const t = raw.trim()
+  if (t === '') return ''
+  try {
+    const u = new URL(t)
+    return trimSlash(u.origin)
+  } catch {
+    return ''
+  }
+}
+
+function resolveDynamicAssetBase() {
+  const explicit = trimSlash(import.meta.env?.VITE_PUBLIC_ASSET_BASE_URL || '')
+  if (explicit) return explicit
+
+  // Staging sering mengembalikan path relatif (/providers/...): pakai origin API bila tersedia.
+  const apiAssetBase = toOriginBase(import.meta.env?.VITE_API_ASSET_BASE_URL)
+  if (apiAssetBase) return apiAssetBase
+  const apiBase = toOriginBase(import.meta.env?.VITE_API_BASE_URL)
+  if (apiBase) return apiBase
+  const proxyTarget = toOriginBase(import.meta.env?.VITE_API_PROXY_TARGET)
+  if (proxyTarget) return proxyTarget
+  return ''
+}
+
 /**
  * Hindari gambar/logo “nyangkut” di cache bila path URL sama tapi file di server diganti.
  * Dipakai setelah GET /website sukses (satu revision per fetch).
@@ -34,7 +60,7 @@ export function publicAssetUrl(path) {
 
   const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
 
-  const base = trimSlash(import.meta.env?.VITE_PUBLIC_ASSET_BASE_URL || '')
+  const base = resolveDynamicAssetBase()
   if (base) return `${base}${normalized}`
 
   if (typeof window !== 'undefined' && window.location?.origin) {

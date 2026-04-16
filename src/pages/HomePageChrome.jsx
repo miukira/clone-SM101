@@ -552,23 +552,24 @@ function MobileProviderCard({ provider }) {
   /** 0: API / default file; 1: paksa default; 2: 🎰 */
   const [heroTier, setHeroTier] = useState(0)
 
-  if (!provider) return null
-
   // Handle badge - can be object {type: 'hot'} or string 'HOT'
-  const badgeType = typeof provider.badge === 'object' ? provider.badge?.type : provider.badge
+  const badgeType =
+    provider && typeof provider.badge === 'object' ? provider.badge?.type : provider?.badge
   const isHot = badgeType === 'hot' || badgeType === 'HOT'
   const isNew = badgeType === 'new' || badgeType === 'NEW'
 
-  const characterImage = normalizeImageUrl(provider.characterImg)
-  const logoImage = normalizeImageUrl(provider.logoImg)
+  const characterImage = normalizeImageUrl(provider?.characterImg)
+  const logoImage = normalizeImageUrl(provider?.logoImg)
   const heroImage = logoImage ?? characterImage
   const showCornerLogo =
     Boolean(logoImage && characterImage && logoImage !== characterImage)
-  const name = provider.name || provider.logoAlt || 'Provider'
+  const name = provider?.name || provider?.logoAlt || 'Provider'
 
   useEffect(() => {
     setHeroTier(0)
   }, [heroImage])
+
+  if (!provider) return null
 
   const mobileHeroUrl =
     heroTier === 0
@@ -821,7 +822,7 @@ function MobileTogelSkeleton() {
 }
 
 // ============ FULL PROVIDERS LIST PAGE ============
-function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) {
+function ProvidersListPage({ category, navigate, dropdownProvidersByCategory, navProvidersLoading }) {
   const cat = categories.find(c => c.id === category) || categories[0]
   const Icon = cat.icon
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
@@ -833,6 +834,8 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
 
   // Pakai data dari cache bersama (sudah di-prefetch oleh useNavDropdownProviders)
   const apiProviders = dropdownProvidersByCategory[category] ?? []
+  const providersLoading =
+    navProvidersLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
 
   // Use API data if available, otherwise fallback to static config
   const categoryProviders = apiProviders.length > 0 ? apiProviders : cat.providers
@@ -1089,6 +1092,7 @@ export default function HomePageChrome() {
         category={providerCategory}
         navigate={navigate}
         dropdownProvidersByCategory={dropdownProvidersByCategory}
+        navProvidersLoading={navProvidersLoading}
       />
     )
   }
