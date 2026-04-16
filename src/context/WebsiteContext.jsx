@@ -25,15 +25,29 @@ function updateFaviconFromConfig(faviconUrl, assetRev) {
   console.log('🎨 Favicon updated:', faviconUrl)
 }
 
-/** Hanya eksekusi string yang masuk akal sebagai snippet JS (bukan URL/HTML dari CMS). */
-function isExecutableExternalScriptSnippet(script) {
-  if (typeof script !== 'string') return false
+/**
+ * Ekstrak konten JS dari dalam tag <script>...</script> jika ada.
+ * Contoh: "<script>console.log('hello');</script>" → "console.log('hello');"
+ */
+function extractScriptContent(script) {
+  if (typeof script !== 'string') return null
   const s = script.trim()
-  if (s.length < 2) return false
-  if (s.startsWith('<') || s.startsWith('<?')) return false
-  // Satu baris URL saja — bukan kode; hindari SyntaxError Unexpected token '<' / invalid
-  if (/^https?:\/\/\S+$/i.test(s)) return false
-  return true
+  if (s.length < 2) return null
+
+  // Jika dibungkus <script>...</script>, ekstrak isinya
+  const scriptTagMatch = s.match(/^<script[^>]*>([\s\S]*)<\/script>$/i)
+  if (scriptTagMatch) {
+    const inner = scriptTagMatch[1].trim()
+    return inner.length > 0 ? inner : null
+  }
+
+  // Bukan script tag, cek apakah valid JS snippet
+  // Skip jika dimulai dengan < (HTML/XML lain) atau <? (PHP)
+  if (s.startsWith('<') || s.startsWith('<?')) return null
+  // Skip jika hanya URL
+  if (/^https?:\/\/\S+$/i.test(s)) return null
+
+  return s
 }
 
 function runExternalScriptsFromConfig(scripts) {
@@ -41,14 +55,15 @@ function runExternalScriptsFromConfig(scripts) {
 
   console.log('🔧 Executing external scripts from API...')
   scripts.forEach((script, index) => {
-    if (!isExecutableExternalScriptSnippet(script)) {
+    const jsContent = extractScriptContent(script)
+    if (!jsContent) {
       console.warn(
-        `⏭️ External script ${index + 1} skipped (bukan snippet JS valid — URL/HTML/dikosongkan?)`,
+        `⏭️ External script ${index + 1} skipped (kosong, URL, atau HTML non-script)`,
       )
       return
     }
     try {
-      const fn = new Function(script)
+      const fn = new Function(jsContent)
       fn()
       console.log(`✅ External script ${index + 1} executed successfully`)
     } catch (err) {

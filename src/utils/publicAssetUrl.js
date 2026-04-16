@@ -32,8 +32,8 @@ function resolveDynamicAssetBase() {
   if (apiAssetBase) return apiAssetBase
   const apiBase = toOriginBase(import.meta.env?.VITE_API_BASE_URL)
   if (apiBase) return apiBase
-  const proxyTarget = toOriginBase(import.meta.env?.VITE_API_PROXY_TARGET)
-  if (proxyTarget) return proxyTarget
+  // NOTE: Tidak pakai VITE_API_PROXY_TARGET untuk asset resolution
+  // karena proxy hanya untuk API calls, bukan untuk static assets
   return ''
 }
 
