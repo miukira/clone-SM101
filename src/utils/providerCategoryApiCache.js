@@ -10,6 +10,8 @@ import {
   getPokerProviders,
   getCockfightProviders,
 } from '../services/api'
+
+const IS_DEV = import.meta.env.DEV === true
 import {
   slotProviders,
   sportsProviders,
@@ -115,11 +117,22 @@ export async function ensureProviderCategory(category) {
   }
 
   p = (async () => {
-    const raw = await fetcher()
-    const t = transformProviderData(raw || [])
-    const merged = mergeStaticExtras(t, staticByCategory[category])
-    cache[category] = merged
-    return merged
+    try {
+      const raw = await fetcher()
+      if (!Array.isArray(raw)) {
+        if (IS_DEV) console.warn(`⚠️ /${category} non-array response`)
+        cache[category] = []
+        return []
+      }
+      const t = transformProviderData(raw)
+      const merged = mergeStaticExtras(t, staticByCategory[category])
+      cache[category] = merged
+      return merged
+    } catch (err) {
+      if (IS_DEV) console.warn(`⚠️ /${category} failed`)
+      cache[category] = []
+      return []
+    }
   })()
 
   inflight.set(category, p)

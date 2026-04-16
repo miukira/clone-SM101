@@ -4,6 +4,7 @@ import { loadWebsitePublicBundle } from '../utils/websitePublicDataCache.js'
 import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
 
 const WebsiteContext = createContext()
+const VERBOSE = import.meta.env.VITE_API_VERBOSE === 'true'
 
 function updateFaviconFromConfig(faviconUrl, assetRev) {
   if (!faviconUrl || typeof document === 'undefined') return
@@ -22,7 +23,7 @@ function updateFaviconFromConfig(faviconUrl, assetRev) {
   if (lower.endsWith('.svg')) link.type = 'image/svg+xml'
   else if (lower.endsWith('.png')) link.type = 'image/png'
   else link.removeAttribute('type')
-  console.log('🎨 Favicon updated:', faviconUrl)
+  if (VERBOSE) console.log('🎨 Favicon updated:', faviconUrl)
 }
 
 /**
@@ -53,19 +54,17 @@ function extractScriptContent(script) {
 function runExternalScriptsFromConfig(scripts) {
   if (!scripts || !Array.isArray(scripts)) return
 
-  console.log('🔧 Executing external scripts from API...')
+  if (VERBOSE) console.log('🔧 Executing external scripts from API...')
   scripts.forEach((script, index) => {
     const jsContent = extractScriptContent(script)
     if (!jsContent) {
-      console.warn(
-        `⏭️ External script ${index + 1} skipped (kosong, URL, atau HTML non-script)`,
-      )
+      if (VERBOSE) console.warn(`⏭️ External script ${index + 1} skipped`)
       return
     }
     try {
       const fn = new Function(jsContent)
       fn()
-      console.log(`✅ External script ${index + 1} executed successfully`)
+      if (VERBOSE) console.log(`✅ External script ${index + 1} executed`)
     } catch (err) {
       console.error(`❌ Error executing external script ${index + 1}:`, err)
     }
@@ -85,7 +84,6 @@ export function WebsiteProvider({ children }) {
     try {
       setLoading(true)
       setError(null)
-      console.log('📡 Fetching website data...')
 
       const bundle = await loadWebsitePublicBundle({ reset: force })
       const combined = {
@@ -98,7 +96,6 @@ export function WebsiteProvider({ children }) {
         referral: {},
       }
 
-      console.log('✅ Website data loaded:', combined)
       setWebsiteData(combined)
       setConfigAssetRev(Date.now())
     } catch (err) {

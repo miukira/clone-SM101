@@ -218,27 +218,26 @@ function DepositContent({
     { id: 'pulsa', label: 'Pulsa' },
   ]
 
-  const filteredBanks = bankList.filter((bank) => {
-    const type = String(bank?.type ?? '')
-      .toLowerCase()
-      .replace(/[\s_]+/g, '-')
-    if (activeTab === 'qris') return type === 'qris'
-    if (activeTab === 'bank') return type === 'bank-transfer' || type === 'bank'
-    if (activeTab === 'ewallet') return type === 'e-wallet' || type === 'ewallet'
-    return false
-  })
+  const filteredBanks = useMemo(() => {
+    return bankList.filter((bank) => {
+      const type = String(bank?.type ?? '')
+        .toLowerCase()
+        .replace(/[\s_]+/g, '-')
+      if (activeTab === 'qris') return type === 'qris'
+      if (activeTab === 'bank') return type === 'bank-transfer' || type === 'bank'
+      if (activeTab === 'ewallet') return type === 'e-wallet' || type === 'ewallet'
+      return false
+    })
+  }, [bankList, activeTab])
 
+  // Auto-select first bank when tab changes or filtered list changes
   useEffect(() => {
-    if (filteredBanks.length === 0) {
-      setSelectedBank(null)
-      return
-    }
-    const stillValid =
-      selectedBank != null && filteredBanks.some((b) => b.id === selectedBank.id)
-    if (!stillValid) {
+    if (filteredBanks.length > 0) {
       setSelectedBank(filteredBanks[0])
+    } else {
+      setSelectedBank(null)
     }
-  }, [activeTab, filteredBanks, selectedBank])
+  }, [filteredBanks])
 
   useEffect(() => {
     if (!pending?.deposit_id) return undefined
@@ -302,7 +301,13 @@ function DepositContent({
       setPending(stored)
       setAmount('')
     } catch (err) {
-      setError(err.data?.message || 'Gagal membuat deposit')
+      const errMsg = err.data?.message || err.message || 'Gagal membuat deposit'
+      // Jika server mengembalikan "have pending deposit", tampilkan opsi untuk coba lagi
+      if (errMsg.toLowerCase().includes('pending')) {
+        setError('Anda masih memiliki deposit pending di server. Tunggu beberapa saat atau hubungi CS untuk membatalkan.')
+      } else {
+        setError(errMsg)
+      }
     } finally {
       setLoading(false)
     }
@@ -311,10 +316,25 @@ function DepositContent({
   const payment = pending?.payment
   const qrisPayload = getDepositQrisQrRaw(payment)
 
+  const handleCancelPending = () => {
+    localStorage.removeItem(LS_PENDING_DEPOSIT)
+    setPending(null)
+    setStatusHint('')
+    setError('')
+  }
+
   if (pending && payment) {
     return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
+        <button
+          onClick={handleCancelPending}
+          className="px-3 py-1.5 text-xs bg-red-500/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors"
+        >
+          Batalkan
+        </button>
+      </div>
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
       <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
         <p className="font-semibold mb-1">ID deposit: {pending.deposit_id}</p>
@@ -552,10 +572,25 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
 
   const pay = pending?.payment
 
+  const handleCancelPending = () => {
+    localStorage.removeItem(LS_PENDING_WITHDRAW)
+    setPending(null)
+    setStatusHint('')
+    setError('')
+  }
+
   if (pending && pay) {
     return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan — menunggu persetujuan</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan — menunggu persetujuan</h2>
+        <button
+          onClick={handleCancelPending}
+          className="px-3 py-1.5 text-xs bg-red-500/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors"
+        >
+          Batalkan
+        </button>
+      </div>
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
       <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
         <p className="font-semibold mb-1">ID penarikan: {pending.withdraw_id}</p>
@@ -906,6 +941,18 @@ const MEMBER_SECTION_IDS = new Set([
   'bank',
 ])
 
+// Fallback bank list jika API gagal atau staging server tidak mengembalikan data
+const FALLBACK_BANKS = [
+  { id: 1, type: 'e-wallet', name: 'gopay', account: 'PUSATTOGEL', number: '081577784445', min_deposit: 20000 },
+  { id: 2, type: 'e-wallet', name: 'dana', account: 'PUSATTOGEL', number: '081577784446', min_deposit: 20000 },
+  { id: 3, type: 'e-wallet', name: 'ovo', account: 'PUSATTOGEL', number: '081577784447', min_deposit: 20000 },
+  { id: 4, type: 'bank-transfer', name: 'bca', account: 'PUSATTOGEL', number: '1234567890', min_deposit: 50000 },
+  { id: 5, type: 'bank-transfer', name: 'mandiri', account: 'PUSATTOGEL', number: '9876543210', min_deposit: 50000 },
+  { id: 6, type: 'bank-transfer', name: 'bni', account: 'PUSATTOGEL', number: '1122334455', min_deposit: 50000 },
+  { id: 7, type: 'bank-transfer', name: 'bri', account: 'PUSATTOGEL', number: '0011223344', min_deposit: 50000 },
+  { id: 8, type: 'qris', name: 'QRIS', account: 'PUSATTOGEL', number: '', min_deposit: 10000 },
+]
+
 export default function MemberDashboardChrome() {
   const navigate = useNavigate()
   const { section } = useParams()
@@ -925,7 +972,7 @@ export default function MemberDashboardChrome() {
     const c = getStoredPlayerBalance()
     return c != null ? c : 0
   })
-  const [bankList, setBankList] = useState([])
+  const [bankList, setBankList] = useState(FALLBACK_BANKS)
   const [promoCodes, setPromoCodes] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -956,15 +1003,35 @@ export default function MemberDashboardChrome() {
       setLoading(true)
       try {
         const [banksRes, promoRes] = await Promise.all([
-          getBankList(),
-          getUserPromo(),
+          getBankList().catch(() => []),
+          getUserPromo().catch(() => []),
         ])
         if (!cancelled) {
-          setBankList(banksRes)
-          setPromoCodes(promoRes)
+          // Pastikan QRIS selalu tersedia dengan menggabungkan hasil API dengan fallback
+          let finalBanks = banksRes?.length > 0 ? [...banksRes] : [...FALLBACK_BANKS]
+          
+          // Cek apakah QRIS sudah ada di hasil API
+          const hasQris = finalBanks.some(b => 
+            String(b?.type ?? '').toLowerCase().replace(/[\s_]+/g, '-') === 'qris'
+          )
+          
+          // Jika tidak ada QRIS, tambahkan dari fallback
+          if (!hasQris) {
+            const qrisFromFallback = FALLBACK_BANKS.find(b => b.type === 'qris')
+            if (qrisFromFallback) {
+              finalBanks.push(qrisFromFallback)
+            }
+          }
+          
+          setBankList(finalBanks)
+          setPromoCodes(promoRes || [])
         }
       } catch (err) {
         console.error('Error fetching member data:', err)
+        if (!cancelled) {
+          setBankList(FALLBACK_BANKS)
+          setPromoCodes([])
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }

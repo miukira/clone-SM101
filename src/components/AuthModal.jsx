@@ -161,15 +161,15 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
       setToken(result.token)
       setSuccess('Login berhasil!')
       
-      // Callback and redirect
+      // Callback and wait for profile fetch
       if (onLoginSuccess) {
-        onLoginSuccess(result)
+        await onLoginSuccess(result)
       }
       
       setTimeout(() => {
         onClose()
         navigate('/member')
-      }, 1000)
+      }, 500)
     } catch (err) {
       setError(err.data?.message || 'Login gagal. Silakan coba lagi.')
     } finally {
@@ -229,13 +229,13 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
       setSuccess('Registrasi berhasil!')
       
       if (onLoginSuccess) {
-        onLoginSuccess(result)
+        await onLoginSuccess(result)
       }
       
       setTimeout(() => {
         onClose()
         navigate('/member')
-      }, 1000)
+      }, 500)
     } catch (err) {
       setError(err.data?.message || 'Registrasi gagal. Silakan coba lagi.')
     } finally {

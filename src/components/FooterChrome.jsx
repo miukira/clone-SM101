@@ -263,20 +263,10 @@ const bankItems = [
 ]
 
 export default function FooterChrome() {
-  const { title, about } = useWebsite()
-  const aboutText = about?.trim() ?? ''
+  const { title } = useWebsite()
 
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
-      {/* Teks footer dari `config.about` (GET /info) — token PUSATTOGEL → title */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
-        {aboutText ? (
-          <p className="whitespace-pre-line text-[10px] sm:text-xs text-[#909090] leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
-            {interleaveBrand(aboutText, title)}
-          </p>
-        ) : null}
-      </section>
-
       {/* Game Providers Section */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
         <div className="flex items-center gap-3 mb-6">
