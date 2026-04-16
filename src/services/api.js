@@ -3,8 +3,11 @@ import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
 import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
 import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
 
-// Base URL: VITE_API_BASE_URL di .env (tanpa trailing slash). Kosong → fallback dev.
-const DEFAULT_API_BASE_URL = 'http://localhost:4010/api/v1'
+// Base URL: VITE_API_BASE_URL di .env (tanpa trailing slash).
+// Dev tanpa env: /api/v1 (same-origin) + proxy Vite → mock/staging (hindari CORS ke host asing).
+// Build produksi tanpa env: fallback langsung ke mock (set VITE_API_BASE_URL di deploy).
+const DEFAULT_API_BASE_URL =
+  import.meta.env.DEV === true ? '/api/v1' : 'http://localhost:4010/api/v1'
 
 const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, DEFAULT_API_BASE_URL)
 
@@ -52,6 +55,40 @@ function normalizeAuthResponse(data) {
     return { ...data, token: typeof raw === 'string' ? raw : String(raw) }
   }
   return data
+}
+
+function normalizeBankType(rawType) {
+  const t = String(rawType ?? '')
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .trim()
+  if (t === 'bank-transfer' || t === 'bank') return 'bank-transfer'
+  if (t === 'e-wallet' || t === 'ewallet') return 'e-wallet'
+  if (t === 'qris') return 'qris'
+  return t
+}
+
+function normalizeBankListResponse(rows) {
+  if (!Array.isArray(rows)) return []
+  return rows.map((row) => ({
+    ...row,
+    type: normalizeBankType(row?.type),
+  }))
+}
+
+function normalizeProfileResponse(data) {
+  if (!data || typeof data !== 'object') return data
+  const bankName = data.bank_name ?? data.bankName ?? data.bank?.name ?? data.bank?.bank_name ?? null
+  const bankNumber =
+    data.bank_number ?? data.bankNumber ?? data.bank_no ?? data.bankNo ?? data.bank?.number ?? null
+  const bankAccount =
+    data.bank_account ?? data.bankAccount ?? data.account_name ?? data.accountName ?? data.bank?.account ?? null
+  return {
+    ...data,
+    bank_name: bankName,
+    bank_number: bankNumber,
+    bank_account: bankAccount,
+  }
 }
 
 // ============================================
@@ -226,7 +263,7 @@ export const checkPhoneNumber = (number) =>
 export const checkBankNumber = (number) =>
   apiCall(`/check-bank-number?number=${encodeURIComponent(number)}`)
 
-export const getProfile = () => apiCall('/profile')
+export const getProfile = () => apiCall('/profile').then(normalizeProfileResponse)
 
 /** GET /balance — hanya untuk aksi refresh saldo (bukan load pertama halaman). */
 export const getBalance = () => apiCall('/balance')
@@ -277,7 +314,7 @@ export const getWebsite = (domain) => {
   return apiCall(`/website?${q}`)
 }
 
-export const getBankList = () => apiCall('/bank-list')
+export const getBankList = () => apiCall('/bank-list').then(normalizeBankListResponse)
 
 export const getReferral = () => apiCall('/referral')
 

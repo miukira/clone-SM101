@@ -218,10 +218,13 @@ function DepositContent({
     { id: 'pulsa', label: 'Pulsa' },
   ]
 
-  const filteredBanks = bankList.filter(bank => {
-    if (activeTab === 'qris') return bank.type === 'qris'
-    if (activeTab === 'bank') return bank.type === 'bank-transfer'
-    if (activeTab === 'ewallet') return bank.type === 'e-wallet'
+  const filteredBanks = bankList.filter((bank) => {
+    const type = String(bank?.type ?? '')
+      .toLowerCase()
+      .replace(/[\s_]+/g, '-')
+    if (activeTab === 'qris') return type === 'qris'
+    if (activeTab === 'bank') return type === 'bank-transfer' || type === 'bank'
+    if (activeTab === 'ewallet') return type === 'e-wallet' || type === 'ewallet'
     return false
   })
 
@@ -393,7 +396,9 @@ function DepositContent({
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
             <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Rekening Bank</label>
             <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
-              {userBank ? `${userBank.bank_name?.toUpperCase()} - ${userBank.bank_number}` : 'Loading...'}
+              {userBank
+                ? `${(userBank.bank_name || userBank.bankName || '-').toUpperCase()} - ${userBank.bank_number || userBank.bankNumber || '-'}`
+                : 'Loading...'}
             </div>
           </div>
         ) : null}
@@ -588,7 +593,9 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <label className="sm:w-40 text-sm text-[#4a4a4a]">Ke Rekening Bank</label>
           <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
-            {userBank ? `${userBank.bank_name?.toUpperCase()} - ${userBank.bank_number}` : 'Loading...'}
+            {userBank
+              ? `${(userBank.bank_name || userBank.bankName || '-').toUpperCase()} - ${userBank.bank_number || userBank.bankNumber || '-'}`
+              : 'Loading...'}
           </div>
         </div>
 

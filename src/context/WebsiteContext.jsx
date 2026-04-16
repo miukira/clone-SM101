@@ -25,11 +25,28 @@ function updateFaviconFromConfig(faviconUrl, assetRev) {
   console.log('🎨 Favicon updated:', faviconUrl)
 }
 
+/** Hanya eksekusi string yang masuk akal sebagai snippet JS (bukan URL/HTML dari CMS). */
+function isExecutableExternalScriptSnippet(script) {
+  if (typeof script !== 'string') return false
+  const s = script.trim()
+  if (s.length < 2) return false
+  if (s.startsWith('<') || s.startsWith('<?')) return false
+  // Satu baris URL saja — bukan kode; hindari SyntaxError Unexpected token '<' / invalid
+  if (/^https?:\/\/\S+$/i.test(s)) return false
+  return true
+}
+
 function runExternalScriptsFromConfig(scripts) {
   if (!scripts || !Array.isArray(scripts)) return
 
   console.log('🔧 Executing external scripts from API...')
   scripts.forEach((script, index) => {
+    if (!isExecutableExternalScriptSnippet(script)) {
+      console.warn(
+        `⏭️ External script ${index + 1} skipped (bukan snippet JS valid — URL/HTML/dikosongkan?)`,
+      )
+      return
+    }
     try {
       const fn = new Function(script)
       fn()
