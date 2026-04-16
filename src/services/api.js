@@ -11,6 +11,14 @@ const DEFAULT_API_BASE_URL =
 
 const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, DEFAULT_API_BASE_URL)
 
+const IS_DEV = import.meta.env.DEV === true
+const VERBOSE_LOG = import.meta.env.VITE_API_VERBOSE === 'true'
+
+const SILENT_ENDPOINTS = new Set([
+  '/deposit-status',
+  '/withdraw-status',
+])
+
 /** Key utama; legacy `token` selaras OpenAPI / backend lain */
 const LS_TOKEN = 'pusattogel-token'
 const LS_TOKEN_LEGACY = 'token'
@@ -186,9 +194,11 @@ const apiCall = async (endpoint, options = {}) => {
   }
 
   const run = async () => {
-    console.log(`📡 API Request: ${method} ${endpoint}`)
-    if (options.body) {
-      console.log(`   📤 Request Body:`, JSON.parse(options.body))
+    const pathOnly = endpoint.split('?')[0]
+    const isSilent = SILENT_ENDPOINTS.has(pathOnly)
+
+    if (IS_DEV && !isSilent) {
+      console.log(`📡 ${method} ${endpoint}`)
     }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -197,14 +207,32 @@ const apiCall = async (endpoint, options = {}) => {
       cache: options.cache ?? (method === 'GET' ? 'no-store' : 'default'),
     })
 
-    const data = await response.json()
+    const contentType = response.headers.get('content-type') || ''
+    let data
+    if (contentType.includes('application/json')) {
+      data = await response.json()
+    } else {
+      const text = await response.text()
+      if (IS_DEV && !isSilent) console.warn(`⚠️ ${endpoint} non-JSON:`, text.slice(0, 50))
+      throw { status: response.status, data: { message: text, notJson: true } }
+    }
 
     if (!response.ok) {
-      console.log(`❌ API Error (${response.status}):`, JSON.stringify(data, null, 2))
+      if (IS_DEV && !isSilent) {
+        console.log(`❌ ${endpoint} (${response.status}):`, data?.message || '')
+      }
       throw { status: response.status, data }
     }
 
-    console.log(`✅ API Response (${response.status}):`, JSON.stringify(data, null, 2))
+    if (IS_DEV && !isSilent) {
+      const preview = Array.isArray(data)
+        ? `[${data.length} items]`
+        : typeof data === 'object' && data !== null
+          ? `{${Object.keys(data).slice(0, 4).join(', ')}${Object.keys(data).length > 4 ? '...' : ''}}`
+          : String(data).slice(0, 30)
+      console.log(`✅ ${endpoint} →`, preview)
+    }
+
     const out = resolveAssetUrlsDeep(data)
     if (dedupeKey?.startsWith('GET|public|')) {
       PUBLIC_GET_RESPONSE_MEMO.set(dedupeKey, { value: cloneForMemo(out), t: Date.now() })
@@ -401,4 +429,6 @@ export const removeToken = () => {
   localStorage.removeItem(LS_PLAYER_BALANCE)
 }
 
-console.log(`🌐 API base URL: ${API_BASE_URL}`)
+if (IS_DEV) {
+  console.log(`🌐 API base URL: ${API_BASE_URL}`)
+}

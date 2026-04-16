@@ -1162,7 +1162,6 @@ export default function HomePageChrome() {
           <section className="mb-6">
             <PromoBanner />
           </section>
-          <HomeAboutBlurb />
 
           {/* LIVE JACKPOT - Desktop */}
           <section className="mb-6 pb-6 themed-border-bottom">
@@ -1300,7 +1299,6 @@ export default function HomePageChrome() {
           <section className="mb-3">
             <PromoBanner />
           </section>
-          <HomeAboutBlurb />
 
           {/* Togel Results - Horizontal Scroll */}
           <section className="mb-3">

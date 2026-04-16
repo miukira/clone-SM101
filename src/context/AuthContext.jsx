@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
     setLoading(false)
   }
 
-  const loginSuccess = (userData) => {
+  const loginSuccess = async (userData) => {
     const balance = resolveUserBalance(userData)
     setUser({
       username: userData.username,
@@ -59,6 +59,21 @@ export function AuthProvider({ children }) {
     })
     setIsAuthenticated(true)
     if (balance != null) persistPlayerBalance(balance)
+
+    // Fetch full profile untuk mendapatkan data bank
+    try {
+      const profile = await getProfile()
+      const fullBalance = resolveUserBalance(profile)
+      setUser({
+        ...profile,
+        balance: fullBalance ?? balance,
+        currency: userData.currency,
+        referral_code: profile.referral_code || userData.referral_code,
+      })
+      if (fullBalance != null) persistPlayerBalance(fullBalance)
+    } catch {
+      // Jika gagal fetch profile, tetap gunakan data login
+    }
   }
 
   const logout = () => {

@@ -21,6 +21,20 @@ const pImg = (providerId) => providerMockAnimatedImages[String(providerId)]
 
 const app = express()
 const PORT = 4010
+const VERBOSE = process.env.MOCK_VERBOSE === 'true'
+
+function logRequest(method, endpoint) {
+  if (VERBOSE) console.log(`📡 ${method} ${endpoint}`)
+}
+function logResponse(endpoint, data) {
+  if (!VERBOSE) return
+  const preview = Array.isArray(data)
+    ? `[${data.length} items]`
+    : typeof data === 'object' && data !== null
+      ? `{${Object.keys(data).slice(0, 4).join(', ')}...}`
+      : String(data).slice(0, 50)
+  console.log(`✅ ${endpoint} →`, preview)
+}
 
 const uploadBrandCard = multer({
   storage: multer.memoryStorage(),
@@ -1033,7 +1047,7 @@ router.post('/register', (req, res) => {
       winlose: 0,
       comision: 0
     })
-    console.log(`✅ User ${newUser.username} added as downline of ${referrer.username}`)
+    if (VERBOSE) console.log(`✅ User ${newUser.username} added as downline of ${referrer.username}`)
   }
   
   const token = generateToken(newUser.id)
@@ -1272,8 +1286,8 @@ router.get('/website', (req, res) => {
   if (!domain) {
     return res.status(400).json({ message: 'domain is required' })
   }
-  console.log(`📡 GET /website?domain=${domain}`)
-  console.log('✅ Response:', JSON.stringify(mockWebsiteConfig, null, 2))
+  logRequest('GET', `/website?domain=${domain}`)
+  logResponse('/website', mockWebsiteConfig)
   res.json(mockWebsiteConfig)
 })
 
@@ -1294,71 +1308,71 @@ router.get('/promo', (req, res) => {
 
 // GET /slot
 router.get('/slot', (req, res) => {
-  console.log('📡 GET /slot')
-  console.log('✅ Response:', JSON.stringify(mockSlotProviders, null, 2))
+  logRequest('GET', '/slot')
+  logResponse('/slot', mockSlotProviders)
   res.json(mockSlotProviders)
 })
 
 // GET /fish
 router.get('/fish', (req, res) => {
-  console.log('📡 GET /fish')
-  console.log('✅ Response:', JSON.stringify(mockFishProviders, null, 2))
+  logRequest('GET', '/fish')
+  logResponse('/fish', mockFishProviders)
   res.json(mockFishProviders)
 })
 
 // GET /casino
 router.get('/casino', (req, res) => {
-  console.log('📡 GET /casino')
-  console.log('✅ Response:', JSON.stringify(mockCasinoProviders, null, 2))
+  logRequest('GET', '/casino')
+  logResponse('/casino', mockCasinoProviders)
   res.json(mockCasinoProviders)
 })
 
 // GET /sportsbook
 router.get('/sportsbook', (req, res) => {
-  console.log('📡 GET /sportsbook')
-  console.log('✅ Response:', JSON.stringify(mockSportsbookProviders, null, 2))
+  logRequest('GET', '/sportsbook')
+  logResponse('/sportsbook', mockSportsbookProviders)
   res.json(mockSportsbookProviders)
 })
 
 // GET /togel
 router.get('/togel', (req, res) => {
-  console.log('📡 GET /togel')
-  console.log('✅ Response:', JSON.stringify(mockTogelProviders, null, 2))
+  logRequest('GET', '/togel')
+  logResponse('/togel', mockTogelProviders)
   res.json(mockTogelProviders)
 })
 
 // GET /arcade
 router.get('/arcade', (req, res) => {
-  console.log('📡 GET /arcade')
-  console.log('✅ Response:', JSON.stringify(mockArcadeProviders, null, 2))
+  logRequest('GET', '/arcade')
+  logResponse('/arcade', mockArcadeProviders)
   res.json(mockArcadeProviders)
 })
 
 // GET /crush
 router.get('/crush', (req, res) => {
-  console.log('📡 GET /crush')
-  console.log('✅ Response:', JSON.stringify(mockCrushProviders, null, 2))
+  logRequest('GET', '/crush')
+  logResponse('/crush', mockCrushProviders)
   res.json(mockCrushProviders)
 })
 
 // GET /esports
 router.get('/esports', (req, res) => {
-  console.log('📡 GET /esports')
-  console.log('✅ Response:', JSON.stringify(mockEsportsProviders, null, 2))
+  logRequest('GET', '/esports')
+  logResponse('/esports', mockEsportsProviders)
   res.json(mockEsportsProviders)
 })
 
 // GET /poker
 router.get('/poker', (req, res) => {
-  console.log('📡 GET /poker')
-  console.log('✅ Response:', JSON.stringify(mockPokerProviders, null, 2))
+  logRequest('GET', '/poker')
+  logResponse('/poker', mockPokerProviders)
   res.json(mockPokerProviders)
 })
 
 // GET /cockfight
 router.get('/cockfight', (req, res) => {
-  console.log('📡 GET /cockfight')
-  console.log('✅ Response:', JSON.stringify(mockCockfightProviders, null, 2))
+  logRequest('GET', '/cockfight')
+  logResponse('/cockfight', mockCockfightProviders)
   res.json(mockCockfightProviders)
 })
 
@@ -1377,45 +1391,44 @@ function normalizeGamesForOpenApi(games) {
 // GET /game-list
 router.get('/game-list', (req, res) => {
   const { provider_id } = req.query
-  console.log(`📡 GET /game-list?provider_id=${provider_id}`)
+  logRequest('GET', `/game-list?provider_id=${provider_id}`)
   const games = mockGames[provider_id]
   if (!games) {
-    console.log('❌ Error: provider not found')
+    if (VERBOSE) console.log('❌ Error: provider not found')
     return res.status(400).json({ message: 'provider not found' })
   }
   const out = normalizeGamesForOpenApi(games)
-  console.log('✅ Response:', JSON.stringify(out, null, 2))
+  logResponse('/game-list', out)
   res.json(out)
 })
 
 // GET /play - sesuai Swagger: returns { game_url }
 router.get('/play', (req, res) => {
   const { provider_id, game_id } = req.query
-  console.log(`📡 GET /play?provider_id=${provider_id}&game_id=${game_id}`)
+  logRequest('GET', `/play?provider_id=${provider_id}&game_id=${game_id}`)
   
   const user = verifyToken(req)
   if (!user) {
-    console.log('❌ Error: please login')
+    if (VERBOSE) console.log('❌ Error: please login')
     return res.status(400).json({ message: 'please login' })
   }
   
   const games = mockGames[provider_id]
   if (!games) {
-    console.log('❌ Error: provider not found')
+    if (VERBOSE) console.log('❌ Error: provider not found')
     return res.status(400).json({ message: 'provider not found' })
   }
   
   const game = games.find((g) => String(g.id) === String(game_id))
   if (!game) {
-    console.log('❌ Error: game not found')
+    if (VERBOSE) console.log('❌ Error: game not found')
     return res.status(400).json({ message: 'game not found' })
   }
   
-  // Return JSON dengan game_url sesuai Swagger
   const response = {
     game_url: `https://game.example.com/play?token=mock_${Date.now()}`
   }
-  console.log('✅ Response:', JSON.stringify(response, null, 2))
+  logResponse('/play', response)
   res.json(response)
 })
 
@@ -1436,7 +1449,7 @@ router.post('/bet', (req, res) => {
   if (!user) return res.status(401).json({ message: 'please login' })
   
   const bets = req.body
-  console.log('📥 Bet request:', JSON.stringify(bets, null, 2))
+  if (VERBOSE) console.log('📥 Bet request:', `[${bets?.length || 0} bets]`)
   
   if (!Array.isArray(bets) || bets.length === 0) {
     return res.status(400).json({ message: 'invalid bet data' })
@@ -1452,9 +1465,8 @@ router.post('/bet', (req, res) => {
     return res.status(400).json({ message: 'insufficient balance' })
   }
   
-  // Kurangi saldo
   user.balance -= totalPay
-  console.log(`💰 Balance updated: ${user.username} -> Rp ${user.balance.toLocaleString()}`)
+  if (VERBOSE) console.log(`💰 Balance updated: ${user.username} -> Rp ${user.balance.toLocaleString()}`)
   
   // Simpan ke bet history
   bets.forEach(bet => {
@@ -1469,7 +1481,7 @@ router.post('/bet', (req, res) => {
     mockBetHistory[market].unshift(historyEntry) // Add to beginning
   })
   
-  console.log(`✅ Bet placed successfully. Total: Rp ${totalPay.toLocaleString()}`)
+  if (VERBOSE) console.log(`✅ Bet placed successfully. Total: Rp ${totalPay.toLocaleString()}`)
   res.json({ 
     message: 'success',
     new_balance: user.balance,
@@ -1493,13 +1505,12 @@ router.get('/bet-history', (req, res) => {
 // GET /market-info
 router.get('/market-info', (req, res) => {
   const { market, type } = req.query
-  console.log(`📊 Market info request: ${market} (${type})`)
+  logRequest('GET', `/market-info?market=${market}&type=${type}`)
   const info = mockMarketInfo[market]
   if (!info) return res.status(400).json({ message: 'market not found' })
   if (!['4d', '3d', '2d', 'bbfs'].includes(String(type || '').toLowerCase())) {
     return res.status(400).json({ message: 'type not found' })
   }
-  // Response sesuai Swagger MarketInfo schema
   const response = {
     market: market,
     status: info.status,
@@ -1508,7 +1519,7 @@ router.get('/market-info', (req, res) => {
     bet_shortcut: info.bet_shortcut,
     discount_percentage: info.discount_percentage
   }
-  console.log(`   → Response:`, JSON.stringify(response))
+  logResponse('/market-info', response)
   res.json(response)
 })
 
