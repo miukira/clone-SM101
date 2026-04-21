@@ -1,7 +1,7 @@
 // Modal untuk menampilkan daftar game dari provider
 import { useState, useEffect } from 'react'
 import { playGame, getToken } from '../services/api'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 import { useGameList } from '../hooks/useProviders'
@@ -33,9 +33,9 @@ function GameCard({ game, onPlay, isLoading }) {
 
   const gameHeroUrl =
     heroTier === 0
-      ? publicAssetUrl(gameImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      ? providerAssetUrl(gameImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
       : heroTier === 1
-        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        ? providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
         : null
 
   const handleGameImgError = () => {
@@ -138,7 +138,7 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
 
   const providerThumb =
     normalizeImageUrl(provider?.logoImg) ?? normalizeImageUrl(provider?.characterImg)
-  const headerLogoSrc = publicAssetUrl(providerThumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
+  const headerLogoSrc = providerAssetUrl(providerThumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
 
   return (
     <>
@@ -162,7 +162,7 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
                 const el = e.currentTarget
                 if (!el.dataset.fallbackTried) {
                   el.dataset.fallbackTried = '1'
-                  el.src = publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+                  el.src = providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
                 } else {
                   el.style.display = 'none'
                 }

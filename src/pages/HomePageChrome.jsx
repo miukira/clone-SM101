@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavDropdownProviders } from '../hooks/useNavDropdownProviders'
 import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
 import { useLotteryResults, parseResultToNumbers, MARKET_DISPLAY_NAMES } from '../hooks/useLottery'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 import { mapConfigBannersToPromoSlides } from '../utils/mapHomePromoBanners.js'
@@ -18,13 +18,7 @@ import {
   slotProviders,
   sportsProviders,
   casinoProviders,
-  togelProviders,
   fishingProviders,
-  arcadeProviders,
-  crushProviders,
-  esportsProviders,
-  pokerProviders,
-  cockfightProviders,
 } from '../config/providers'
 import NotificationMarquee from '../components/NotificationMarquee'
 import ChromeAppHeader from '../components/ChromeAppHeader'
@@ -34,11 +28,6 @@ import {
   CasinoIconChrome,
   LotteryIconChrome,
   FishingIconChrome,
-  ArcadeIconChrome,
-  CrushIconChrome,
-  EsportsIconChrome,
-  PokerIconChrome,
-  CockFightingIconChrome,
   HomeIconChrome,
   PromoIconChrome,
   ReferralIconChrome,
@@ -81,14 +70,8 @@ const headerMenuItems = [
   { id: 'home', name: 'HOME', icon: HomeIconChrome, isPage: true, path: '/' },
   { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, providers: slotProviders },
   { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, providers: casinoProviders },
-  { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome, providers: togelProviders },
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
-  { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome, providers: arcadeProviders },
-  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome, providers: crushProviders },
-  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome, providers: esportsProviders },
-  { id: 'poker', name: 'POKER', icon: PokerIconChrome, providers: pokerProviders },
-  { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome, providers: cockfightProviders },
   { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, isPage: true, path: '/promo' },
   { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, isPage: true, path: '/referral' },
 ]
@@ -97,14 +80,8 @@ const headerMenuItems = [
 const categories = [
   { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, providers: slotProviders },
   { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, providers: casinoProviders },
-  { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome, providers: togelProviders },
   { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
   { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
-  { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome, providers: arcadeProviders },
-  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome, providers: crushProviders },
-  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome, providers: esportsProviders },
-  { id: 'poker', name: 'POKER', icon: PokerIconChrome, providers: pokerProviders },
-  { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome, providers: cockfightProviders },
 ]
 
 // Togel 4D Result Card Component - Larger Day & Date
@@ -574,9 +551,9 @@ function MobileProviderCard({ provider }) {
 
   const mobileHeroUrl =
     heroTier === 0
-      ? publicAssetUrl(heroImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      ? providerAssetUrl(heroImage ?? DEFAULT_PROVIDER_CARD_IMAGE)
       : heroTier === 1
-        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        ? providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
         : null
 
   const handleMobileHeroError = () => {
@@ -629,7 +606,7 @@ function MobileProviderCard({ provider }) {
             className={`absolute bottom-2 right-2 transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}
           >
             <img
-              src={publicAssetUrl(logoImage)}
+              src={providerAssetUrl(logoImage)}
               alt={name}
               className="h-8 w-auto object-contain drop-shadow-lg"
               onError={(e) => {
@@ -713,9 +690,9 @@ function MiniProviderCard({ provider, isActive, onClick }) {
 
   const miniThumbUrl =
     thumbTier === 0
-      ? publicAssetUrl(thumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      ? providerAssetUrl(thumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
       : thumbTier === 1
-        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        ? providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
         : null
 
   const handleMiniThumbError = () => {
@@ -1200,7 +1177,7 @@ export default function HomePageChrome() {
               </div>
               
               <button 
-                onClick={() => navigate('/providers/togel')}
+                onClick={() => navigate('/togel')}
                 className="block w-full mt-4 py-3 bg-gradient-to-b from-[#1a1a1a] to-[#0d0d0d] border border-[#2a2a2a] rounded-xl text-[10px] font-bold text-[#505050] hover:text-[#C0C0C0] hover:border-[#404040] transition-all tracking-widest text-center cursor-pointer"
               >
                 LIHAT SEMUA PASARAN →

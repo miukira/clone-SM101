@@ -2,13 +2,7 @@ import {
   getSlotProviders,
   getSportsbookProviders,
   getCasinoProviders,
-  getTogelProviders,
   getFishProviders,
-  getArcadeProviders,
-  getCrushProviders,
-  getEsportsProviders,
-  getPokerProviders,
-  getCockfightProviders,
 } from '../services/api'
 
 const IS_DEV = import.meta.env.DEV === true
@@ -16,13 +10,7 @@ import {
   slotProviders,
   sportsProviders,
   casinoProviders,
-  togelProviders,
   fishingProviders,
-  arcadeProviders,
-  crushProviders,
-  esportsProviders,
-  pokerProviders,
-  cockfightProviders,
 } from '../config/providers'
 import { transformProviderData } from './transformProviderApi.js'
 
@@ -30,42 +18,24 @@ export const CATEGORY_IDS = [
   'slots',
   'sports',
   'casino',
-  'togel',
   'fishing',
-  'arcade',
-  'crush',
-  'esports',
-  'poker',
-  'sabung',
 ]
 
-/** Urutan awal home: kotak provider default + strip togel — selebihnya di fase berikutnya */
-export const PROVIDER_NAV_PRIORITY_IDS = ['slots', 'togel']
+/** Urutan awal home: mulai dari slots lalu sisanya */
+export const PROVIDER_NAV_PRIORITY_IDS = ['slots']
 
 const fetchers = {
   slots: getSlotProviders,
   sports: getSportsbookProviders,
   casino: getCasinoProviders,
-  togel: getTogelProviders,
   fishing: getFishProviders,
-  arcade: getArcadeProviders,
-  crush: getCrushProviders,
-  esports: getEsportsProviders,
-  poker: getPokerProviders,
-  sabung: getCockfightProviders,
 }
 
 const staticByCategory = {
   slots: slotProviders,
   sports: sportsProviders,
   casino: casinoProviders,
-  togel: togelProviders,
   fishing: fishingProviders,
-  arcade: arcadeProviders,
-  crush: crushProviders,
-  esports: esportsProviders,
-  poker: pokerProviders,
-  sabung: cockfightProviders,
 }
 
 function mergeStaticExtras(transformed, staticList) {

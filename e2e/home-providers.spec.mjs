@@ -27,13 +27,13 @@ test.describe('Home — provider cards & kategori (UI vs mock)', () => {
     await expect(mainDesktop.getByRole('button', { name: 'PLAY NOW' }).first()).toBeVisible()
   })
 
-  test('TOGEL: pill di main mengganti heading', async ({ page }) => {
+  test('SPORTS: pill di main mengganti heading', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
 
     const mainDesktop = page.locator('main').first()
-    await mainDesktop.getByRole('button', { name: 'TOGEL', exact: true }).click()
+    await mainDesktop.getByRole('button', { name: 'SPORTS', exact: true }).click()
 
-    await expect(mainDesktop.getByRole('heading', { name: 'TOGEL PROVIDERS' })).toBeVisible({
+    await expect(mainDesktop.getByRole('heading', { name: 'SPORTS PROVIDERS' })).toBeVisible({
       timeout: 20_000,
     })
     await expect(mainDesktop.getByRole('button', { name: 'PLAY NOW' }).first()).toBeVisible()

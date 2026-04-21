@@ -10,7 +10,6 @@ import {
   assertOpenApiDocumentValid,
   assertErrorBodyMatchesOpenApi,
   assertResponseMatchesOpenApi,
-  assertProviderArrayBodyMatchesOpenApi,
   loadOpenApiDereferenced,
 } from './helpers/openapiAjv.mjs'
 
@@ -149,17 +148,6 @@ describe('OpenAPI — mock server (/api/v1) selaras openapi.yaml', () => {
         const res = await agent.get(`${BASE}${apiPath}`).expect(200)
         assertResponseMatchesOpenApi(spec, apiPath, 'get', 200, res.body)
         assert.ok(Array.isArray(res.body))
-        assert.ok(res.body.length > 0)
-        assert.ok(res.body[0].provider_id != null && res.body[0].name)
-      })
-    }
-  })
-
-  describe('Game providers — route mock di luar OpenAPI (bentuk = GET /slot: Provider[])', () => {
-    for (const apiPath of ['/togel', '/arcade', '/crush', '/esports', '/poker', '/cockfight']) {
-      it(`GET ${apiPath} → 200 Provider[] (AJV sama seperti /slot)`, async () => {
-        const res = await agent.get(`${BASE}${apiPath}`).expect(200)
-        assertProviderArrayBodyMatchesOpenApi(spec, res.body)
         assert.ok(res.body.length > 0)
         assert.ok(res.body[0].provider_id != null && res.body[0].name)
       })
