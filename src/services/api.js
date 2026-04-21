@@ -1,4 +1,11 @@
-// API Service — selalu HTTP ke backend (mock-server lokal atau produksi)
+// API Service — base path `/api/v1` selaras `openapi.yaml` `servers[0].url`.
+// Pemetaan utama (operationId / path): login→POST /login, register→POST /register,
+// getProfile→GET /profile, getInfo→GET /info, getWebsite→GET /website?domain=,
+// getSlotProviders→GET /slot, getFishProviders→GET /fish, getCasinoProviders→GET /casino,
+// getSportsbookProviders→GET /sportsbook, getGameList→GET /game-list, playGame→GET /play,
+// placeBet→POST /bet, getBetHistory→GET /bet-history, getMarketInfo→GET /market-info.
+// Endpoint tambahan FE (respons Provider[] mengikuti components/schemas/Provider): GET /togel, /arcade, /crush, /esports, /poker, /cockfight.
+// GET/POST /theme: mock-only; di OpenAPI theme ada di WebsiteConfig.
 import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
 import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
 import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'

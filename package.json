@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "test:unit": "node --test test/*.test.mjs",
     "test:openapi": "node --test test/openapi-mock-api.test.mjs",
+    "test:contract": "node --test test/openapi-mock-api.test.mjs test/home-provider-mock-flow.test.mjs && playwright test e2e/home-providers.spec.mjs",
     "test:e2e": "playwright test",
     "preview": "vite preview",
     "combine:casino": "node scripts/combine-casino-cards.mjs",
