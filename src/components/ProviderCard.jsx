@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
 
@@ -35,9 +35,9 @@ export default function ProviderCard({
 
   const heroImageUrl =
     heroTier === 0
-      ? publicAssetUrl(heroSrc ?? DEFAULT_PROVIDER_CARD_IMAGE)
+      ? providerAssetUrl(heroSrc ?? DEFAULT_PROVIDER_CARD_IMAGE)
       : heroTier === 1
-        ? publicAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+        ? providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
         : null
 
   const handleHeroError = () => {
@@ -115,7 +115,7 @@ export default function ProviderCard({
             {/* Overlay efek (mis. petir) — opsional */}
             {overlayResolved && heroSrc != null && heroTier === 0 && (
               <img
-                src={publicAssetUrl(overlayResolved)}
+                src={providerAssetUrl(overlayResolved)}
                 alt=""
                 onError={(e) => {
                   e.currentTarget.style.display = 'none'

@@ -24,8 +24,8 @@ describe('Mock GET kategori → transformProviderData (siap untuk ProviderCard)'
   for (const { path: apiPath, min } of [
     { path: '/slot', min: 3 },
     { path: '/fish', min: 2 },
-    { path: '/togel', min: 2 },
-    { path: '/arcade', min: 2 },
+    { path: '/casino', min: 2 },
+    { path: '/sportsbook', min: 2 },
   ]) {
     it(`GET ${apiPath} + transform → kartu dengan logoImg`, async () => {
       const res = await agent.get(`${BASE}${apiPath}`).expect(200)

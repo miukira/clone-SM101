@@ -51,6 +51,37 @@ export function withCacheBust(url, revision) {
   return `${url}${sep}_cfg=${key}`
 }
 
+function resolveProviderAssetBase() {
+  const explicit = trimSlash(import.meta.env?.VITE_PROVIDER_IMAGE_BASE_URL || '')
+  if (explicit) return explicit
+
+  // Ikuti host FE/CDN yang sama seperti aset publik aplikasi.
+  const publicBase = trimSlash(import.meta.env?.VITE_PUBLIC_ASSET_BASE_URL || '')
+  if (publicBase) return publicBase
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return trimSlash(window.location.origin)
+  }
+  return ''
+}
+
+/**
+ * URL untuk gambar kartu provider:
+ * - URL absolut (mis. CDN): dipakai apa adanya.
+ * - Path relatif (/path/to/image.png): ke host FE/CDN, atau override via VITE_PROVIDER_IMAGE_BASE_URL.
+ */
+export function providerAssetUrl(path) {
+  if (path == null) return null
+  if (typeof path !== 'string') return path
+  const trimmed = path.trim()
+  if (trimmed === '') return null
+  if (/^(https?:|data:|blob:)/i.test(trimmed)) return trimmed
+
+  const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  const base = resolveProviderAssetBase()
+  if (base) return `${base}${normalized}`
+  return normalized
+}
+
 export function publicAssetUrl(path) {
   if (path == null) return null
   if (typeof path !== 'string') return path

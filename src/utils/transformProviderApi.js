@@ -1,4 +1,5 @@
 import { normalizeImageUrl } from './normalizeImageUrl.js'
+import { providerAssetUrl } from './publicAssetUrl.js'
 
 /**
  * Transform API Provider[] → props yang dipakai ProviderCard / modal.
@@ -8,7 +9,8 @@ export function transformProviderData(apiData) {
   if (!apiData || apiData.length === 0) return []
 
   return apiData.map((provider) => {
-    const img = normalizeImageUrl(provider.image)
+    const raw = normalizeImageUrl(provider.image)
+    const img = raw == null ? null : providerAssetUrl(raw)
     return {
       id: provider.provider_id,
       provider_id: provider.provider_id,

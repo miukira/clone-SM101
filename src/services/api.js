@@ -366,18 +366,6 @@ export const getCasinoProviders = () => apiCall('/casino')
 
 export const getSportsbookProviders = () => apiCall('/sportsbook')
 
-export const getTogelProviders = () => apiCall('/togel')
-
-export const getArcadeProviders = () => apiCall('/arcade')
-
-export const getCrushProviders = () => apiCall('/crush')
-
-export const getEsportsProviders = () => apiCall('/esports')
-
-export const getPokerProviders = () => apiCall('/poker')
-
-export const getCockfightProviders = () => apiCall('/cockfight')
-
 export const getGameList = (provider_id) =>
   apiCall(`/game-list?provider_id=${encodeURIComponent(provider_id)}`)
 

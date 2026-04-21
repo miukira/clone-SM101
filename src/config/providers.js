@@ -3,7 +3,7 @@
 
 // Provider config — gambar kartu dari provider-mock-animated-images.json (public/animated-brand)
 import providerMockAnimatedImages from '../data/provider-mock-animated-images.json'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { providerAssetUrl } from '../utils/publicAssetUrl'
 
 function pImg(providerId) {
   return providerMockAnimatedImages[String(providerId)] ?? null
@@ -13,7 +13,7 @@ function mapProviderImages(list) {
   return list.map((p) => {
     const { characterImg, logoImg, overlayImg, ...rest } = p
     const url = pImg(rest.provider_id)
-    const resolved = url ? publicAssetUrl(url) : null
+    const resolved = url ? providerAssetUrl(url) : null
     return {
       ...rest,
       characterImg: resolved,

@@ -1222,44 +1222,6 @@ router.get('/sportsbook', (req, res) => {
   res.json(mockSportsbookProviders)
 })
 
-// GET /togel, /arcade, /crush, /esports, /poker, /cockfight — tidak ada di openapi.yaml;
-// respons memakai skema Provider[] yang sama dengan GET /slot (ekstensi produk / FE).
-router.get('/togel', (req, res) => {
-  logRequest('GET', '/togel')
-  logResponse('/togel', mockTogelProviders)
-  res.json(mockTogelProviders)
-})
-
-router.get('/arcade', (req, res) => {
-  logRequest('GET', '/arcade')
-  logResponse('/arcade', mockArcadeProviders)
-  res.json(mockArcadeProviders)
-})
-
-router.get('/crush', (req, res) => {
-  logRequest('GET', '/crush')
-  logResponse('/crush', mockCrushProviders)
-  res.json(mockCrushProviders)
-})
-
-router.get('/esports', (req, res) => {
-  logRequest('GET', '/esports')
-  logResponse('/esports', mockEsportsProviders)
-  res.json(mockEsportsProviders)
-})
-
-router.get('/poker', (req, res) => {
-  logRequest('GET', '/poker')
-  logResponse('/poker', mockPokerProviders)
-  res.json(mockPokerProviders)
-})
-
-router.get('/cockfight', (req, res) => {
-  logRequest('GET', '/cockfight')
-  logResponse('/cockfight', mockCockfightProviders)
-  res.json(mockCockfightProviders)
-})
-
 /** Respons GET /game-list — OpenAPI Game: id & image string (format uri). */
 function normalizeGamesForOpenApi(games) {
   return games.map((g) => ({
