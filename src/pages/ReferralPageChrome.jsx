@@ -20,14 +20,13 @@ import {
   AccountIconChrome,
 } from '../components/IconsChrome'
 
-// Import referral banner image
-import referralBanner from '../assets/banners/referral-banner.png'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 
-const referralBannerSrc = publicAssetUrl(referralBanner)
+/** CDN: unggah `referral-banner.webp` ke path yang sama di VITE_PUBLIC_ASSET_BASE_URL */
+const referralBannerSrc = publicAssetUrl('/banners/referral-banner.webp')
 
 // Categories for header
 const categories = [

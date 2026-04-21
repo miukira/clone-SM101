@@ -6,11 +6,27 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  /** Dev: browser memanggil /api/v1/* (same-origin); proxy ke mock atau staging → hindari CORS */
-  const proxyTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:4010'
+  /** Dev: bila API memakai path same-origin /api (tanpa VITE_API_BASE_URL absolut) — proxy ke staging, bukan mock */
+  const proxyTarget = env.VITE_API_PROXY_TARGET || 'https://staging.rdd-server.com'
+
+  const cdnBase = (env.VITE_PUBLIC_ASSET_BASE_URL || '').replace(/\/$/, '')
+  const faviconHref =
+    env.VITE_FAVICON_URL || (cdnBase ? `${cdnBase}/favicon.svg` : '/favicon.svg')
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'html-cdn-favicon',
+        transformIndexHtml(html) {
+          return html.replace(
+            /<link rel="icon"[^>]*href="[^"]*"[^>]*>/,
+            `<link rel="icon" type="image/svg+xml" href="${faviconHref}" />`,
+          )
+        },
+      },
+    ],
     server: {
       proxy: {
         '/api': {
@@ -18,7 +34,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: true,
         },
-        // Asset provider dari API staging kadang berupa path relatif (/providers/...).
+        // Path relatif /providers/... dari API → proxy ke target (opsional).
         '/providers': {
           target: proxyTarget,
           changeOrigin: true,

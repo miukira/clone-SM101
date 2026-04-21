@@ -302,7 +302,7 @@ function HomeAboutBlurb() {
   )
 }
 
-// Promo Banner — `config.banner` dari GET /info; kosong → banner default `public/banners/banner-1.webp`
+// Promo Banner — `config.banner` dari GET /info; kosong → default `/banners/banner-1.webp` (CDN)
 function PromoBanner() {
   const navigate = useNavigate()
   const { banners: apiBanners, title: siteTitle, loading: websiteLoading, configAssetRev } =

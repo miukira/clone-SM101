@@ -57,7 +57,7 @@ function mapBannerItemsToSlides(apiBanners, siteTitle, assetRev) {
 /**
  * Map `config.banner` dari GET /info → slide PromoBanner di home.
  * OpenAPI: { id, image } + optional link. Field opsional teks: title_line1, title_line2, description, tag, gradient.
- * Bila array kosong atau tidak ada satu pun gambar valid → pakai banner default (`public/banners/banner-1.webp`).
+ * Bila array kosong atau tidak ada satu pun gambar valid → pakai banner default `/banners/banner-1.webp` (CDN).
  */
 export function mapConfigBannersToPromoSlides(apiBanners, siteTitle = '', assetRev = null) {
   const fromApi = mapBannerItemsToSlides(apiBanners, siteTitle, assetRev)

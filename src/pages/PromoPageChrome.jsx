@@ -26,22 +26,14 @@ import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 
-// Import promo banner images from banners folder (same as home page)
-import welcomeBonus from '../assets/banners/welcome-bonus.webp'
-import bonusDeposit from '../assets/banners/popup-deposit-imlek.webp'
-import bannerBaru from '../assets/banners/banner-baru.webp'
-import hadiah from '../assets/banners/hadiah-togel.webp'
-import putarRoda from '../assets/banners/putar-roda.webp'
-import bannerQris from '../assets/banners/banner-qris.webp'
-
-// Image mapping untuk fallback (absolute URL)
+/** Path relatif → URL penuh lewat VITE_PUBLIC_ASSET_BASE_URL (CDN); unggah file ke CDN dengan struktur sama. */
 const imageMap = {
-  'default': publicAssetUrl(welcomeBonus),
-  'bonusDeposit': publicAssetUrl(bonusDeposit),
-  'bannerBaru': publicAssetUrl(bannerBaru),
-  'hadiah': publicAssetUrl(hadiah),
-  'putarRoda': publicAssetUrl(putarRoda),
-  'bannerQris': publicAssetUrl(bannerQris)
+  default: publicAssetUrl('/banners/welcome-bonus.webp'),
+  bonusDeposit: publicAssetUrl('/banners/popup-deposit-imlek.webp'),
+  bannerBaru: publicAssetUrl('/banners/banner-baru.webp'),
+  hadiah: publicAssetUrl('/banners/hadiah-togel.webp'),
+  putarRoda: publicAssetUrl('/banners/putar-roda.webp'),
+  bannerQris: publicAssetUrl('/banners/banner-qris.webp'),
 }
 
 // Categories for header
