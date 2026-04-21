@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { publicAssetUrl, withCacheBust } from '../utils/publicAssetUrl'
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { publicAssetUrl, withCacheBust, setRuntimeAssetBaseUrl } from '../utils/publicAssetUrl'
 import { loadWebsitePublicBundle } from '../utils/websitePublicDataCache.js'
 import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
 
@@ -109,6 +109,18 @@ export function WebsiteProvider({ children }) {
   useEffect(() => {
     fetchWebsiteData()
   }, [fetchWebsiteData])
+
+  /** Path CDN dinamis: optional `asset_base_url` | `cdn_base_url` pada WebsiteConfig (ekstensi backend). */
+  const runtimeCdnBaseFromConfig = useMemo(() => {
+    const cfg = websiteData?.config
+    if (!cfg || typeof cfg !== 'object') return ''
+    const assetBase = cfg.asset_base_url != null ? String(cfg.asset_base_url).trim() : ''
+    const cdnBase = cfg.cdn_base_url != null ? String(cfg.cdn_base_url).trim() : ''
+    return assetBase || cdnBase || ''
+  }, [websiteData?.config])
+
+  // Sinkron ke modul sebelum child render — providerAssetUrl() pakai basis ini untuk path relatif.
+  setRuntimeAssetBaseUrl(runtimeCdnBaseFromConfig)
 
   const refetchWebsite = useCallback(() => fetchWebsiteData({ force: true }), [fetchWebsiteData])
 

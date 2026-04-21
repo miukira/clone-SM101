@@ -11,8 +11,8 @@ import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
 import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
 
 // Base URL: VITE_API_BASE_URL di .env (tanpa trailing slash).
-// Dev tanpa env: /api/v1 (same-origin) + proxy Vite → mock/staging (hindari CORS ke host asing).
-// Build produksi tanpa env: fallback langsung ke mock (set VITE_API_BASE_URL di deploy).
+// Dev tanpa VITE_API_BASE_URL: /api/v1 same-origin + proxy Vite → staging (lihat vite.config).
+// Build produksi tanpa env: set VITE_API_BASE_URL di deploy.
 const DEFAULT_API_BASE_URL =
   import.meta.env.DEV === true ? '/api/v1' : 'http://localhost:4010/api/v1'
 
@@ -265,6 +265,9 @@ const apiCall = async (endpoint, options = {}) => {
 function resolveWebsiteDomain(explicit) {
   const e = explicit != null ? String(explicit).trim() : ''
   if (e !== '') return e
+  /** Dev dari localhost + proxy ke staging: pakai hostname tenant di staging, bukan `localhost`. */
+  const fromEnv = import.meta.env.VITE_WEBSITE_DOMAIN
+  if (typeof fromEnv === 'string' && fromEnv.trim() !== '') return fromEnv.trim()
   if (typeof window !== 'undefined' && window.location?.hostname) {
     return window.location.hostname
   }

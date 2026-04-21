@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:staging": "vite",
     "build": "vite build",
+    "build:staging": "vite build --mode staging",
     "lint": "eslint .",
     "test:unit": "node --test test/*.test.mjs",
+    "test:url-logic": "node --test test/public-asset-url.test.mjs test/provider-card-response.test.mjs test/home-provider-mock-flow.test.mjs test/resolve-api-base-url.test.mjs test/normalize-image-url.test.mjs",
     "test:openapi": "node --test test/openapi-mock-api.test.mjs",
     "test:contract": "node --test test/openapi-mock-api.test.mjs test/home-provider-mock-flow.test.mjs && playwright test e2e/home-providers.spec.mjs",
     "test:e2e": "playwright test",
