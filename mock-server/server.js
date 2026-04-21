@@ -216,6 +216,46 @@ const mockSportsbookProviders = [
   { provider_id: 4008, name: 'united-gaming', image: pImg(4008) },
 ]
 
+/** Provider[] — skema sama seperti GET /slot … /sportsbook (OpenAPI components/schemas/Provider). */
+const mockTogelProviders = [
+  { provider_id: 5001, name: 'hong-kong-lotto', image: pImg(5001) },
+  { provider_id: 5002, name: 'sydney-lotto', image: pImg(5002) },
+  { provider_id: 5003, name: 'singapore-togel', image: pImg(5003) },
+  { provider_id: 5004, name: 'kamboja-togel', image: pImg(5004) },
+  { provider_id: 5005, name: 'taiwan-togel', image: pImg(5005) },
+  { provider_id: 5006, name: 'hongkong-togel', image: pImg(5006) },
+  { provider_id: 5007, name: 'sidney-togel', image: pImg(5007) },
+]
+
+const mockArcadeProviders = [
+  { provider_id: 6001, name: 'aviatrix-arcade', image: pImg(6001) },
+  { provider_id: 6002, name: 'kingmidas-arcade', image: pImg(6002) },
+  { provider_id: 6003, name: 'sbobet-arcade', image: pImg(6003) },
+  { provider_id: 6004, name: 'spribe-arcade', image: pImg(6004) },
+  { provider_id: 6005, name: 'brand-arc-jdb', image: pImg(6005) },
+  { provider_id: 6006, name: 'brand-arc-cq9', image: pImg(6006) },
+  { provider_id: 6007, name: 'brand-arc-fachai', image: pImg(6007) },
+  { provider_id: 6008, name: 'brand-arc-rich88', image: pImg(6008) },
+  { provider_id: 6009, name: 'brand-arc-askmeslot', image: pImg(6009) },
+  { provider_id: 6010, name: 'brand-arc-six', image: pImg(6010) },
+]
+
+const mockEsportsProviders = [
+  { provider_id: 9101, name: 'ia-esports', image: pImg(9101) },
+  { provider_id: 9102, name: 'sbobetesports', image: pImg(9102) },
+  { provider_id: 9103, name: 'hp-gaming', image: pImg(9103) },
+]
+
+const mockCrushProviders = Array.from({ length: 9 }, (_, i) => ({
+  provider_id: 9001 + i,
+  name: `crush-rocket-${i + 1}`,
+  image: pImg(9001 + i),
+}))
+
+const mockPokerProviders = [{ provider_id: 7001, name: 'millionaire-poker', image: pImg(7001) }]
+
+const mockCockfightProviders = [{ provider_id: 8001, name: 'ga28-cockfight', image: pImg(8001) }]
+
 // Game schema sesuai Swagger: { id, name, image }
 const mockGames = {
   // ===== SLOT GAMES (1xxx) =====
@@ -1125,6 +1165,20 @@ router.get('/website', (req, res) => {
   res.json(mockWebsiteConfig)
 })
 
+// GET/POST /theme — tidak ada path terpisah di openapi.yaml (lihat WebsiteConfig.theme); mock mendukung api.js getTheme/updateTheme.
+router.get('/theme', (req, res) => {
+  res.json(mockWebsiteConfig.theme || {})
+})
+
+router.post('/theme', (req, res) => {
+  const user = verifyToken(req)
+  if (!user) return res.status(401).json({ message: 'invalid token' })
+  if (req.body && typeof req.body === 'object') {
+    mockWebsiteConfig.theme = { ...mockWebsiteConfig.theme, ...req.body }
+  }
+  res.json({ message: 'success', theme: mockWebsiteConfig.theme })
+})
+
 // GET /bank-list
 router.get('/bank-list', (req, res) => {
   res.json(mockBanks)
@@ -1166,6 +1220,44 @@ router.get('/sportsbook', (req, res) => {
   logRequest('GET', '/sportsbook')
   logResponse('/sportsbook', mockSportsbookProviders)
   res.json(mockSportsbookProviders)
+})
+
+// GET /togel, /arcade, /crush, /esports, /poker, /cockfight — tidak ada di openapi.yaml;
+// respons memakai skema Provider[] yang sama dengan GET /slot (ekstensi produk / FE).
+router.get('/togel', (req, res) => {
+  logRequest('GET', '/togel')
+  logResponse('/togel', mockTogelProviders)
+  res.json(mockTogelProviders)
+})
+
+router.get('/arcade', (req, res) => {
+  logRequest('GET', '/arcade')
+  logResponse('/arcade', mockArcadeProviders)
+  res.json(mockArcadeProviders)
+})
+
+router.get('/crush', (req, res) => {
+  logRequest('GET', '/crush')
+  logResponse('/crush', mockCrushProviders)
+  res.json(mockCrushProviders)
+})
+
+router.get('/esports', (req, res) => {
+  logRequest('GET', '/esports')
+  logResponse('/esports', mockEsportsProviders)
+  res.json(mockEsportsProviders)
+})
+
+router.get('/poker', (req, res) => {
+  logRequest('GET', '/poker')
+  logResponse('/poker', mockPokerProviders)
+  res.json(mockPokerProviders)
+})
+
+router.get('/cockfight', (req, res) => {
+  logRequest('GET', '/cockfight')
+  logResponse('/cockfight', mockCockfightProviders)
+  res.json(mockCockfightProviders)
 })
 
 /** Respons GET /game-list — OpenAPI Game: id & image string (format uri). */

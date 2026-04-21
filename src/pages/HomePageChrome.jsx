@@ -6,6 +6,7 @@ import AuthModal from '../components/AuthModal'
 import GameListModal from '../components/GameListModal'
 import { useAuth } from '../context/AuthContext'
 import { useNavDropdownProviders } from '../hooks/useNavDropdownProviders'
+import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
 import { useLotteryResults, parseResultToNumbers, MARKET_DISPLAY_NAMES } from '../hooks/useLottery'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
@@ -822,7 +823,7 @@ function MobileTogelSkeleton() {
 }
 
 // ============ FULL PROVIDERS LIST PAGE ============
-function ProvidersListPage({ category, navigate, dropdownProvidersByCategory, navProvidersLoading }) {
+function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) {
   const cat = categories.find(c => c.id === category) || categories[0]
   const Icon = cat.icon
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
@@ -832,12 +833,11 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory, na
   const [gameModalOpen, setGameModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
 
-  // Pakai data dari cache bersama (sudah di-prefetch oleh useNavDropdownProviders)
-  const apiProviders = dropdownProvidersByCategory[category] ?? []
+  /** Satu sumber data: konteks kategori = GET /slot|/fish|… → Provider[] (OpenAPI) + transformProviderData */
+  const { providers: apiProviders, loading: providerCategoryLoading } = useProviderCategory(cat.id)
   const providersLoading =
-    navProvidersLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
+    providerCategoryLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
 
-  // Use API data if available, otherwise fallback to static config
   const categoryProviders = apiProviders.length > 0 ? apiProviders : cat.providers
   
   const openAuthModal = (tab = 'login') => {
@@ -1042,21 +1042,21 @@ export default function HomePageChrome() {
   const [gameModalOpen, setGameModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
 
-  const { providersByCategory: dropdownProvidersByCategory, loading: navProvidersLoading } =
-    useNavDropdownProviders()
+  const { providersByCategory: dropdownProvidersByCategory } = useNavDropdownProviders()
 
-  // Hindari GET /slot (dll.) kedua: pakai cache prefetch dropdown untuk kotak provider di home
-  const apiProviders = dropdownProvidersByCategory[providerBoxCategory] ?? []
+  /** Grid kartu home: konteks kategori aktif — selaras kontrak Provider + transform (bukan slice dari snapshot nav) */
+  const { providers: apiProviders, loading: providerCategoryLoading } =
+    useProviderCategory(providerBoxCategory)
   const providersLoading =
-    navProvidersLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
+    providerCategoryLoading && (!Array.isArray(apiProviders) || apiProviders.length === 0)
 
   // Fetch lottery results from API
   const { results: lotteryResults, loading: lotteryLoading } = useLotteryResults()
-  
-  // Use API data if available, otherwise fallback to static config
-  const activeProviders = apiProviders.length > 0 
-    ? apiProviders 
-    : categories.find(c => c.id === providerBoxCategory)?.providers || []
+
+  const activeProviders =
+    apiProviders.length > 0
+      ? apiProviders
+      : categories.find((c) => c.id === providerBoxCategory)?.providers || []
   
   // Transform lottery results for display
   const togelResults = transformLotteryResults(lotteryResults)
@@ -1092,7 +1092,6 @@ export default function HomePageChrome() {
         category={providerCategory}
         navigate={navigate}
         dropdownProvidersByCategory={dropdownProvidersByCategory}
-        navProvidersLoading={navProvidersLoading}
       />
     )
   }

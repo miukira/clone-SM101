@@ -139,6 +139,14 @@ export function assertResponseMatchesOpenApi(spec, apiPath, method, statusCode, 
  * @param {object} spec — dereferenced
  * @param {unknown} body
  */
+/**
+ * Respons array provider (GET /slot …) — skema sama untuk rute mock ekstensi (/togel, /arcade, …).
+ * Memakai validasi 200 GET /slot karena `type: array` + `items: Provider` identik.
+ */
+export function assertProviderArrayBodyMatchesOpenApi(spec, body) {
+  assertResponseMatchesOpenApi(spec, '/slot', 'get', 200, body)
+}
+
 export function assertErrorBodyMatchesOpenApi(spec, body) {
   const errSchema = spec.components?.schemas?.Error
   if (!errSchema) {

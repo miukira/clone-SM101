@@ -3,6 +3,7 @@ import MaintenancePage from './pages/MaintenancePage'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider } from './context/AuthContext'
 import { WebsiteProvider, useWebsite } from './context/WebsiteContext'
+import { ProviderCategoriesProvider } from './context/ProviderCategoryContexts.jsx'
 import SeasonalEffects from './components/SeasonalEffects'
 import ThemeCustomizer from './components/ThemeCustomizer'
 import ThemedBackground from './components/ThemedBackground'
@@ -47,7 +48,9 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <WebsiteProvider>
-          <AppContent />
+          <ProviderCategoriesProvider>
+            <AppContent />
+          </ProviderCategoriesProvider>
         </WebsiteProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -103,7 +103,7 @@ export function isFullProviderCategoryCache() {
 }
 
 /**
- * Satu request per kategori — dipakai nav dropdown + useProviders (hindari GET /slot dua kali).
+ * Satu request per kategori (cache modul) — dipakai ProviderCategoryContexts + ensureProviderCategory.
  */
 export async function ensureProviderCategory(category) {
   if (cache[category]) return cache[category]

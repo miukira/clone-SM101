@@ -1,46 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { getGameList as apiGetGameList } from '../services/api'
-import { ensureProviderCategory } from '../utils/providerCategoryApiCache.js'
+import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
 import { transformProviderData } from '../utils/transformProviderApi.js'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl.js'
 
 export { transformProviderData }
 
 /**
- * Data provider untuk satu kategori — memakai cache bersama useNavDropdownProviders
- * (tidak memanggil GET /slot lagi bila sudah di-prefetch nav).
+ * Data provider untuk satu kategori — dari Context kategori yang sesuai (cache API sama di bawahnya).
  */
 export function useProviders(category) {
-  const [providers, setProviders] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-
-    ensureProviderCategory(category)
-      .then((data) => {
-        if (!cancelled) setProviders(Array.isArray(data) ? data : [])
-      })
-      .catch((err) => {
-        console.error(`Error fetching ${category} providers:`, err)
-        if (!cancelled) {
-          setError(err)
-          setProviders([])
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [category])
-
-  return { providers, loading, error }
+  return useProviderCategory(category)
 }
 
 /**
