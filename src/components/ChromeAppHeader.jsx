@@ -98,7 +98,7 @@ export default function ChromeAppHeader({
       <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black to-[#0a0a0a] themed-border-bottom z-50">
         <div className="flex items-center justify-between px-3 md:px-6 lg:px-8 py-2 md:py-2.5 lg:py-3">
           <div className="flex items-center gap-2 md:gap-3">
-            <ChromeSiteBrand variant="header" onClick={() => navigate('/')} />
+            <ChromeSiteBrand variant="header" hideTitle onClick={() => navigate('/')} />
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">

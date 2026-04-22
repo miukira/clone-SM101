@@ -6,6 +6,7 @@ import { useWebsite } from '../context/WebsiteContext'
  * @param {() => void} [onClick] — if set and wrapper=true, renders as button
  * @param {string} [className]
  * @param {boolean} [hideTitleOnMobile]
+ * @param {boolean} [hideTitle] — if true, logo only (no sitename label)
  * @param {boolean} [wrapper] — if false, only img + title fragment (parent supplies layout / click)
  */
 export default function ChromeSiteBrand({
@@ -13,6 +14,7 @@ export default function ChromeSiteBrand({
   onClick,
   className = '',
   hideTitleOnMobile = false,
+  hideTitle = false,
   wrapper = true,
 }) {
   const { logo, title } = useWebsite()
@@ -44,7 +46,7 @@ export default function ChromeSiteBrand({
       decoding="async"
     />
   )
-  const label = <span className={titleClass}>{title}</span>
+  const label = hideTitle ? null : <span className={titleClass}>{title}</span>
 
   if (!wrapper) {
     return (
