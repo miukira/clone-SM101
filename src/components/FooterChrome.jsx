@@ -367,7 +367,7 @@ export default function FooterChrome() {
           </div>
           
           <div className="flex items-center gap-3 min-w-0">
-            <ChromeSiteBrand variant="footer" className="min-w-0" />
+            <ChromeSiteBrand variant="footer" hideTitle className="min-w-0" />
           </div>
         </div>
       </section>
