@@ -22,7 +22,7 @@ function LoadingSpinner() {
 // Game schema dari Swagger: { id, name, image }
 function GameCard({ game, onPlay, isLoading }) {
   const [imageLoaded, setImageLoaded] = useState(false)
-  /** 0: game / default file; 1: paksa default; 2: placeholder 🎮 */
+  /** 0: game / default file; 1: paksa default; 2: placeholder 🎰 (ukuran medium) */
   const [heroTier, setHeroTier] = useState(0)
   const gameImage = normalizeImageUrl(game.image)
 
@@ -61,7 +61,9 @@ function GameCard({ game, onPlay, isLoading }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a]">
-            <span className="text-4xl opacity-30">🎮</span>
+            <span className="text-3xl opacity-35 select-none" aria-hidden>
+              🎰
+            </span>
           </div>
         )}
         
@@ -138,7 +140,12 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
 
   const providerThumb =
     normalizeImageUrl(provider?.logoImg) ?? normalizeImageUrl(provider?.characterImg)
-  const headerLogoSrc = providerAssetUrl(providerThumb ?? DEFAULT_PROVIDER_CARD_IMAGE)
+  const headerLogoSrc = (() => {
+    if (providerThumb) return providerAssetUrl(providerThumb)
+    if (DEFAULT_PROVIDER_CARD_IMAGE) return providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
+    return null
+  })()
+  const hasHeaderLogo = headerLogoSrc != null && String(headerLogoSrc).trim() !== ''
 
   return (
     <>
@@ -153,21 +160,24 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[#333] bg-gradient-to-r from-[#1a1a1a] via-[#222] to-[#1a1a1a]">
           <div className="flex items-center gap-4">
-            {/* Provider Logo */}
-            <img
-              src={headerLogoSrc}
-              alt={provider?.name || 'Provider'}
-              className="h-8 sm:h-10 w-auto object-contain"
-              onError={(e) => {
-                const el = e.currentTarget
-                if (!el.dataset.fallbackTried) {
-                  el.dataset.fallbackTried = '1'
-                  el.src = providerAssetUrl(DEFAULT_PROVIDER_CARD_IMAGE)
-                } else {
-                  el.style.display = 'none'
-                }
-              }}
-            />
+            {/* Provider Logo — bukan file lokal default */}
+            {hasHeaderLogo ? (
+              <img
+                src={headerLogoSrc}
+                alt={provider?.name || 'Provider'}
+                className="h-8 sm:h-10 w-auto object-contain"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            ) : (
+              <div
+                className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center text-3xl opacity-35 select-none"
+                aria-hidden
+              >
+                🎰
+              </div>
+            )}
             <div>
               <h2 className="text-sm sm:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
                 {provider?.name || 'Game List'}
@@ -206,7 +216,9 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
             </div>
           ) : games.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <span className="text-4xl mb-4">🎮</span>
+              <span className="text-3xl opacity-35 mb-4 select-none" aria-hidden>
+                🎰
+              </span>
               <p className="text-[#808080]">Belum ada game tersedia</p>
             </div>
           ) : (
