@@ -1,45 +1,72 @@
 // FooterChrome.jsx - Reusable footer component for Chrome theme
 
-import { Fragment } from 'react'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { Fragment, useEffect, useMemo, useState } from 'react'
+import { providerAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { useWebsite } from '../context/WebsiteContext'
+import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
 import ChromeSiteBrand from './ChromeSiteBrand'
 
-/** Logo footer: file PNG lama di assets2 tidak ada — pakai kartu animated-brand di public/ */
-const AB = '/animated-brand'
-const gameProvidersRaw = [
-  { name: 'Pragmatic Play', logo: `${AB}/slot/slot-pragmatic-play.webp` },
-  { name: 'YGR', logo: `${AB}/slot/slot-ygr.webp` },
-  { name: 'Dragoon Soft', logo: `${AB}/slot/slot-dragoonsoft.webp` },
-  { name: 'FastSpin', logo: `${AB}/slot/slot-fastspin.webp` },
-  { name: 'Playstar', logo: `${AB}/slot/slot-playstar.webp` },
-  { name: 'PG Soft', logo: `${AB}/slot/slot-pg-soft.webp` },
-  { name: 'Advant Play', logo: `${AB}/slot/slot-advantplay.webp` },
-  { name: 'Rich88', logo: `${AB}/slot/slot-rich88.webp` },
-  { name: 'Joker', logo: `${AB}/slot/slot-joker.webp` },
-  { name: 'Habanero', logo: `${AB}/slot/slot-habanero.webp` },
-  { name: 'Funky Games', logo: `${AB}/slot/slot-funkygames.webp` },
-  { name: 'SBOBET', logo: `${AB}/sport/sport-sbobet.webp` },
-  { name: 'CQ9', logo: `${AB}/slot/slot-cq9.webp` },
-  { name: 'Microgaming', logo: `${AB}/slot/slot-microgaming.webp` },
-  { name: 'Yggdrasil', logo: `${AB}/slot/slot-yggdrasil.webp` },
-  { name: 'Nolimit City', logo: `${AB}/slot/slot-nolimit-city.webp` },
-  { name: 'Saba Sports', logo: `${AB}/sport/sport-saba-sports.webp` },
-  { name: 'BTi', logo: `${AB}/sport/sport-bti.webp` },
-  { name: 'JILI', logo: `${AB}/slot/slot-jili.webp` },
-  { name: 'Naga Games', logo: `${AB}/slot/slot-nagagames.webp` },
-  { name: 'Lucky Monaco', logo: `${AB}/slot/slot-lucky-monaco.webp` },
-  { name: 'World Match', logo: `${AB}/slot/slot-worldmatch.webp` },
-  { name: 'SBO Slot', logo: `${AB}/slot/slot-sboslot.webp` },
-  { name: 'NetEnt', logo: `${AB}/slot/slot-netent.webp` },
-  { name: 'AFB777', logo: `${AB}/slot/slot-afb777.webp` },
-  { name: 'Kingmaker', logo: `${AB}/slot/slot-kingmaker.webp` },
-]
+/**
+ * Game Providers di footer: data dari API (kategori slot/sports/casino/fishing), URL gambar
+ * lewat providerAssetUrl (CDN / GET /website). Tanpa aset lokal; bila URL kosong/404 tampil nama.
+ */
+function FooterProviderThumb({ provider }) {
+  const name = provider.display_name || provider.name || 'Provider'
+  const raw =
+    normalizeImageUrl(provider.logoImg) ?? normalizeImageUrl(provider.characterImg) ?? null
+  const [failed, setFailed] = useState(false)
 
-const gameProviders = gameProvidersRaw.map((p) => ({
-  ...p,
-  logo: publicAssetUrl(p.logo),
-}))
+  useEffect(() => {
+    setFailed(false)
+  }, [raw, provider.provider_id, provider.id])
+
+  const canShowImg = raw != null && raw !== '' && !failed
+  const src = canShowImg ? providerAssetUrl(raw) : null
+
+  return (
+    <div
+      className="aspect-[3/2] bg-[#111] themed-card rounded-md flex items-center justify-center p-1.5 hover:bg-[#1a1a1a] transition-all cursor-default overflow-hidden"
+      title={name}
+    >
+      {src ? (
+        <img
+          src={src}
+          alt={name}
+          className="max-w-full max-h-full object-contain filter brightness-90 hover:brightness-110 transition-all"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span className="text-[8px] sm:text-[9px] text-center text-[#707070] leading-tight line-clamp-3 px-0.5 font-medium">
+          {name}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function useFooterGameProviders() {
+  const { providers: slots, loading: ls } = useProviderCategory('slots')
+  const { providers: sports, loading: lsp } = useProviderCategory('sports')
+  const { providers: casino, loading: lc } = useProviderCategory('casino')
+  const { providers: fishing, loading: lf } = useProviderCategory('fishing')
+
+  const merged = useMemo(() => {
+    const m = new Map()
+    for (const p of [...(slots || []), ...(sports || []), ...(casino || []), ...(fishing || [])]) {
+      const id = p?.provider_id ?? p?.id
+      if (id == null) continue
+      const key = String(id)
+      if (!m.has(key)) m.set(key, p)
+    }
+    return Array.from(m.values()).sort((a, b) =>
+      (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }),
+    )
+  }, [slots, sports, casino, fishing])
+
+  const loading = ls || lsp || lc || lf
+  return { providers: merged, loading }
+}
 
 const BRAND_TOKEN = 'PUSATTOGEL'
 
@@ -264,10 +291,11 @@ const bankItems = [
 
 export default function FooterChrome() {
   const { title } = useWebsite()
+  const { providers: footerProviders, loading: footerProvidersLoading } = useFooterGameProviders()
 
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
-      {/* Game Providers Section */}
+      {/* Game Providers Section — URL gambar dari API + providerAssetUrl; bukan public/ lokal */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center">
@@ -280,19 +308,25 @@ export default function FooterChrome() {
         </div>
         
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-13 gap-2 sm:gap-3">
-          {gameProviders.map((provider, i) => (
-            <div
-              key={i}
-              className="aspect-[3/2] bg-[#111] themed-card rounded-md flex items-center justify-center p-1.5 hover:bg-[#1a1a1a] transition-all cursor-pointer overflow-hidden"
-              title={provider.name}
-            >
-              <img 
-                src={provider.logo} 
-                alt={provider.name} 
-                className="max-w-full max-h-full object-contain filter brightness-90 hover:brightness-110 transition-all"
+          {footerProvidersLoading ? (
+            Array.from({ length: 24 }).map((_, i) => (
+              <div
+                key={`fp-skel-${i}`}
+                className="aspect-[3/2] bg-[#1a1a1a] themed-card rounded-md animate-pulse"
               />
-            </div>
-          ))}
+            ))
+          ) : footerProviders.length === 0 ? (
+            <p className="col-span-full text-center text-xs text-[#505050] py-4">
+              Belum ada data provider.
+            </p>
+          ) : (
+            footerProviders.map((p) => (
+              <FooterProviderThumb
+                key={p.provider_id ?? p.id}
+                provider={p}
+              />
+            ))
+          )}
         </div>
       </section>
 

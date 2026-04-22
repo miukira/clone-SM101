@@ -1,2 +1,5 @@
-/** Fallback kartu provider bila `image` kosong atau gagal load (404, dll.) */
-export const DEFAULT_PROVIDER_CARD_IMAGE = '/logo.png'
+/**
+ * Bila kosong, ProviderCard tidak memakai file lokal — tampil placeholder 🎰 ukuran medium (Tailwind ~text-3xl).
+ * Dulu: '/logo.png' (brand lokal). URL gambar seharusnya selalu dari API + providerAssetUrl.
+ */
+export const DEFAULT_PROVIDER_CARD_IMAGE = ''

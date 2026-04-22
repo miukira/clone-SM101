@@ -98,7 +98,7 @@ export default function ProviderCard({
               className={`absolute inset-0 z-[0] bg-gradient-radial ${glowColorMap[glowColor] || glowColorMap.white} to-transparent blur-2xl ${glowColorHoverMap[glowColorHover] || glowColorHoverMap.white} transition-all duration-700`}
             />
 
-            {/* Satu gambar full — kosong/404 → default /logo.png → 🎰 */}
+            {/* Satu gambar full — kosong/404 / tanpa default lokal → 🎰 */}
             {heroImageUrl ? (
               <img
                 src={heroImageUrl}
@@ -109,7 +109,9 @@ export default function ProviderCard({
                 }`}
               />
             ) : (
-              <div className="absolute inset-0 z-[2] flex items-center justify-center text-4xl opacity-25">🎰</div>
+              <div className="absolute inset-0 z-[2] flex items-center justify-center text-3xl opacity-35 select-none">
+                🎰
+              </div>
             )}
 
             {/* Overlay efek (mis. petir) — opsional */}

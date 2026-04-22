@@ -592,7 +592,9 @@ function MobileProviderCard({ provider }) {
             onError={handleMobileHeroError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl opacity-30">🎰</div>
+          <div className="w-full h-full flex items-center justify-center text-3xl opacity-35 select-none">
+            🎰
+          </div>
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent" />
@@ -725,7 +727,7 @@ function MiniProviderCard({ provider, isActive, onClick }) {
             }`}
           />
         ) : (
-          <span className="text-lg opacity-40" aria-hidden>
+          <span className="text-2xl opacity-35 leading-none select-none" aria-hidden>
             🎰
           </span>
         )}
