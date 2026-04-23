@@ -316,25 +316,10 @@ function DepositContent({
   const payment = pending?.payment
   const qrisPayload = getDepositQrisQrRaw(payment)
 
-  const handleCancelPending = () => {
-    localStorage.removeItem(LS_PENDING_DEPOSIT)
-    setPending(null)
-    setStatusHint('')
-    setError('')
-  }
-
   if (pending && payment) {
     return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
-        <button
-          onClick={handleCancelPending}
-          className="px-3 py-1.5 text-xs bg-red-500/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors"
-        >
-          Batalkan
-        </button>
-      </div>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
       <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
         <p className="font-semibold mb-1">ID deposit: {pending.deposit_id}</p>
