@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef, us
 import { publicAssetUrl, withCacheBust, setRuntimeAssetBaseUrl } from '../utils/publicAssetUrl'
 import { loadWebsitePublicBundle } from '../utils/websitePublicDataCache.js'
 import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
+import { DEFAULT_MIN_WITHDRAW } from '../constants/transactionLimits'
 
 const WebsiteContext = createContext()
 const VERBOSE = import.meta.env.VITE_API_VERBOSE === 'true'
@@ -90,6 +91,7 @@ export function WebsiteProvider({ children }) {
         notification: bundle.notification || [],
         lottery_result: bundle.lottery_result || [],
         withdraw_list: bundle.withdraw_list || [],
+        min_withdraw: bundle.min_withdraw,
         config: bundle.config || {},
         banks: [],
         promotions: [],
@@ -178,6 +180,12 @@ export function WebsiteProvider({ children }) {
       : null) || 'PUSATTOGEL'
   const about = config.about || ''
 
+  const rawMinWithdraw = websiteData?.min_withdraw
+  const minWithdraw = (() => {
+    const n = Number(rawMinWithdraw)
+    return Number.isFinite(n) && n > 0 ? n : DEFAULT_MIN_WITHDRAW
+  })()
+
   const value = {
     loading,
     error,
@@ -202,6 +210,7 @@ export function WebsiteProvider({ children }) {
     configAssetRev,
     title,
     about,
+    minWithdraw,
   }
 
   return (

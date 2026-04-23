@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import QRCode from 'react-qr-code'
 import FooterChrome from '../components/FooterChrome'
 import { useAuth } from '../context/AuthContext'
+import { useWebsite } from '../context/WebsiteContext'
 import {
   getBalance,
   getBankList,
@@ -32,39 +33,8 @@ import {
   PENDING_STATUS_POLL_MS,
   isTerminalTransactionFailure,
 } from '../constants/pendingTransactions'
-import {
-  SlotsIconChrome,
-  SportsIconChrome,
-  CasinoIconChrome,
-  LotteryIconChrome,
-  FishingIconChrome,
-  ArcadeIconChrome,
-  CrushIconChrome,
-  EsportsIconChrome,
-  PokerIconChrome,
-  CockFightingIconChrome,
-  HomeIconChrome,
-  PromoIconChrome,
-  ReferralIconChrome,
-} from '../components/IconsChrome'
 import ChromeAppHeader from '../components/ChromeAppHeader'
-
-// Navigation menu items for member page
-const navMenuItems = [
-  { id: 'home', name: 'HOME', icon: HomeIconChrome, path: '/' },
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, path: '/providers/slots' },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, path: '/providers/casino' },
-  { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome, path: '/providers/togel' },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, path: '/providers/sports' },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, path: '/providers/fishing' },
-  { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome, path: '/providers/arcade' },
-  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome, path: '/providers/crush' },
-  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome, path: '/providers/esports' },
-  { id: 'poker', name: 'POKER', icon: PokerIconChrome, path: '/providers/poker' },
-  { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome, path: '/providers/sabung' },
-  { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, path: '/promo' },
-  { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, path: '/referral' },
-]
+import { CHROME_COMPACT_HEADER_NAV as navMenuItems } from '../config/chromeCompactTopNav'
 
 // ============ SIDEBAR ICONS ============
 // Chrome Silver theme - using silver/gray colors
@@ -218,26 +188,50 @@ function DepositContent({
     { id: 'pulsa', label: 'Pulsa' },
   ]
 
-  const filteredBanks = useMemo(() => {
+  const minDeposit = (b) => Math.max(0, Number(b?.min_deposit) || 0)
+
+  const tabFilteredBanks = useMemo(() => {
     return bankList.filter((bank) => {
       const type = String(bank?.type ?? '')
         .toLowerCase()
         .replace(/[\s_]+/g, '-')
+      const name = String(bank?.name ?? '')
+      // Pulsa: type pulsa (ekstensi backend) ATAU e-wallet dengan penanda "pulsa" di nama
+      // (OpenAPI hanya punya e-wallet|bank-transfer|qris; mock memakai e-wallet + "(pulsa)" di name)
+      const isPulsaRow =
+        type === 'pulsa' ||
+        ((type === 'e-wallet' || type === 'ewallet') && /pulsa/i.test(name))
       if (activeTab === 'qris') return type === 'qris'
       if (activeTab === 'bank') return type === 'bank-transfer' || type === 'bank'
-      if (activeTab === 'ewallet') return type === 'e-wallet' || type === 'ewallet'
+      if (activeTab === 'ewallet')
+        return (type === 'e-wallet' || type === 'ewallet') && !isPulsaRow
+      if (activeTab === 'pulsa') return isPulsaRow
       return false
     })
   }, [bankList, activeTab])
 
-  // Auto-select first bank when tab changes or filtered list changes
+  /** Hanya tampilkan metode yang minimalnya terpenuhi bila jumlah sudah diisi. */
+  const availableBanks = useMemo(() => {
+    const raw = String(amount ?? '').trim()
+    const n = raw === '' ? NaN : parseInt(raw, 10)
+    if (!Number.isFinite(n) || n <= 0) return tabFilteredBanks
+    return tabFilteredBanks.filter((b) => n >= minDeposit(b))
+  }, [tabFilteredBanks, amount])
+
+  const allMethodsAmountTooLow =
+    tabFilteredBanks.length > 0 && availableBanks.length === 0 && String(amount ?? '').trim() !== ''
+
+  // Pilih entri terpilih yang masih tersedia (tab/jumlah)
   useEffect(() => {
-    if (filteredBanks.length > 0) {
-      setSelectedBank(filteredBanks[0])
+    if (availableBanks.length > 0) {
+      setSelectedBank((prev) => {
+        if (prev && availableBanks.some((b) => b.id === prev.id)) return prev
+        return availableBanks[0]
+      })
     } else {
       setSelectedBank(null)
     }
-  }, [filteredBanks])
+  }, [availableBanks])
 
   useEffect(() => {
     if (!pending?.deposit_id) return undefined
@@ -281,12 +275,33 @@ function DepositContent({
       setError('Masukkan jumlah')
       return
     }
-    if (activeTab !== 'qris' && !selectedBank) {
-      setError('Pilih bank tujuan')
+    const n = parseInt(String(amount).trim(), 10)
+    if (!Number.isFinite(n) || n <= 0) {
+      setError('Masukkan jumlah valid')
       return
     }
-    if (activeTab === 'qris' && !selectedBank) {
-      setError('Metode QRIS tidak tersedia. Coba lagi nanti.')
+    if (tabFilteredBanks.length === 0) {
+      setError('Tidak ada metode deposit untuk tab ini')
+      return
+    }
+    if (allMethodsAmountTooLow) {
+      const lowest = Math.min(...tabFilteredBanks.map((b) => minDeposit(b)))
+      setError(
+        `Jumlah di bawah minimum. Minimum terendah di tab ini: IDR ${lowest.toLocaleString('id-ID')}`
+      )
+      return
+    }
+    if (!selectedBank) {
+      if (activeTab === 'qris') setError('Metode QRIS tidak tersedia. Coba lagi nanti.')
+      else if (activeTab === 'pulsa') setError('Pilih tujuan pulsa')
+      else if (activeTab === 'ewallet') setError('Pilih e-wallet tujuan')
+      else setError('Pilih bank tujuan')
+      return
+    }
+    if (n < minDeposit(selectedBank)) {
+      setError(
+        `Minimum deposit IDR ${minDeposit(selectedBank).toLocaleString('id-ID')} untuk metode terpilih`
+      )
       return
     }
 
@@ -295,7 +310,7 @@ function DepositContent({
     setStatusHint('')
 
     try {
-      const result = await createDeposit(selectedBank.id, parseInt(amount, 10), promoCode || null)
+      const result = await createDeposit(selectedBank.id, n, promoCode || null)
       const stored = { deposit_id: result.deposit_id, payment: result }
       localStorage.setItem(LS_PENDING_DEPOSIT, JSON.stringify(stored))
       setPending(stored)
@@ -411,15 +426,17 @@ function DepositContent({
         {activeTab !== 'qris' ? (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <label className="sm:w-40 text-sm text-[#4a4a4a]">Bank Tujuan</label>
+              <label className="sm:w-40 text-sm text-[#4a4a4a]">
+                {activeTab === 'pulsa' ? 'Pulsa / tujuan' : activeTab === 'ewallet' ? 'E-wallet tujuan' : 'Bank Tujuan'}
+              </label>
               <select
                 className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
                 value={selectedBank?.id || ''}
-                onChange={(e) => setSelectedBank(filteredBanks.find((b) => b.id === parseInt(e.target.value, 10)))}
+                onChange={(e) => setSelectedBank(availableBanks.find((b) => b.id === parseInt(e.target.value, 10)))}
               >
-                {filteredBanks.map((bank) => (
+                {availableBanks.map((bank) => (
                   <option key={bank.id} value={bank.id}>
-                    {bank.name?.toUpperCase()} - {bank.account}
+                    {bank.name?.toUpperCase()} — {bank.account} (min. {minDeposit(bank).toLocaleString('id-ID')})
                   </option>
                 ))}
               </select>
@@ -430,7 +447,7 @@ function DepositContent({
                 <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Bank Name</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.name?.toUpperCase()}</span></div>
                 <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Account</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.account}</span></div>
                 <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Number</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.number}</span></div>
-                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Jumlah Minimum</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {selectedBank.min_deposit?.toLocaleString()}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Jumlah Minimum</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {minDeposit(selectedBank).toLocaleString('id-ID')}</span></div>
               </div>
             ) : null}
           </>
@@ -440,15 +457,29 @@ function DepositContent({
           </p>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Jumlah</label>
-          <input 
-            type="number" 
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-            placeholder="Masukkan jumlah"
-          />
+        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">Jumlah</label>
+          <div className="flex-1 space-y-1.5">
+            <input
+              type="number"
+              min={selectedBank != null ? minDeposit(selectedBank) : 0}
+              step="1000"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
+              placeholder="Masukkan jumlah"
+            />
+            {selectedBank ? (
+              <p className="text-[10px] sm:text-xs text-[#707070]">
+                Minimum deposit: IDR {minDeposit(selectedBank).toLocaleString('id-ID')}
+              </p>
+            ) : null}
+            {allMethodsAmountTooLow ? (
+              <p className="text-[10px] sm:text-xs text-amber-600/90">
+                Jumlah saat ini di bawah minimum semua metode di tab ini. Naikkan nominal.
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -483,12 +514,26 @@ function DepositContent({
   )
 }
 
-function WithdrawContent({ userBank, balance, onRefreshBalance }) {
+function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [pending, setPending] = useState(readStoredPendingWithdraw)
   const [statusHint, setStatusHint] = useState('')
+
+  const minW = Math.max(0, Number(minWithdraw) || 0)
+  const balanceNum = (() => {
+    const b = Number(balance)
+    return Number.isFinite(b) && b >= 0 ? b : 0
+  })()
+  const belowAvailableMinimum = minW > 0 && balanceNum < minW
+  const amountNum = useMemo(() => {
+    const raw = String(amount ?? '').trim()
+    if (raw === '') return NaN
+    return parseInt(raw, 10)
+  }, [amount])
+  const belowMinWithdraw = Number.isFinite(amountNum) && amountNum > 0 && amountNum < minW
+  const aboveBalance = Number.isFinite(amountNum) && amountNum > balanceNum
 
   useEffect(() => {
     if (!pending?.withdraw_id) return undefined
@@ -532,8 +577,16 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
       setError('Masukkan jumlah penarikan')
       return
     }
-
-    if (parseInt(amount, 10) > balance) {
+    const n = parseInt(String(amount).trim(), 10)
+    if (!Number.isFinite(n) || n <= 0) {
+      setError('Masukkan jumlah valid')
+      return
+    }
+    if (n < minW) {
+      setError(`Minimum penarikan IDR ${minW.toLocaleString('id-ID')}`)
+      return
+    }
+    if (n > balanceNum) {
       setError('Saldo tidak mencukupi')
       return
     }
@@ -543,7 +596,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
     setStatusHint('')
 
     try {
-      const result = await createWithdraw(parseInt(amount, 10))
+      const result = await createWithdraw(n)
       const stored = { withdraw_id: result.withdraw_id, payment: result }
       localStorage.setItem(LS_PENDING_WITHDRAW, JSON.stringify(stored))
       setPending(stored)
@@ -619,15 +672,36 @@ function WithdrawContent({ userBank, balance, onRefreshBalance }) {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Jumlah</label>
-          <input 
-            type="number" 
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]" 
-            placeholder="Masukkan jumlah"
-          />
+        <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
+          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">Jumlah</label>
+          <div className="flex-1 space-y-1.5">
+            <input
+              type="number"
+              min={minW}
+              max={Number.isFinite(balanceNum) && balanceNum > 0 ? Math.floor(balanceNum) : undefined}
+              step="1000"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
+              placeholder="Masukkan jumlah"
+            />
+            <p className="text-[10px] sm:text-xs text-[#707070]">
+              Minimum penarikan: IDR {minW.toLocaleString('id-ID')}
+            </p>
+            {belowMinWithdraw ? (
+              <p className="text-[10px] sm:text-xs text-amber-600/90">
+                Jumlah di bawah minimum penarikan.
+              </p>
+            ) : null}
+            {aboveBalance ? (
+              <p className="text-[10px] sm:text-xs text-amber-600/90">Jumlah melebihi saldo tersedia.</p>
+            ) : null}
+            {belowAvailableMinimum ? (
+              <p className="text-[10px] sm:text-xs text-amber-600/90">
+                Saldo tersedia di bawah minimum penarikan (IDR {minW.toLocaleString('id-ID')}).
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <div className="border-t border-[#909090]/30 my-4"></div>
@@ -936,12 +1010,16 @@ const FALLBACK_BANKS = [
   { id: 6, type: 'bank-transfer', name: 'bni', account: 'PUSATTOGEL', number: '1122334455', min_deposit: 50000 },
   { id: 7, type: 'bank-transfer', name: 'bri', account: 'PUSATTOGEL', number: '0011223344', min_deposit: 50000 },
   { id: 8, type: 'qris', name: 'QRIS', account: 'PUSATTOGEL', number: '', min_deposit: 10000 },
+  { id: 9, type: 'e-wallet', name: 'telkomsel (pulsa)', account: 'PUSATTOGEL', number: '081234000001', min_deposit: 10000 },
+  { id: 10, type: 'e-wallet', name: 'xl/axis (pulsa)', account: 'PUSATTOGEL', number: '081234000002', min_deposit: 10000 },
+  { id: 11, type: 'e-wallet', name: 'indosat (pulsa)', account: 'PUSATTOGEL', number: '081234000003', min_deposit: 10000 },
 ]
 
 export default function MemberDashboardChrome() {
   const navigate = useNavigate()
   const { section } = useParams()
   const { user, logout, isAuthenticated, updateBalance } = useAuth()
+  const { minWithdraw } = useWebsite()
 
   /** Satu sumber kebenaran dengan URL — hindari fetch tab (referral/history) saat state & path tidak sinkron */
   const activeMenu = useMemo(() => {
@@ -1094,12 +1172,15 @@ export default function MemberDashboardChrome() {
             onRefreshBalance={refreshBalanceWithSpin}
           />
         )
-      case 'withdraw': 
-        return <WithdrawContent 
-          userBank={profile} 
-          balance={balance}
-          onRefreshBalance={refreshBalanceWithSpin}
-        />
+      case 'withdraw':
+        return (
+          <WithdrawContent
+            userBank={profile}
+            balance={balance}
+            minWithdraw={minWithdraw}
+            onRefreshBalance={refreshBalanceWithSpin}
+          />
+        )
       case 'history':
         return (
           <Suspense fallback={<MemberTabSuspenseFallback />}>

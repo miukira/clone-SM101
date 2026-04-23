@@ -46,5 +46,14 @@ export function normalizeWebsiteInfoResponse(raw) {
   }
 
   merged.config = cfg
+
+  const m = merged.min_withdraw
+  const n = m == null || m === '' ? NaN : Number(m)
+  if (Number.isFinite(n) && n > 0) {
+    merged.min_withdraw = n
+  } else {
+    delete merged.min_withdraw
+  }
+
   return merged
 }

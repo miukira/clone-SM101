@@ -80,7 +80,14 @@ function normalizeBankType(rawType) {
   if (t === 'bank-transfer' || t === 'bank') return 'bank-transfer'
   if (t === 'e-wallet' || t === 'ewallet') return 'e-wallet'
   if (t === 'qris') return 'qris'
+  if (t === 'pulsa' || t === 'phone-credit' || t === 'credit') return 'pulsa'
   return t
+}
+
+function normalizeMinDeposit(v) {
+  if (v == null || v === '') return 0
+  const n = Number(v)
+  return Number.isFinite(n) && n >= 0 ? n : 0
 }
 
 function normalizeBankListResponse(rows) {
@@ -88,6 +95,7 @@ function normalizeBankListResponse(rows) {
   return rows.map((row) => ({
     ...row,
     type: normalizeBankType(row?.type),
+    min_deposit: normalizeMinDeposit(row?.min_deposit),
   }))
 }
 
