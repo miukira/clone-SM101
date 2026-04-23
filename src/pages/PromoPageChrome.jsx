@@ -5,16 +5,6 @@ import FooterChrome from '../components/FooterChrome'
 import { getPromo } from '../services/api'
 import {
   HomeIconChrome,
-  SlotsIconChrome,
-  CasinoIconChrome,
-  LotteryIconChrome,
-  SportsIconChrome,
-  FishingIconChrome,
-  ArcadeIconChrome,
-  CrushIconChrome,
-  EsportsIconChrome,
-  PokerIconChrome,
-  CockFightingIconChrome,
   PromoIconChrome,
   ReferralIconChrome,
   HelpIconChrome,
@@ -25,6 +15,7 @@ import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
+import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
 /** Path relatif → URL penuh lewat VITE_PUBLIC_ASSET_BASE_URL (CDN); unggah file ke CDN dengan struktur sama. */
 const imageMap = {
@@ -35,29 +26,6 @@ const imageMap = {
   putarRoda: publicAssetUrl('/banners/putar-roda.webp'),
   bannerQris: publicAssetUrl('/banners/banner-qris.webp'),
 }
-
-// Categories for header
-const categories = [
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome },
-  { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome },
-  { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome },
-  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome },
-  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome },
-  { id: 'poker', name: 'POKER', icon: PokerIconChrome },
-  { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome },
-]
-
-// Header Menu Items
-const headerMenuItems = [
-  { id: 'home', name: 'HOME', icon: HomeIconChrome, path: '/' },
-  ...categories.map(cat => ({ ...cat, path: `/providers/${cat.id}` })),
-  { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, path: '/promo' },
-  { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, path: '/referral' },
-]
-
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
@@ -247,7 +215,7 @@ export default function PromoPageChrome() {
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
         desktopNav={
-          <ChromeSimpleDesktopNav items={headerMenuItems} activeId="promosi" navigate={navigate} />
+          <ChromeSimpleDesktopNav items={CHROME_COMPACT_HEADER_NAV} activeId="promosi" navigate={navigate} />
         }
       />
       

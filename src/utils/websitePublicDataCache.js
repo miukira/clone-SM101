@@ -38,6 +38,7 @@ export async function loadWebsitePublicBundle({ reset = false } = {}) {
         notification: infoData?.notification || [],
         lottery_result: infoData?.lottery_result || [],
         withdraw_list: infoData?.withdraw_list || [],
+        min_withdraw: infoData?.min_withdraw,
         config: configData || {},
       }
       if (gen === activeBundleGen) {

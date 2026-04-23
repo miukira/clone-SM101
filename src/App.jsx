@@ -5,7 +5,6 @@ import { AuthProvider } from './context/AuthContext'
 import { WebsiteProvider, useWebsite } from './context/WebsiteContext'
 import { ProviderCategoriesProvider } from './context/ProviderCategoryContexts.jsx'
 import SeasonalEffects from './components/SeasonalEffects'
-import ThemeCustomizer from './components/ThemeCustomizer'
 import ThemedBackground from './components/ThemedBackground'
 import AppRoutes from './Routes'
 
@@ -36,7 +35,6 @@ function AppContent() {
       <ThemeProvider>
         <ThemedBackground />
         <SeasonalEffects />
-        <ThemeCustomizer />
         <AppRoutes />
       </ThemeProvider>
     </MaintenanceWrapper>

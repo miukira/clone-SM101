@@ -2,53 +2,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FooterChrome from '../components/FooterChrome'
-import {
-  HomeIconChrome,
-  SlotsIconChrome,
-  CasinoIconChrome,
-  LotteryIconChrome,
-  SportsIconChrome,
-  FishingIconChrome,
-  ArcadeIconChrome,
-  CrushIconChrome,
-  EsportsIconChrome,
-  PokerIconChrome,
-  CockFightingIconChrome,
-  PromoIconChrome,
-  ReferralIconChrome,
-  HelpIconChrome,
-  AccountIconChrome,
-} from '../components/IconsChrome'
+import { HomeIconChrome, PromoIconChrome, ReferralIconChrome, HelpIconChrome, AccountIconChrome } from '../components/IconsChrome'
 
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
+import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
 /** CDN: unggah `referral-banner.webp` ke path yang sama di VITE_PUBLIC_ASSET_BASE_URL */
 const referralBannerSrc = publicAssetUrl('/banners/referral-banner.webp')
-
-// Categories for header
-const categories = [
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome },
-  { id: 'togel', name: 'TOGEL', icon: LotteryIconChrome },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome },
-  { id: 'arcade', name: 'ARCADE', icon: ArcadeIconChrome },
-  { id: 'crush', name: 'CRUSH', icon: CrushIconChrome },
-  { id: 'esports', name: 'ESPORTS', icon: EsportsIconChrome },
-  { id: 'poker', name: 'POKER', icon: PokerIconChrome },
-  { id: 'sabung', name: 'SABUNG', icon: CockFightingIconChrome },
-]
-
-// Header Menu Items
-const headerMenuItems = [
-  { id: 'home', name: 'HOME', icon: HomeIconChrome, path: '/' },
-  ...categories.map(cat => ({ ...cat, path: `/providers/${cat.id}` })),
-  { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, path: '/promo' },
-  { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, path: '/referral' },
-]
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
@@ -122,7 +85,7 @@ export default function ReferralPageChrome() {
         onQuickDeposit={() => navigate('/member/deposit')}
         onBalanceRefresh={refreshBalance}
         desktopNav={
-          <ChromeSimpleDesktopNav items={headerMenuItems} activeId="referral" navigate={navigate} />
+          <ChromeSimpleDesktopNav items={CHROME_COMPACT_HEADER_NAV} activeId="referral" navigate={navigate} />
         }
       />
       

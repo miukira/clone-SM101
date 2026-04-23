@@ -88,6 +88,9 @@ const mockBanks = [
   { id: 6, type: 'bank-transfer', name: 'bni', account: 'PUSATTOGEL', number: '1122334455', min_deposit: 50000 },
   { id: 7, type: 'bank-transfer', name: 'bri', account: 'PUSATTOGEL', number: '0011223344', min_deposit: 50000 },
   { id: 8, type: 'qris', name: 'QRIS', account: 'PUSATTOGEL', number: '', min_deposit: 10000 },
+  { id: 9, type: 'e-wallet', name: 'telkomsel (pulsa)', account: 'PUSATTOGEL', number: '081234000001', min_deposit: 10000 },
+  { id: 10, type: 'e-wallet', name: 'xl/axis (pulsa)', account: 'PUSATTOGEL', number: '081234000002', min_deposit: 10000 },
+  { id: 11, type: 'e-wallet', name: 'indosat (pulsa)', account: 'PUSATTOGEL', number: '081234000003', min_deposit: 10000 },
 ]
 
 // Promotion sesuai OpenAPI: { id, title, image, description }
@@ -504,8 +507,12 @@ const mockGames = {
 
 }
 
+/** Ekor respons GET /info — ekstensi; frontend memakai untuk batas min withdraw. */
+const MOCK_MIN_WITHDRAW = 50000
+
 // WebsiteInfo - sesuai OpenAPI schema
 const mockWebsiteInfo = {
+  min_withdraw: MOCK_MIN_WITHDRAW,
   notification: [
     'Selamat datang di PUSATTOGEL - Platform Togel Terpercaya',
     'Promo bonus deposit 10% setiap hari untuk member setia',
@@ -1023,7 +1030,11 @@ router.post('/deposit', (req, res) => {
     return res.status(400).json({ message: 'have pending deposit' })
   }
 
-  const { bank_id, amount, promo_code } = req.body
+  const { bank_id, promo_code } = req.body
+  const amount = Number(req.body?.amount)
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return res.status(400).json({ message: 'invalid amount' })
+  }
   const bank = mockBanks.find((b) => b.id === bank_id)
   if (!bank) return res.status(400).json({ message: 'bank not found' })
   if (amount < bank.min_deposit) {
@@ -1098,7 +1109,14 @@ router.post('/withdraw', (req, res) => {
     return res.status(400).json({ message: 'have pending withdraw' })
   }
 
-  const { amount } = req.body
+  const { amount: rawAmount } = req.body
+  const amount = Number(rawAmount)
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return res.status(400).json({ message: 'invalid amount' })
+  }
+  if (amount < MOCK_MIN_WITHDRAW) {
+    return res.status(400).json({ message: `minimum withdraw is ${MOCK_MIN_WITHDRAW}` })
+  }
   if (user.balance < amount) {
     return res.status(400).json({ message: 'insufficient balance' })
   }

@@ -287,7 +287,7 @@ describe('OpenAPI — mock server (/api/v1) selaras openapi.yaml', () => {
       const res = await agent
         .post(`${BASE}/withdraw`)
         .set('Authorization', `Bearer ${token}`)
-        .send({ amount: 1000 })
+        .send({ amount: 50000 })
       if (res.status === 400 && String(res.body?.message || '').includes('pending')) {
         return
       }
