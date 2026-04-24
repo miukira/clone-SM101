@@ -4,7 +4,7 @@ import { unlinkSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import sharp from 'sharp'
-import { normalizeBrandCardToWebp, BRAND_CARD } from '../scripts/lib/brandCardNormalize.mjs'
+import { normalizeBrandCardToWebp, BRAND_CARD } from '../script/lib/brandCardNormalize.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 

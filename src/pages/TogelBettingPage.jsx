@@ -799,16 +799,6 @@ export default function TogelBettingPage() {
           </section>
         )}
 
-        <section className="mt-8 p-4 bg-[#0a0a0a] rounded-xl border border-[#1a1a1a]">
-          <h3 className="text-xs font-bold text-[#333] mb-2">🔧 API Debug</h3>
-          <div className="text-xs text-[#505050] space-y-1 font-mono">
-            <p>Market: {selectedMarket}</p>
-            <p>market-info type: {marketInfoType}</p>
-            <p>GET /market-info: {marketLoading ? '⏳ Loading...' : marketInfo ? '✅ Loaded' : '❌ Not loaded'}</p>
-            <p>GET /bet-history: {historyLoading ? '⏳ Loading...' : history.length > 0 ? `✅ ${history.length} items` : '📭 Empty'}</p>
-            <p>POST /bet: {betLoading ? '⏳ Sending...' : betSuccess ? '✅ Success' : betError ? '❌ Error' : '⏸️ Idle'}</p>
-          </div>
-        </section>
       </main>
     </div>
   )

@@ -1,5 +1,8 @@
 import { defineConfig } from '@playwright/test'
 
+/**
+ * E2E: Vite dev (proxy /api → staging) — samakan dengan .env.development
+ */
 export default defineConfig({
   testDir: './e2e',
   timeout: 90_000,
@@ -12,25 +15,11 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:5173',
     trace: 'on-first-retry',
   },
-  webServer: [
-    {
-      name: 'mock-api',
-      command: 'node server.js',
-      cwd: 'mock-server',
-      url: 'http://127.0.0.1:4010/api/v1/info',
-      reuseExistingServer: true,
-      timeout: 120_000,
-    },
-    {
-      name: 'vite',
-      command: 'npx vite --host 127.0.0.1 --port 5173',
-      url: 'http://127.0.0.1:5173',
-      env: {
-        ...process.env,
-        VITE_API_BASE_URL: 'http://127.0.0.1:4010/api/v1',
-      },
-      reuseExistingServer: true,
-      timeout: 120_000,
-    },
-  ],
+  webServer: {
+    name: 'vite',
+    command: 'npx vite --host 127.0.0.1 --port 5173',
+    url: 'http://127.0.0.1:5173',
+    reuseExistingServer: true,
+    timeout: 120_000,
+  },
 })
