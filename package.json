@@ -10,18 +10,10 @@
     "build:staging": "vite build --mode staging",
     "lint": "eslint .",
     "test:unit": "node --test test/*.test.mjs",
-    "test:url-logic": "node --test test/public-asset-url.test.mjs test/provider-card-response.test.mjs test/home-provider-mock-flow.test.mjs test/resolve-api-base-url.test.mjs test/normalize-image-url.test.mjs",
-    "test:openapi": "node --test test/openapi-mock-api.test.mjs test/deposit-withdraw-limits.test.mjs",
-    "test:contract": "node --test test/openapi-mock-api.test.mjs test/deposit-withdraw-limits.test.mjs test/home-provider-mock-flow.test.mjs && playwright test e2e/home-providers.spec.mjs",
+    "test:url-logic": "node --test test/public-asset-url.test.mjs test/provider-card-response.test.mjs test/resolve-api-base-url.test.mjs test/normalize-image-url.test.mjs",
+    "test:contract": "playwright test e2e/home-providers.spec.mjs e2e/smoke.spec.mjs",
     "test:e2e": "playwright test",
-    "preview": "vite preview",
-    "combine:casino": "node scripts/combine-casino-cards.mjs",
-    "combine:assets3-casino": "node scripts/combine-assets3-casino-cards.mjs",
-    "combine:assets3-crash": "node scripts/combine-assets3-crash-cards.mjs",
-    "combine:assets3-fish": "node scripts/combine-assets3-fish-cards.mjs",
-    "combine:assets3-sport": "node scripts/combine-assets3-sport-cards.mjs",
-    "generate:animated-brand": "node scripts/generate-animated-brand-cards.mjs",
-    "normalize-brand-card": "node scripts/normalize-brand-card.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -31,22 +23,17 @@
     "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
-    "@apidevtools/swagger-parser": "^10.1.1",
     "@eslint/js": "^9.39.1",
-    "@openapi-contrib/openapi-schema-to-json-schema": "^5.1.0",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "ajv": "^8.18.0",
-    "ajv-formats": "^3.0.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "sharp": "^0.34.5",
-    "supertest": "^7.2.2",
     "tailwindcss": "^4.1.18",
     "vite": "^7.3.1"
   }

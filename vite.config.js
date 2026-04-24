@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => {
     env.VITE_FAVICON_URL || (cdnBase ? `${cdnBase}/favicon.svg` : '/favicon.svg')
 
   return {
+    publicDir: 'aset',
     plugins: [
       react(),
       tailwindcss(),

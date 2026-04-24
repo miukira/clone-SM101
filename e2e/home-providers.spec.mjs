@@ -1,11 +1,10 @@
 /**
- * Home: kartu provider & pill kategori (mock + Vite dev).
- * Kontrak JSON GET /slot … dijamin oleh test/openapi-mock-api.test.mjs + test/home-provider-mock-flow.test.mjs.
+ * Home: kartu provider & pill kategori — API lewat Vite proxy ke staging (.env.development).
  * Jalankan: npm run test:e2e -- e2e/home-providers.spec.mjs
  */
 import { test, expect } from '@playwright/test'
 
-test.describe('Home — provider cards & kategori (UI vs mock)', () => {
+test.describe('Home — provider cards & kategori', () => {
   test.use({ viewport: { width: 1280, height: 900 } })
 
   test('SLOTS: heading + PLAY NOW; FISHING: ganti heading + kartu', async ({ page }) => {

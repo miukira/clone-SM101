@@ -17,7 +17,7 @@ import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
-/** Fallback promo — hanya file yang benar-benar ada di public/banners/ (lihat mapHomePromoBanners DEFAULT_CONFIG). */
+/** Fallback promo — hanya file yang benar-benar ada di aset/banners/ (lihat mapHomePromoBanners DEFAULT_CONFIG). */
 const imageMap = {
   default: publicAssetUrl('/banners/banner-1.webp'),
   bonusDeposit: publicAssetUrl('/banners/banner-2.webp'),

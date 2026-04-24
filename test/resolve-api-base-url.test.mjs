@@ -5,20 +5,20 @@ import {
   trimTrailingSlash,
 } from '../src/utils/resolveApiBaseUrl.js'
 
-const DEFAULT_DEV = 'http://localhost:4010/api/v1'
+const STAGING_FALLBACK = 'https://staging.rdd-server.com/api/v1'
 
 describe('resolveApiBaseUrl — VITE_API_BASE_URL + fallback', () => {
   test('pakai env bila di-set', () => {
     assert.equal(
-      resolveApiBaseUrl('http://localhost:9999/api/v1', DEFAULT_DEV),
+      resolveApiBaseUrl('http://localhost:9999/api/v1', STAGING_FALLBACK),
       'http://localhost:9999/api/v1',
     )
   })
 
   test('fallback bila env kosong / undefined / whitespace', () => {
-    assert.equal(resolveApiBaseUrl(undefined, DEFAULT_DEV), DEFAULT_DEV)
-    assert.equal(resolveApiBaseUrl('', DEFAULT_DEV), DEFAULT_DEV)
-    assert.equal(resolveApiBaseUrl('   ', DEFAULT_DEV), DEFAULT_DEV)
+    assert.equal(resolveApiBaseUrl(undefined, STAGING_FALLBACK), STAGING_FALLBACK)
+    assert.equal(resolveApiBaseUrl('', STAGING_FALLBACK), STAGING_FALLBACK)
+    assert.equal(resolveApiBaseUrl('   ', STAGING_FALLBACK), STAGING_FALLBACK)
   })
 
   test('path relatif sebagai fallback', () => {
@@ -27,7 +27,7 @@ describe('resolveApiBaseUrl — VITE_API_BASE_URL + fallback', () => {
 
   test('trim trailing slash dari env', () => {
     assert.equal(
-      resolveApiBaseUrl('http://host/api/v1/', DEFAULT_DEV),
+      resolveApiBaseUrl('http://host/api/v1/', STAGING_FALLBACK),
       'http://host/api/v1',
     )
   })

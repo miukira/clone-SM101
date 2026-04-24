@@ -4,7 +4,7 @@ Service layer untuk integrasi dengan Backend API sesuai OpenAPI spec.
 
 ## Struktur Files
 
-- **`api.js`** — Klien REST: `fetch` ke backend. Base URL dari `VITE_API_BASE_URL`; bila tidak di-set: di **dev** fallback `/api/v1` (Vite mem-proxy ke staging, tanpa CORS), di **build** fallback `https://staging.rdd-server.com/api/v1`. Mock hanya bila `VITE_API_BASE_URL` menuju `127.0.0.1:4010` (E2E).
+- **`api.js`** — Klien REST: `fetch` ke backend. Base URL dari `VITE_API_BASE_URL`; bila tidak di-set: di **dev** fallback `/api/v1` (Vite mem-proxy ke staging, tanpa CORS), di **build** fallback `https://staging.rdd-server.com/api/v1`.
 
 ## Konfigurasi
 
@@ -356,4 +356,4 @@ Mock data structure sudah kompatibel dengan MySQL, seharusnya tidak perlu peruba
 
 ## Pengujian kontrak API
 
-Skema OpenAPI dicek terhadap **HTTP** mock-server (`test/openapi-mock-api.test.mjs`). Jalankan server Express (`mock-server/server.js`) tidak diperlukan untuk unit test itu karena tes memakai `supertest` dengan app in-process.
+Bandingkan perilaku klien `api.js` dengan `openapi.yaml` (review manual) atau uji alur E2E terhadap staging.

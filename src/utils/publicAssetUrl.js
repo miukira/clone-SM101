@@ -2,7 +2,7 @@
  * Public / CDN asset URLs — hasil akhir untuk <img src> biasanya absolute (https://...).
  *
  * Dev lokal tanpa CDN: jangan set VITE_PUBLIC_ASSET_BASE_URL — path "/foo/bar.png" dipakai sebagai
- * origin + path (mis. http://localhost:5173/foo/bar.png); file di public/foo/bar.png.
+ * origin + path (mis. http://localhost:5173/foo/bar.png); file di aset/foo/bar.png (Vite publicDir).
  *
  * Produksi/CDN: set VITE_PUBLIC_ASSET_BASE_URL (tanpa trailing slash), contoh https://cdn.example.com
  *
@@ -94,7 +94,7 @@ function resolveProviderAssetBase() {
   return ''
 }
 
-/** Path prefix kartu provider di public/ — jangan proxy ke API di Vite; file dari public/animated-brand */
+/** Path prefix kartu provider di aset/ — jangan proxy ke API di Vite; file dari aset/animated-brand */
 export const ANIMATED_BRAND_PATH_PREFIX = '/animated-brand/'
 
 /**
@@ -111,7 +111,7 @@ function apiOriginsEligibleForAnimatedBrandRewrite() {
 }
 
 /**
- * https://api-host/animated-brand/slot/x.webp → same path di resolveProviderAssetBase() (dev: localhost + public/).
+ * https://api-host/animated-brand/slot/x.webp → same path di resolveProviderAssetBase() (dev: localhost + aset/).
  */
 function rewriteAnimatedBrandFromApiHosts(absoluteUrlString) {
   try {
@@ -134,7 +134,7 @@ function rewriteAnimatedBrandFromApiHosts(absoluteUrlString) {
  * - Path relatif (/path/to/image.png): ke host FE/CDN, atau override via VITE_PROVIDER_IMAGE_BASE_URL.
  * - URL absolut ke origin VITE_API_BASE_URL atau VITE_API_ASSET_BASE_URL + path /animated-brand/...:
  *   di-rewrite ke origin FE (atau VITE_PROVIDER_IMAGE_BASE_URL), karena host API sering tidak
- *   menyajikan static (respons teks placeholder / text/plain) sementara file ada di public/ build.
+ *   menyajikan static (respons teks placeholder / text/plain) sementara file ada di aset/ build.
  */
 export function providerAssetUrl(path) {
   if (path == null) return null

@@ -5,7 +5,7 @@
 // getSportsbookProviders→GET /sportsbook, getGameList→GET /game-list, playGame→GET /play,
 // placeBet→POST /bet, getBetHistory→GET /bet-history, getMarketInfo→GET /market-info.
 // Endpoint tambahan FE (respons Provider[] mengikuti components/schemas/Provider): GET /togel, /arcade, /crush, /esports, /poker, /cockfight.
-// GET/POST /theme: mock-only; di OpenAPI theme ada di WebsiteConfig.
+// Di OpenAPI, theme ada di WebsiteConfig.
 import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
 import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
 import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
@@ -13,7 +13,7 @@ import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
 // Base URL: VITE_API_BASE_URL di .env (tanpa trailing slash).
 // — npm run dev: default `/api/v1` (same-origin) → Vite mem-proxy ke VITE_API_PROXY_TARGET (staging),
 //   sehingga tidak kena CORS. Jangan URL absolut ke staging di dev kecuali backend sudah CORS.
-// — build / preview: default URL penuh staging. Mock: VITE_API_BASE_URL=http://127.0.0.1:4010/api/v1
+// — build / preview: default URL penuh staging.
 const STAGING_API_BASE = 'https://staging.rdd-server.com/api/v1'
 const DEFAULT_API_BASE_URL =
   import.meta.env.DEV === true ? '/api/v1' : STAGING_API_BASE
@@ -22,6 +22,18 @@ const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, DEFAUL
 
 const IS_DEV = import.meta.env.DEV === true
 const VERBOSE_LOG = import.meta.env.VITE_API_VERBOSE === 'true'
+
+/** URL absolute yang dipakai `fetch` (bantu debug saat respons bukan JSON). */
+function resolveApiRequestUrlForLog(endpoint) {
+  const p = `${API_BASE_URL}${endpoint}`
+  if (typeof window === 'undefined') return p
+  if (/^https?:\/\//i.test(p)) return p
+  try {
+    return new URL(p, window.location.origin).href
+  } catch {
+    return p
+  }
+}
 
 const SILENT_ENDPOINTS = new Set([
   '/deposit-status',
@@ -225,13 +237,39 @@ const apiCall = async (endpoint, options = {}) => {
     })
 
     const contentType = response.headers.get('content-type') || ''
+    const looksJsonType =
+      contentType.includes('application/json') || contentType.includes('application/vnd.api+json')
+
     let data
-    if (contentType.includes('application/json')) {
+    if (looksJsonType) {
       data = await response.json()
     } else {
       const text = await response.text()
-      if (IS_DEV && !isSilent) console.warn(`⚠️ ${endpoint} non-JSON:`, text.slice(0, 50))
-      throw { status: response.status, data: { message: text, notJson: true } }
+      const trimmed = text.trim()
+      const likeJsonObject = trimmed.startsWith('{') && trimmed.includes('}')
+      const likeJsonArray = trimmed.startsWith('[') && trimmed.includes(']')
+      if (likeJsonObject || likeJsonArray) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          data = undefined
+        }
+      }
+      if (data === undefined) {
+        if (IS_DEV && !isSilent) {
+          const reqHref = resolveApiRequestUrlForLog(endpoint)
+          const resUrl = response.url || reqHref
+          console.warn(
+            `⚠️ ${method} ${endpoint} — bukan JSON (Content-Type: ${contentType || '—'}) → "${text.slice(0, 80)}"…`,
+          )
+          console.warn(`   request URL: ${reqHref}`)
+          console.warn(`   response URL: ${resUrl}`)
+          console.warn(
+            '   Pastikan base URL = …/api/v1 (contoh .env: VITE_API_BASE_URL=/api/v1) dan rute tersedia di server (bukan halaman default / placeholder).',
+          )
+        }
+        throw { status: response.status, data: { message: text, notJson: true } }
+      }
     }
 
     if (!response.ok) {
