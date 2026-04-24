@@ -11,10 +11,12 @@ import { normalizeWebsiteInfoResponse } from '../utils/normalizeWebsiteInfo'
 import { resolveApiBaseUrl } from '../utils/resolveApiBaseUrl'
 
 // Base URL: VITE_API_BASE_URL di .env (tanpa trailing slash).
-// Dev tanpa VITE_API_BASE_URL: /api/v1 same-origin + proxy Vite → staging (lihat vite.config).
-// Build produksi tanpa env: set VITE_API_BASE_URL di deploy.
+// — npm run dev: default `/api/v1` (same-origin) → Vite mem-proxy ke VITE_API_PROXY_TARGET (staging),
+//   sehingga tidak kena CORS. Jangan URL absolut ke staging di dev kecuali backend sudah CORS.
+// — build / preview: default URL penuh staging. Mock: VITE_API_BASE_URL=http://127.0.0.1:4010/api/v1
+const STAGING_API_BASE = 'https://staging.rdd-server.com/api/v1'
 const DEFAULT_API_BASE_URL =
-  import.meta.env.DEV === true ? '/api/v1' : 'http://localhost:4010/api/v1'
+  import.meta.env.DEV === true ? '/api/v1' : STAGING_API_BASE
 
 const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, DEFAULT_API_BASE_URL)
 

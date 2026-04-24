@@ -10,7 +10,7 @@ export function trimTrailingSlash(s) {
 
 /**
  * @param {string | undefined} viteApiBaseUrl — import.meta.env.VITE_API_BASE_URL
- * @param {string} fallbackBaseUrl — mis. http://localhost:4010/api/v1 atau /api/v1
+ * @param {string} fallbackBaseUrl — mis. https://staging.rdd-server.com/api/v1 atau /api/v1
  */
 export function resolveApiBaseUrl(viteApiBaseUrl, fallbackBaseUrl) {
   const env = trimTrailingSlash(viteApiBaseUrl)

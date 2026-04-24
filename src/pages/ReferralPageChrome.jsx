@@ -1,17 +1,17 @@
 // ReferralPageChrome.jsx - Referral page with Chrome theme
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FooterChrome from '../components/FooterChrome'
 import { HomeIconChrome, PromoIconChrome, ReferralIconChrome, HelpIconChrome, AccountIconChrome } from '../components/IconsChrome'
-
+import { getReferral } from '../services/api'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
-/** CDN: unggah `referral-banner.webp` ke path yang sama di VITE_PUBLIC_ASSET_BASE_URL */
-const referralBannerSrc = publicAssetUrl('/banners/referral-banner.webp')
+const fallbackBanner = publicAssetUrl('/banners/banner-1.webp')
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
@@ -61,12 +61,42 @@ export default function ReferralPageChrome() {
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authModalTab, setAuthModalTab] = useState('login')
+  const [referralImage, setReferralImage] = useState(fallbackBanner)
+  const [referralDescription, setReferralDescription] = useState('')
+  const [referralLoading, setReferralLoading] = useState(true)
+  const [referralError, setReferralError] = useState(null)
 
   const openAuthModal = (tab = 'login') => {
     setAuthModalTab(tab)
     setAuthModalOpen(true)
   }
-  
+
+  useEffect(() => {
+    let cancelled = false
+    setReferralLoading(true)
+    setReferralError(null)
+    getReferral()
+      .then((data) => {
+        if (cancelled || !data) return
+        const img = normalizeImageUrl(data.image)
+        setReferralImage(img ? publicAssetUrl(img) : fallbackBanner)
+        setReferralDescription(String(data.description ?? '').trim())
+      })
+      .catch((err) => {
+        if (cancelled) return
+        console.error('Error fetching referral:', err)
+        setReferralError(err.data?.message || 'Gagal memuat informasi referral')
+        setReferralImage(fallbackBanner)
+        setReferralDescription('')
+      })
+      .finally(() => {
+        if (!cancelled) setReferralLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       <AuthModal 
@@ -101,20 +131,44 @@ export default function ReferralPageChrome() {
               <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
                 REFERRAL
               </h1>
-              <p className="text-sm text-[#606060]">
-                Ajak teman dan dapatkan komisi seumur hidup
-              </p>
+              {referralLoading && (
+                <p className="text-sm text-[#606060] mt-1 h-4 w-64 max-w-full bg-[#2a2a2a] rounded animate-pulse" />
+              )}
             </div>
           </div>
-          
-          {/* Referral Banner Image */}
+
+          {referralError && (
+            <p className="text-sm text-amber-400/90 mb-4" role="alert">
+              {referralError}
+            </p>
+          )}
+
+          {/* Referral banner + deskripsi dari GET /referral (OpenAPI: image, description) */}
           <div className="rounded-2xl overflow-hidden themed-card shadow-2xl">
-            <img 
-              src={referralBannerSrc} 
-              alt="Bonus Referral - Hasilkan Pasif Income Jutaan Rupiah Tanpa Modal"
-              className="w-full h-auto"
-            />
+            {referralLoading ? (
+              <div
+                className="w-full aspect-[2/1] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] animate-pulse"
+                aria-hidden
+              />
+            ) : (
+              <img
+                src={referralImage}
+                alt="Referral"
+                className="w-full h-auto"
+                onError={(e) => {
+                  const t = e.target
+                  t.onerror = null
+                  t.src = fallbackBanner
+                }}
+              />
+            )}
           </div>
+
+          {!referralLoading && referralDescription && (
+            <p className="mt-4 md:mt-6 text-sm md:text-base text-[#a0a0a0] leading-relaxed max-w-3xl">
+              {referralDescription}
+            </p>
+          )}
         </div>
       </main>
       
@@ -130,20 +184,40 @@ export default function ReferralPageChrome() {
               <h1 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
                 REFERRAL
               </h1>
-              <p className="text-xs text-[#606060]">
-                Ajak teman dan dapatkan komisi seumur hidup
-              </p>
+              {referralLoading && (
+                <p className="text-xs text-[#606060] mt-0.5 h-3 w-40 bg-[#2a2a2a] rounded animate-pulse" />
+              )}
             </div>
           </div>
-          
-          {/* Referral Banner Image - Mobile */}
+
+          {referralError && (
+            <p className="text-xs text-amber-400/90 mb-3" role="alert">
+              {referralError}
+            </p>
+          )}
+
           <div className="rounded-xl overflow-hidden themed-card">
-            <img 
-              src={referralBannerSrc} 
-              alt="Bonus Referral - Hasilkan Pasif Income Jutaan Rupiah Tanpa Modal"
-              className="w-full h-auto"
-            />
+            {referralLoading ? (
+              <div className="w-full aspect-[2/1] bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] animate-pulse" aria-hidden />
+            ) : (
+              <img
+                src={referralImage}
+                alt="Referral"
+                className="w-full h-auto"
+                onError={(e) => {
+                  const t = e.target
+                  t.onerror = null
+                  t.src = fallbackBanner
+                }}
+              />
+            )}
           </div>
+
+          {!referralLoading && referralDescription && (
+            <p className="mt-4 text-xs sm:text-sm text-[#a0a0a0] leading-relaxed">
+              {referralDescription}
+            </p>
+          )}
         </div>
       </main>
       

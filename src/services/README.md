@@ -4,17 +4,18 @@ Service layer untuk integrasi dengan Backend API sesuai OpenAPI spec.
 
 ## Struktur Files
 
-- **`api.js`** — Klien REST: selalu `fetch` ke backend. Base URL dari `VITE_API_BASE_URL` (lihat `.env.example`); bila kosong dipakai fallback dev `http://localhost:4010/api/v1` (Express di folder `mock-server/`).
+- **`api.js`** — Klien REST: `fetch` ke backend. Base URL dari `VITE_API_BASE_URL`; bila tidak di-set: di **dev** fallback `/api/v1` (Vite mem-proxy ke staging, tanpa CORS), di **build** fallback `https://staging.rdd-server.com/api/v1`. Mock hanya bila `VITE_API_BASE_URL` menuju `127.0.0.1:4010` (E2E).
 
 ## Konfigurasi
 
-Set di root project (`.env`):
+Lokal (`.env.development`) — data tetap dari staging, lewat proxy:
 
 ```bash
-VITE_API_BASE_URL=http://localhost:4010/api/v1
+VITE_API_BASE_URL=/api/v1
+VITE_API_PROXY_TARGET=https://staging.rdd-server.com
 ```
 
-Untuk produksi, arahkan ke API sungguhan Anda (bukan mock-server).
+URL absolut ke staging di `npm run dev` hanya bila backend mengizinkan CORS; jika tidak, pakai pola di atas.
 
 ---
 

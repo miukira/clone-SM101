@@ -17,14 +17,14 @@ import { useAuth } from '../context/AuthContext'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
-/** Path relatif → URL penuh lewat VITE_PUBLIC_ASSET_BASE_URL (CDN); unggah file ke CDN dengan struktur sama. */
+/** Fallback promo — hanya file yang benar-benar ada di public/banners/ (lihat mapHomePromoBanners DEFAULT_CONFIG). */
 const imageMap = {
-  default: publicAssetUrl('/banners/welcome-bonus.webp'),
-  bonusDeposit: publicAssetUrl('/banners/popup-deposit-imlek.webp'),
-  bannerBaru: publicAssetUrl('/banners/banner-baru.webp'),
-  hadiah: publicAssetUrl('/banners/hadiah-togel.webp'),
-  putarRoda: publicAssetUrl('/banners/putar-roda.webp'),
-  bannerQris: publicAssetUrl('/banners/banner-qris.webp'),
+  default: publicAssetUrl('/banners/banner-1.webp'),
+  bonusDeposit: publicAssetUrl('/banners/banner-2.webp'),
+  bannerBaru: publicAssetUrl('/banners/banner-3.webp'),
+  hadiah: publicAssetUrl('/banners/banner-1.webp'),
+  putarRoda: publicAssetUrl('/banners/banner-2.webp'),
+  bannerQris: publicAssetUrl('/banners/banner-3.webp'),
 }
 
 // Mobile Bottom Navigation
@@ -93,10 +93,10 @@ function PromoCard({ promo }) {
           alt={promo.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => {
-            // Fallback jika image gagal load (404, dll)
-            const fallbackKeys = Object.keys(imageMap)
-            const fallbackKey = fallbackKeys[promo.id % fallbackKeys.length]
-            e.target.src = imageMap[fallbackKey] || imageMap.default
+            const t = e.target
+            t.onerror = null
+            const keys = Object.keys(imageMap)
+            t.src = imageMap[keys[Number(promo.id) % keys.length]] || imageMap.default
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -147,40 +147,38 @@ export default function PromoPageChrome() {
         // Map API data ke format yang digunakan UI
         // Struktur siap untuk MySQL: handle null/empty image, dates, dll
         const mappedData = data.map((promo, index) => {
-          // Determine tag based on title (atau dari MySQL field 'tag' nanti)
-          let tag = promo.tag || 'HOT' // Jika MySQL punya field 'tag', gunakan itu
+          const titleStr = String(promo.title ?? '')
+          // Tag: field API `tag` atau infer dari title; default HOT (format API: { id, title, image, description } tanpa tag)
+          let tag = promo.tag || 'HOT'
           if (!promo.tag) {
-            // Fallback logic jika tag tidak ada di MySQL
-            if (promo.title.toLowerCase().includes('daily') || promo.title.toLowerCase().includes('harian')) {
-              tag = 'DAILY'
-            } else if (promo.title.toLowerCase().includes('weekly') || promo.title.toLowerCase().includes('mingguan')) {
-              tag = 'WEEKLY'
-            } else if (promo.title.toLowerCase().includes('referral')) {
-              tag = 'REFERRAL'
-            } else if (promo.title.toLowerCase().includes('togel')) {
-              tag = 'TOGEL'
-            } else if (promo.title.toLowerCase().includes('lucky') || promo.title.toLowerCase().includes('wheel')) {
-              tag = 'EVENT'
-            }
+            const t = titleStr.toLowerCase()
+            if (t.includes('daily') || t.includes('harian')) tag = 'DAILY'
+            else if (t.includes('weekly') || t.includes('mingguan')) tag = 'WEEKLY'
+            else if (t.includes('referral')) tag = 'REFERRAL'
+            else if (t.includes('togel')) tag = 'TOGEL'
+            else if (t.includes('lucky') || t.includes('wheel')) tag = 'EVENT'
           }
-          
-          // Map image - handle null/empty dari MySQL, gunakan fallback
+
+          // URL absolut (https://...) atau path relatif dipakai apa adanya; fallback hanya bila image kosong
           let image = normalizeImageUrl(promo.image)
-          if (!image || (image.startsWith('http') && !image.includes('localhost'))) {
-            // Jika image null/empty atau URL external yang mungkin 404, gunakan fallback
+          if (!image) {
             const imageKeys = Object.keys(imageMap)
             const imageKey = imageKeys[index % imageKeys.length]
             image = imageMap[imageKey] || imageMap.default
           }
-          
+
           return {
             id: promo.id,
-            title: promo.title,
-            description: promo.description || '',
-            image: image,
-            dateStart: promo.start_date ? new Date(promo.start_date).toLocaleDateString('id-ID') : '01/01/2026', // Format dari MySQL
-            dateEnd: promo.end_date ? new Date(promo.end_date).toLocaleDateString('id-ID') : '31/12/2026', // Format dari MySQL
-            tag: tag
+            title: titleStr,
+            description: String(promo.description ?? ''),
+            image,
+            dateStart: promo.start_date
+              ? new Date(promo.start_date).toLocaleDateString('id-ID')
+              : '01/01/2026',
+            dateEnd: promo.end_date
+              ? new Date(promo.end_date).toLocaleDateString('id-ID')
+              : '31/12/2026',
+            tag,
           }
         })
         setPromotions(mappedData)
