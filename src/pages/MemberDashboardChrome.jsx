@@ -210,28 +210,26 @@ function DepositContent({
     })
   }, [bankList, activeTab])
 
-  /** Hanya tampilkan metode yang minimalnya terpenuhi bila jumlah sudah diisi. */
-  const availableBanks = useMemo(() => {
+  /** Untuk pesan validasi: nominal di bawah minimum *semua* metode di tab. */
+  const allMethodsAmountTooLow = useMemo(() => {
     const raw = String(amount ?? '').trim()
-    const n = raw === '' ? NaN : parseInt(raw, 10)
-    if (!Number.isFinite(n) || n <= 0) return tabFilteredBanks
-    return tabFilteredBanks.filter((b) => n >= minDeposit(b))
+    if (raw === '' || tabFilteredBanks.length === 0) return false
+    const n = parseInt(raw, 10)
+    if (!Number.isFinite(n) || n <= 0) return false
+    return !tabFilteredBanks.some((b) => n >= minDeposit(b))
   }, [tabFilteredBanks, amount])
 
-  const allMethodsAmountTooLow =
-    tabFilteredBanks.length > 0 && availableBanks.length === 0 && String(amount ?? '').trim() !== ''
-
-  // Pilih entri terpilih yang masih tersedia (tab/jumlah)
+  // Simpan pilihan metode per tab; jangan kosongkan/sembunyikan saat jumlah < minimum (hanya tampilkan peringatan).
   useEffect(() => {
-    if (availableBanks.length > 0) {
+    if (tabFilteredBanks.length > 0) {
       setSelectedBank((prev) => {
-        if (prev && availableBanks.some((b) => b.id === prev.id)) return prev
-        return availableBanks[0]
+        if (prev && tabFilteredBanks.some((b) => b.id === prev.id)) return prev
+        return tabFilteredBanks[0]
       })
     } else {
       setSelectedBank(null)
     }
-  }, [availableBanks])
+  }, [tabFilteredBanks])
 
   useEffect(() => {
     if (!pending?.deposit_id) return undefined
@@ -432,9 +430,14 @@ function DepositContent({
               <select
                 className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
                 value={selectedBank?.id || ''}
-                onChange={(e) => setSelectedBank(availableBanks.find((b) => b.id === parseInt(e.target.value, 10)))}
+                onChange={(e) => {
+                  const id = parseInt(e.target.value, 10)
+                  setSelectedBank(
+                    tabFilteredBanks.find((b) => b.id === id) || null
+                  )
+                }}
               >
-                {availableBanks.map((bank) => (
+                {tabFilteredBanks.map((bank) => (
                   <option key={bank.id} value={bank.id}>
                     {bank.name?.toUpperCase()} — {bank.account} (min. {minDeposit(bank).toLocaleString('id-ID')})
                   </option>

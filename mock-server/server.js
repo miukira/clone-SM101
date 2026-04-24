@@ -93,12 +93,10 @@ const mockBanks = [
   { id: 11, type: 'e-wallet', name: 'indosat (pulsa)', account: 'PUSATTOGEL', number: '081234000003', min_deposit: 10000 },
 ]
 
-// Promotion sesuai OpenAPI: { id, title, image, description }
+// Promotion sesuai OpenAPI: { id, title, image, description } — image boleh URL absolut
 const mockPromotions = [
-  { id: 1, title: 'BONUS DEPOSIT HARIAN 10%', image: '/banners/banner-1.webp', description: 'Bonus deposit harian 10% khusus slot' },
-  { id: 2, title: 'CASHBACK SPORTSBOOK 5%', image: '/banners/banner-2.webp', description: 'Cashback kekalahan sportsbook hingga 5%' },
-  { id: 3, title: 'BONUS NEW MEMBER 30%', image: '/banners/banner-3.webp', description: 'Bonus khusus member baru hingga 30%' },
-  { id: 4, title: 'BONUS REFERRAL 10%', image: '/banners/banner-1.webp', description: 'Bonus referral untuk setiap downline' },
+  { id: 1, title: 'promo1', image: 'https://picsum.photos/600/400', description: 'promo1' },
+  { id: 2, title: 'promo2', image: 'https://picsum.photos/600/400', description: 'promo2' },
 ]
 
 const mockPromoCodes = [
@@ -645,8 +643,9 @@ const mockWebsiteConfig = {
 }
 
 const mockReferralInfo = {
-  image: '/banners/banner-1.webp',
-  description: 'Dapatkan bonus referral 10% dari kekalahan downline, dibayar setiap tanggal 1 tiap bulan.'
+  image: 'https://picsum.photos/800/400',
+  description:
+    'Dapatkan bonus referral sebesar 10% dari setiap deposit yang dilakukan oleh teman yang Anda referensikan. Ajak teman Anda untuk bergabung dan nikmati keuntungan bersama!',
 }
 
 // Downline data - dimulai kosong, terisi saat ada user register dengan referral
