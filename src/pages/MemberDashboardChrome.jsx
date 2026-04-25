@@ -286,21 +286,21 @@ function DepositContent({
       return
     }
     if (tabFilteredBanks.length === 0) {
-      setError('Tidak ada metode deposit untuk tab ini')
+      setError(t('member.deposit.errNoMethod'))
       return
     }
     if (allMethodsAmountTooLow) {
       const lowest = Math.min(...tabFilteredBanks.map((b) => minDeposit(b)))
       setError(
-        `Jumlah di bawah minimum. Minimum terendah di tab ini: IDR ${lowest.toLocaleString('id-ID')}`
+        t('member.deposit.errMinTab', { amount: lowest.toLocaleString(numberLocale) })
       )
       return
     }
     if (!selectedBank) {
-      if (activeTab === 'qris') setError('Metode QRIS tidak tersedia. Coba lagi nanti.')
-      else if (activeTab === 'pulsa') setError('Pilih tujuan pulsa')
-      else if (activeTab === 'ewallet') setError('Pilih e-wallet tujuan')
-      else setError('Pilih bank tujuan')
+      if (activeTab === 'qris') setError(t('member.deposit.errQris'))
+      else if (activeTab === 'pulsa') setError(t('member.deposit.pilihPulsa'))
+      else if (activeTab === 'ewallet') setError(t('member.deposit.pilihEwallet'))
+      else setError(t('member.deposit.pilihBank'))
       return
     }
     if (n < minDeposit(selectedBank)) {
@@ -321,10 +321,10 @@ function DepositContent({
       setPending(stored)
       setAmount('')
     } catch (err) {
-      const errMsg = err.data?.message || err.message || 'Gagal membuat deposit'
+      const errMsg = err.data?.message || err.message || t('member.deposit.errCreate')
       // Jika server mengembalikan "have pending deposit", tampilkan opsi untuk coba lagi
       if (errMsg.toLowerCase().includes('pending')) {
-        setError('Anda masih memiliki deposit pending di server. Tunggu beberapa saat atau hubungi CS untuk membatalkan.')
+        setError(t('member.deposit.errPendingServer'))
       } else {
         setError(errMsg)
       }
@@ -339,7 +339,7 @@ function DepositContent({
   if (pending && payment) {
     return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit — menunggu pembayaran</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.deposit.pendingTitle')}</h2>
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
       <div className="p-3 bg-amber-500/15 border border-amber-500/40 rounded-lg text-amber-200 text-sm">
         <p className="font-semibold mb-1">ID deposit: {pending.deposit_id}</p>
@@ -354,7 +354,7 @@ function DepositContent({
         </div>
       ) : isQrisDepositPayment(payment) && qrisPayload ? (
         <div className="space-y-4">
-          <p className="text-sm text-[#4a4a4a]">Scan kode QR dengan aplikasi e-wallet atau m-banking Anda:</p>
+          <p className="text-sm text-[#4a4a4a]">{t('member.deposit.scanQr')}</p>
           <div className="flex justify-center p-4 sm:p-6 bg-white rounded-xl border border-[#2a2a2a] shadow-inner w-fit mx-auto">
             <QRCode
               value={qrisPayload}
@@ -366,7 +366,7 @@ function DepositContent({
           </div>
           {payment.amount != null ? (
             <p className="text-center text-sm font-medium text-[#3a3a3a]">
-              Nominal: IDR {Number(payment.amount).toLocaleString('id-ID')}
+              {t('member.deposit.jumlah')}: IDR {Number(payment.amount).toLocaleString(numberLocale)}
             </p>
           ) : null}
           <details className="text-xs sm:text-sm">
@@ -380,11 +380,11 @@ function DepositContent({
         </div>
       ) : (
         <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-2 text-sm text-[#2a2a2a]">
-          <p><span className="text-[#5a5a5a]">Tujuan</span>: {(payment.name || '').toUpperCase()}</p>
-          <p><span className="text-[#5a5a5a]">Rekening</span>: {payment.account}</p>
-          <p><span className="text-[#5a5a5a]">Nomor</span>: {payment.number}</p>
+          <p><span className="text-[#5a5a5a]">{t('member.deposit.tujuan')}</span>: {(payment.name || '').toUpperCase()}</p>
+          <p><span className="text-[#5a5a5a]">{t('member.deposit.rekening')}</span>: {payment.account}</p>
+          <p><span className="text-[#5a5a5a]">{t('member.deposit.nomor')}</span>: {payment.number}</p>
           {payment.amount != null ? (
-            <p><span className="text-[#5a5a5a]">Jumlah</span>: IDR {Number(payment.amount).toLocaleString('id-ID')}</p>
+            <p><span className="text-[#5a5a5a]">{t('member.deposit.jumlah')}</span>: IDR {Number(payment.amount).toLocaleString(numberLocale)}</p>
           ) : null}
         </div>
       )}
@@ -394,7 +394,7 @@ function DepositContent({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Deposit</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.deposit.title')}</h2>
       
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 bg-[#1a1a1a] p-1 rounded-lg">
@@ -419,7 +419,7 @@ function DepositContent({
       <div className="space-y-4">
         {activeTab !== 'qris' ? (
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Rekening Bank</label>
+            <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('member.deposit.dariRekening')}</label>
             <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
               {userBank
                 ? `${(userBank.bank_name || userBank.bankName || '-').toUpperCase()} - ${userBank.bank_number || userBank.bankNumber || '-'}`
@@ -432,7 +432,7 @@ function DepositContent({
           <>
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <label className="sm:w-40 text-sm text-[#4a4a4a]">
-                {activeTab === 'pulsa' ? 'Pulsa / tujuan' : activeTab === 'ewallet' ? 'E-wallet tujuan' : 'Bank Tujuan'}
+                {activeTab === 'pulsa' ? t('member.deposit.targetPulsa') : activeTab === 'ewallet' ? t('member.deposit.targetEwallet') : t('member.deposit.targetBank')}
               </label>
               <select
                 className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
@@ -454,10 +454,10 @@ function DepositContent({
 
             {selectedBank ? (
               <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-1.5 sm:space-y-2">
-                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Bank Name</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.name?.toUpperCase()}</span></div>
-                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Account</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.account}</span></div>
-                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Number</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.number}</span></div>
-                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">Jumlah Minimum</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {minDeposit(selectedBank).toLocaleString('id-ID')}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">{t('auth.bankName')}</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.name?.toUpperCase()}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">{t('common.account')}</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.account}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">{t('common.number')}</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: {selectedBank.number}</span></div>
+                <div className="flex flex-col sm:flex-row"><span className="sm:w-40 text-xs sm:text-sm text-[#5a5a5a]">{t('member.deposit.jumlahMin')}</span><span className="text-xs sm:text-sm text-[#3a3a3a]">: IDR {minDeposit(selectedBank).toLocaleString(numberLocale)}</span></div>
               </div>
             ) : null}
           </>
@@ -468,7 +468,7 @@ function DepositContent({
         )}
 
         <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">Jumlah</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">{t('member.deposit.jumlah')}</label>
           <div className="flex-1 space-y-1.5">
             <input
               type="number"
@@ -477,11 +477,11 @@ function DepositContent({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
-              placeholder="Masukkan jumlah"
+              placeholder={t('member.deposit.errAmount')}
             />
             {selectedBank ? (
               <p className="text-[10px] sm:text-xs text-[#707070]">
-                Minimum deposit: IDR {minDeposit(selectedBank).toLocaleString('id-ID')}
+                {t('member.deposit.minDepositLine', { amount: minDeposit(selectedBank).toLocaleString(numberLocale) })}
               </p>
             ) : null}
             {allMethodsAmountTooLow ? (
@@ -493,13 +493,13 @@ function DepositContent({
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Bonus (optional)</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('member.deposit.bonus')}</label>
           <select 
             className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value)}
           >
-            <option value="">No Bonus</option>
+            <option value="">{t('member.deposit.noBonus')}</option>
             {promoCodes.map(promo => (
               <option key={promo.code} value={promo.code}>{promo.name} ({promo.code})</option>
             ))}
@@ -517,7 +517,7 @@ function DepositContent({
           disabled={loading}
           className="w-full sm:w-auto px-8 py-2.5 sm:py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all disabled:opacity-50"
         >
-          {loading ? 'LOADING...' : 'KIRIM'}
+          {loading ? t('member.deposit.sending') : t('member.deposit.send')}
         </button>
       </div>
     </div>
@@ -563,16 +563,16 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
           localStorage.removeItem(LS_PENDING_WITHDRAW)
           setPending(null)
           setStatusHint('')
-          setError('Penarikan ditolak atau gagal diproses.')
+          setError(t('member.withdraw.rejected'))
         } else {
-          setStatusHint('Menunggu persetujuan penarikan…')
+          setStatusHint(t('member.withdraw.waiting'))
         }
       } catch {
         if (!cancelled) {
           localStorage.removeItem(LS_PENDING_WITHDRAW)
           setPending(null)
           setStatusHint('')
-          setError('Tidak dapat memeriksa status penarikan. Silakan coba lagi.')
+          setError(t('member.withdraw.errCheck'))
         }
       }
     }
@@ -599,7 +599,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
       return
     }
     if (n > balanceNum) {
-      setError('Saldo tidak mencukupi')
+      setError(t('member.withdraw.insufficient'))
       return
     }
 
@@ -614,7 +614,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
       setPending(stored)
       setAmount('')
     } catch (err) {
-      setError(err.data?.message || 'Gagal membuat penarikan')
+      setError(err.data?.message || t('member.withdraw.errCreate'))
     } finally {
       setLoading(false)
     }
@@ -633,7 +633,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
     return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan — menunggu persetujuan</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.withdraw.pendingTitle')}</h2>
         <button
           onClick={handleCancelPending}
           className="px-3 py-1.5 text-xs bg-red-500/20 text-red-600 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors"
@@ -650,11 +650,11 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
         {statusHint ? <p className="mt-2 text-xs text-[#C0C0C0]">{statusHint}</p> : null}
       </div>
       <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-3 sm:p-4 space-y-2 text-sm text-[#2a2a2a]">
-        <p><span className="text-[#5a5a5a]">Tujuan</span>: {(pay.name || '').toUpperCase()}</p>
-        <p><span className="text-[#5a5a5a]">Rekening</span>: {pay.account}</p>
-        <p><span className="text-[#5a5a5a]">Nomor</span>: {pay.number}</p>
+        <p><span className="text-[#5a5a5a]">{t('member.deposit.tujuan')}</span>: {(pay.name || '').toUpperCase()}</p>
+        <p><span className="text-[#5a5a5a]">{t('member.deposit.rekening')}</span>: {pay.account}</p>
+        <p><span className="text-[#5a5a5a]">{t('member.deposit.nomor')}</span>: {pay.number}</p>
         {pay.amount != null ? (
-          <p><span className="text-[#5a5a5a]">Jumlah diminta</span>: IDR {Number(pay.amount).toLocaleString('id-ID')}</p>
+          <p><span className="text-[#5a5a5a]">{t('member.withdraw.requested')}</span>: IDR {Number(pay.amount).toLocaleString(numberLocale)}</p>
         ) : null}
       </div>
     </div>
@@ -663,20 +663,20 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Penarikan</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.withdraw.title')}</h2>
       
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Saldo Tersedia</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('member.withdraw.available')}</label>
           <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
             IDR {balance?.toLocaleString() || 0}
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Ke Rekening Bank</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('member.withdraw.keRekening')}</label>
           <div className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]">
             {userBank
               ? `${(userBank.bank_name || userBank.bankName || '-').toUpperCase()} - ${userBank.bank_number || userBank.bankNumber || '-'}`
@@ -685,7 +685,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">Jumlah</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a] pt-2.5 sm:pt-3">{t('member.deposit.jumlah')}</label>
           <div className="flex-1 space-y-1.5">
             <input
               type="number"
@@ -695,22 +695,22 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
-              placeholder="Masukkan jumlah"
+              placeholder={t('member.withdraw.errAmount')}
             />
             <p className="text-[10px] sm:text-xs text-[#707070]">
-              Minimum penarikan: IDR {minW.toLocaleString('id-ID')}
+              {t('member.withdraw.minW', { amount: minW.toLocaleString(numberLocale) })}
             </p>
             {belowMinWithdraw ? (
               <p className="text-[10px] sm:text-xs text-amber-600/90">
-                Jumlah di bawah minimum penarikan.
+                {t('member.withdraw.minW', { amount: minW.toLocaleString(numberLocale) })}
               </p>
             ) : null}
             {aboveBalance ? (
-              <p className="text-[10px] sm:text-xs text-amber-600/90">Jumlah melebihi saldo tersedia.</p>
+              <p className="text-[10px] sm:text-xs text-amber-600/90">{t('member.withdraw.exceeds')}</p>
             ) : null}
             {belowAvailableMinimum ? (
               <p className="text-[10px] sm:text-xs text-amber-600/90">
-                Saldo tersedia di bawah minimum penarikan (IDR {minW.toLocaleString('id-ID')}).
+                {t('member.withdraw.belowMinBal', { amount: minW.toLocaleString(numberLocale) })}
               </p>
             ) : null}
           </div>
@@ -727,7 +727,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
           disabled={loading}
           className="w-full sm:w-auto px-8 py-2.5 sm:py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all disabled:opacity-50"
         >
-          {loading ? 'LOADING...' : 'KIRIM'}
+          {loading ? t('member.deposit.sending') : t('member.deposit.send')}
         </button>
       </div>
     </div>
@@ -735,6 +735,7 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
 }
 
 function ProfileContent({ profile, referralCode }) {
+  const { t } = useTranslation()
   const maskString = (str, visibleStart = 2, visibleEnd = 3) => {
     if (!str) return ''
     if (str.length <= visibleStart + visibleEnd) return str
@@ -743,14 +744,14 @@ function ProfileContent({ profile, referralCode }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Profile</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.profile.title')}</h2>
       
       <div className="space-y-3 sm:space-y-4">
         {[
-          { label: 'Username', value: profile?.username || '-' },
-          { label: 'Bank', value: profile?.bank_name?.toUpperCase() || '-' },
-          { label: 'Nama Rekening', value: profile?.bank_account || '-' },
-          { label: 'No. Rekening', value: maskString(profile?.bank_number) || '-' },
+          { label: t('common.username'), value: profile?.username || '-' },
+          { label: t('common.bank'), value: profile?.bank_name?.toUpperCase() || '-' },
+          { label: t('common.accountName'), value: profile?.bank_account || '-' },
+          { label: t('common.accountNumber'), value: maskString(profile?.bank_number) || '-' },
         ].map((item, i) => (
           <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
             <label className="sm:w-44 text-xs sm:text-sm text-[#4a4a4a]">{item.label}</label>
@@ -761,7 +762,7 @@ function ProfileContent({ profile, referralCode }) {
         ))}
         
         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-          <label className="sm:w-44 text-xs sm:text-sm text-[#4a4a4a]">Referral Code</label>
+          <label className="sm:w-44 text-xs sm:text-sm text-[#4a4a4a]">{t('member.profile.refCode')}</label>
           <div className="flex-1 flex gap-2">
             <div className="flex-1 bg-[#1a1a1a] text-white text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-[#333] truncate">
               {referralCode || '-'}
@@ -776,7 +777,7 @@ function ProfileContent({ profile, referralCode }) {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
-          <label className="sm:w-44 text-xs sm:text-sm text-[#4a4a4a]">Referral Link</label>
+          <label className="sm:w-44 text-xs sm:text-sm text-[#4a4a4a]">{t('member.profile.refLink')}</label>
           <div className="flex-1 flex gap-2">
             <div className="flex-1 bg-[#1a1a1a] text-white text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-[#333] truncate">
               {`${window.location.origin}/register?ref=${referralCode}`}
@@ -795,6 +796,7 @@ function ProfileContent({ profile, referralCode }) {
 }
 
 function PasswordContent() {
+  const { t } = useTranslation()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -804,12 +806,12 @@ function PasswordContent() {
 
   const handleSubmit = async () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Semua field harus diisi')
+      setError(t('member.password.allFields'))
       return
     }
     
     if (newPassword !== confirmPassword) {
-      setError('Password baru tidak cocok')
+      setError(t('member.password.mismatch'))
       return
     }
     
@@ -819,12 +821,12 @@ function PasswordContent() {
     
     try {
       await changePassword(currentPassword, newPassword)
-      setSuccess('Password berhasil diubah!')
+      setSuccess(t('member.password.success'))
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
     } catch (err) {
-      setError(err.data?.message || 'Gagal mengubah password')
+      setError(err.data?.message || t('member.password.failed'))
     } finally {
       setLoading(false)
     }
@@ -832,14 +834,14 @@ function PasswordContent() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Ubah Password</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.password.title')}</h2>
       
       {error && <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>}
       {success && <div className="p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">{success}</div>}
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-44 text-sm text-[#4a4a4a]">Password Saat Ini</label>
+          <label className="sm:w-44 text-sm text-[#4a4a4a]">{t('member.password.current')}</label>
           <input 
             type="password" 
             value={currentPassword}
@@ -849,7 +851,7 @@ function PasswordContent() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-44 text-sm text-[#4a4a4a]">Password Baru</label>
+          <label className="sm:w-44 text-sm text-[#4a4a4a]">{t('member.password.new')}</label>
           <input 
             type="password" 
             value={newPassword}
@@ -859,7 +861,7 @@ function PasswordContent() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-44 text-sm text-[#4a4a4a]">Konfirmasi Password</label>
+          <label className="sm:w-44 text-sm text-[#4a4a4a]">{t('member.password.confirm')}</label>
           <input 
             type="password" 
             value={confirmPassword}
@@ -873,7 +875,7 @@ function PasswordContent() {
           disabled={loading}
           className="w-full sm:w-auto px-8 py-2.5 sm:py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-[#1a1a1a] font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all disabled:opacity-50"
         >
-          {loading ? 'LOADING...' : 'KIRIM'}
+          {loading ? t('member.deposit.sending') : t('member.deposit.send')}
         </button>
       </div>
     </div>
@@ -881,6 +883,7 @@ function PasswordContent() {
 }
 
 function InboxContent() {
+  const { t } = useTranslation()
   const messages = [
     { no: 1, subject: 'INFO MAXWIN / JACKPOT 2026', date: '2026-01-02' },
     { no: 2, subject: 'Halo bos ku', date: '2025-11-16' },
@@ -892,7 +895,7 @@ function InboxContent() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Kotak Masuk</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.inbox.title')}</h2>
       
       {/* Mobile: Card Layout */}
       <div className="md:hidden space-y-3">
@@ -916,9 +919,9 @@ function InboxContent() {
         <table className="w-full">
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
-              <th className="px-4 py-3 text-left text-sm font-medium w-16">No</th>
-              <th className="px-4 py-3 text-center text-sm font-medium">Subjek</th>
-              <th className="px-4 py-3 text-center text-sm font-medium w-40">Tanggal</th>
+              <th className="px-4 py-3 text-left text-sm font-medium w-16">{t('member.inbox.noCol')}</th>
+              <th className="px-4 py-3 text-center text-sm font-medium">{t('member.inbox.subject')}</th>
+              <th className="px-4 py-3 text-center text-sm font-medium w-40">{t('member.inbox.dateCol')}</th>
               <th className="px-4 py-3 text-center text-sm font-medium w-16"></th>
             </tr>
           </thead>
@@ -938,16 +941,17 @@ function InboxContent() {
           </tbody>
         </table>
       </div>
-      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">Showing 1 To 6 of 6 entries</p>
+      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">{t('member.inbox.showing', { from: 1, to: 6, total: 6 })}</p>
     </div>
   )
 }
 
 function BankAccountContent({ profile }) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Rekening Bank</h2>
+        <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('member.bankAcc.title')}</h2>
         <button className="w-full sm:w-auto px-6 py-2 bg-gradient-to-b from-[#E0E0E0] to-[#C0C0C0] text-[#1a1a1a] font-bold rounded-full hover:from-[#F0F0F0] hover:to-[#D0D0D0] transition-all shadow">
           ADD
         </button>
@@ -958,15 +962,15 @@ function BankAccountContent({ profile }) {
         <div className="bg-white/50 rounded-lg p-4 border border-[#909090]/20">
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
-              <span className="text-[#5a5a5a] text-xs">Bank</span>
+              <span className="text-[#5a5a5a] text-xs">{t('member.bankAcc.bank')}</span>
               <p className="text-[#2a2a2a] font-medium">{profile?.bank_name?.toUpperCase() || '-'}</p>
             </div>
             <div>
-              <span className="text-[#5a5a5a] text-xs">No. Rekening</span>
+              <span className="text-[#5a5a5a] text-xs">{t('member.bankAcc.noRek')}</span>
               <p className="text-[#2a2a2a] font-medium text-xs">{profile?.bank_number || '-'}</p>
             </div>
             <div className="col-span-2">
-              <span className="text-[#5a5a5a] text-xs">Nama</span>
+              <span className="text-[#5a5a5a] text-xs">{t('member.bankAcc.name')}</span>
               <p className="text-[#2a2a2a] font-medium">{profile?.bank_account || '-'}</p>
             </div>
           </div>
@@ -979,9 +983,9 @@ function BankAccountContent({ profile }) {
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
               <th className="px-4 py-3 text-left text-sm font-medium w-16">No</th>
-              <th className="px-4 py-3 text-left text-sm font-medium">Bank Name</th>
-              <th className="px-4 py-3 text-left text-sm font-medium">Account Number</th>
-              <th className="px-4 py-3 text-left text-sm font-medium">Account Name</th>
+              <th className="px-4 py-3 text-left text-sm font-medium">{t('auth.bankName')}</th>
+              <th className="px-4 py-3 text-left text-sm font-medium">{t('common.accountNumber')}</th>
+              <th className="px-4 py-3 text-left text-sm font-medium">{t('common.accountName')}</th>
             </tr>
           </thead>
           <tbody>
@@ -994,7 +998,7 @@ function BankAccountContent({ profile }) {
           </tbody>
         </table>
       </div>
-      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">Showing 1 To 1 of 1 entries</p>
+      <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">{t('member.inbox.showing', { from: 1, to: 1, total: 1 })}</p>
     </div>
   )
 }

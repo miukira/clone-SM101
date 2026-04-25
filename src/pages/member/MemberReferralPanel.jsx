@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getUserReferral } from '../../services/api'
 
 export default function MemberReferralPanel() {
+  const { t } = useTranslation()
   const [fromDate, setFromDate] = useState('')
   const [toDate, setToDate] = useState('')
   const [referralData, setReferralData] = useState(null)
@@ -34,14 +36,14 @@ export default function MemberReferralPanel() {
   if (referralLoading) {
     return (
       <div className="flex items-center justify-center h-48 text-sm text-[#5a5a5a]">
-        Memuat data referral…
+        {t('referralPanel.loading')}
       </div>
     )
   }
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Referral</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('referralPanel.title')}</h2>
 
       {referralData?.referral && (
         <div className="bg-[#d8d8d8]/50 border border-[#909090]/30 rounded-lg p-4">
@@ -51,7 +53,7 @@ export default function MemberReferralPanel() {
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Rentang Tanggal</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('referralPanel.dateFrom')}</label>
           <input
             type="date"
             value={fromDate}
@@ -61,7 +63,7 @@ export default function MemberReferralPanel() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Sampai</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('referralPanel.dateTo')}</label>
           <input
             type="date"
             value={toDate}
@@ -86,7 +88,7 @@ export default function MemberReferralPanel() {
             }
           }}
         >
-          CARI
+          {t('referralPanel.filter')}
         </button>
       </div>
 
@@ -94,13 +96,13 @@ export default function MemberReferralPanel() {
         <table className="w-full min-w-[700px]">
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">No</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Username</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">First Depo Date</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">First Depo</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Turnover</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Win/Lose</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Komisi</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('referralPanel.thNo')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('referralPanel.thUser')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('referralPanel.thFirstDepo')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">{t('referralPanel.thFirstDepoAmt')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">{t('referralPanel.thTurnover')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">{t('referralPanel.thWinLose')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">{t('referralPanel.thCommission')}</th>
             </tr>
           </thead>
           <tbody>
@@ -131,7 +133,7 @@ export default function MemberReferralPanel() {
             ) : (
               <tr>
                 <td colSpan="7" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                  Tidak ada data downline
+                  {t('referralPanel.noData')}
                 </td>
               </tr>
             )}
@@ -139,7 +141,7 @@ export default function MemberReferralPanel() {
         </table>
       </div>
       <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">
-        Showing {downlines.length > 0 ? 1 : 0} To {downlines.length || 0} of {downlines.length || 0} entries
+        {t('member.inbox.showing', { from: downlines.length > 0 ? 1 : 0, to: downlines.length || 0, total: downlines.length || 0 })}
       </p>
     </div>
   )

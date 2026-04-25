@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getBalanceMutation } from '../../services/api'
 
 export default function MemberHistoryPanel() {
+  const { t } = useTranslation()
   const [balanceMutations, setBalanceMutations] = useState([])
   const [historyLoading, setHistoryLoading] = useState(true)
   const [transactionType, setTransactionType] = useState('')
@@ -47,27 +49,27 @@ export default function MemberHistoryPanel() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">Riwayat Transaksi</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-[#2a2a2a]">{t('history.title')}</h2>
 
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Jenis Transaksi</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('history.transactionType')}</label>
           <select
             className="flex-1 bg-[#1a1a1a] text-white text-sm px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg border border-[#333]"
             value={transactionType}
             onChange={(e) => setTransactionType(e.target.value)}
           >
-            <option value="">Semua Kategori</option>
-            <option value="deposit">Deposit</option>
-            <option value="withdraw">Withdraw</option>
-            <option value="bonus roling">Bonus Roling</option>
-            <option value="game">Game</option>
-            <option value="lottery">Lottery</option>
+            <option value="">{t('history.allCategories')}</option>
+            <option value="deposit">{t('history.typeDeposit')}</option>
+            <option value="withdraw">{t('history.typeWithdraw')}</option>
+            <option value="bonus roling">{t('history.typeBonusRolling')}</option>
+            <option value="game">{t('history.typeGame')}</option>
+            <option value="lottery">{t('history.typeLottery')}</option>
           </select>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Dari Tanggal</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('history.dateFrom')}</label>
           <input
             type="date"
             value={fromDate}
@@ -77,7 +79,7 @@ export default function MemberHistoryPanel() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-          <label className="sm:w-40 text-sm text-[#4a4a4a]">Sampai Tanggal</label>
+          <label className="sm:w-40 text-sm text-[#4a4a4a]">{t('history.dateTo')}</label>
           <input
             type="date"
             value={toDate}
@@ -91,19 +93,19 @@ export default function MemberHistoryPanel() {
         <table className="w-full min-w-[600px]">
           <thead className="bg-[#1a1a1a] text-white">
             <tr>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">No</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Tipe</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Referensi</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">Jumlah</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-medium">Kredit/Debit</th>
-              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">Tanggal</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('common.id')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('history.type')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('history.reference')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-right text-xs sm:text-sm font-medium">{t('common.amount')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-center text-xs sm:text-sm font-medium">{t('history.creditDebit')}</th>
+              <th className="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm font-medium">{t('common.date')}</th>
             </tr>
           </thead>
           <tbody>
             {historyLoading ? (
               <tr>
                 <td colSpan="6" className="px-4 py-8 text-center text-sm text-[#5a5a5a]">
-                  Memuat riwayat…
+                  {t('history.loading')}
                 </td>
               </tr>
             ) : filteredMutations.length > 0 ? (
@@ -138,7 +140,7 @@ export default function MemberHistoryPanel() {
             ) : (
               <tr>
                 <td colSpan="6" className="px-4 py-6 text-center text-xs sm:text-sm text-[#5a5a5a]">
-                  Tidak ada data yang tersedia
+                  {t('common.noData')}
                 </td>
               </tr>
             )}
@@ -148,7 +150,7 @@ export default function MemberHistoryPanel() {
       <p className="text-center text-xs sm:text-sm text-[#5a5a5a]">
         {historyLoading
           ? '—'
-          : `Showing 1 To ${filteredMutations.length} of ${filteredMutations.length} entries`}
+          : t('member.inbox.showing', { from: filteredMutations.length > 0 ? 1 : 0, to: filteredMutations.length, total: filteredMutations.length })}
       </p>
     </div>
   )

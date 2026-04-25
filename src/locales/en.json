@@ -20,6 +20,8 @@
     "subject": "Subject",
     "username": "Username",
     "amount": "Amount",
+    "account": "Account",
+    "number": "Number",
     "bank": "Bank",
     "accountName": "Account name",
     "accountNumber": "Account number",
@@ -258,7 +260,20 @@
     }
   },
   "history": {
-    "title": "Transaction history"
+    "title": "Transaction history",
+    "transactionType": "Transaction type",
+    "allCategories": "All categories",
+    "type": "Type",
+    "reference": "Reference",
+    "creditDebit": "Credit/Debit",
+    "dateFrom": "From date",
+    "dateTo": "To date",
+    "loading": "Loading history...",
+    "typeDeposit": "Deposit",
+    "typeWithdraw": "Withdraw",
+    "typeBonusRolling": "Rolling bonus",
+    "typeGame": "Game",
+    "typeLottery": "Lottery"
   },
   "referralPanel": {
     "title": "Referral",
@@ -271,7 +286,9 @@
     "thFirstDepoAmt": "First dep.",
     "thTurnover": "Turnover",
     "thWinLose": "Win/Lose",
-    "thCommission": "Commission"
+    "thCommission": "Commission",
+    "loading": "Loading referral data...",
+    "noData": "No downline data"
   },
   "togelRules": {
     "back": "← Back",
@@ -379,6 +396,8 @@
     "modeNoDisc": "no discount (full)",
     "discApplied": "Discount {{p}}% applied",
     "fullPrize": "Full (no prize cut)",
+    "compare4d": "Compare: no-discount 4D {{full}}x · use-discount {{disc}}x (market discount {{pct}}%)",
+    "comparePrize": "No discount: {{full}}x prize · Use discount: {{disc}}x prize",
     "type4d": "4 numbers",
     "type3d": "3 numbers",
     "type2d": "2 numbers",
@@ -401,6 +420,9 @@
     "betTypeHelp": "Choose <strong>4D</strong>, <strong>3D</strong>, <strong>2D</strong>, or <strong>BBFS</strong> (full permutation set — unique 4D through 2D from 4 digits).",
     "position3d": "3D: Front or Back only.",
     "position2d": "2D: Front, Middle, or Back.",
+    "front": "Front",
+    "middle": "Middle",
+    "backPos": "Back",
     "full4d": "4D is only <strong>FULL</strong> type (four digits in order per result).",
     "enterNumbers": "ENTER NUMBERS",
     "enter4bbfs": "ENTER 4 DIGITS (BBFS BASIS)",
@@ -429,6 +451,10 @@
     "processing": "PROCESSING...",
     "marketClosedCta": "MARKET CLOSED",
     "placeBetCta": "PLACE BET",
+    "enterDigitAlert": "Enter {{digits}} digits",
+    "minBetPerLineAlert": "Minimum bet per line: Rp {{amount}}",
+    "betSuccess": "Bet placed successfully!",
+    "newBalance": "New balance: Rp {{amount}}",
     "betHistory": "BET HISTORY",
     "noBets": "No bet history yet"
   },
