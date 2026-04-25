@@ -42,8 +42,9 @@ describe('providerAssetUrl — CDN vs relatif + runtime', () => {
 })
 
 describe('publicAssetUrl — banner/logo path relatif', () => {
-  it('tanpa env & window: path relatif tetap string path (resolveDynamicAssetBase kosong)', () => {
+  it('tanpa env & window: path /banners/ kanon; legacy /static/... terpetakan (resolveDynamicAssetBase kosong)', () => {
     const p = '/banners/banner-1.webp'
-    assert.equal(publicAssetUrl(p), p)
+    assert.equal(publicAssetUrl(p), '/banners/banner-1.webp')
+    assert.equal(publicAssetUrl('/static/banners/banner-1.webp'), '/banners/banner-1.webp')
   })
 })

@@ -1,7 +1,7 @@
 // Provider Card Configuration
 // Add new providers here - no need to create new component files!
 
-// Provider config — path gambar dari provider-mock-animated-images.json → CDN lewat providerAssetUrl (VITE_PUBLIC_ASSET_BASE_URL)
+// Provider config — path /animated-brand/... dari provider-mock-animated-images.json → lewat providerAssetUrl (cdn: VITE_PUBLIC_ASSET_BASE_URL)
 import providerMockAnimatedImages from '../data/provider-mock-animated-images.json'
 import { providerAssetUrl } from '../utils/publicAssetUrl'
 

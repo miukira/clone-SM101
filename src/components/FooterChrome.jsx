@@ -9,7 +9,7 @@ import ChromeSiteBrand from './ChromeSiteBrand'
 
 /**
  * Game Providers di footer: data dari API (kategori slot/sports/casino/fishing), URL gambar
- * lewat providerAssetUrl (CDN / GET /website). Tanpa aset lokal; bila URL kosong/404 tampil nama.
+ * lewat providerAssetUrl (CDN / GET /website). Tanpa bundle gambar lokal; bila URL kosong/404 tampil nama.
  */
 function FooterProviderThumb({ provider }) {
   const name = provider.display_name || provider.name || 'Provider'
@@ -295,7 +295,7 @@ export default function FooterChrome() {
 
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
-      {/* Game Providers Section — URL gambar dari API + providerAssetUrl; bukan aset/ lokal */}
+      {/* Game Providers Section — URL gambar dari API + providerAssetUrl (bukan file di public/ lokal) */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-8 py-8 themed-border-bottom">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-8 h-8 rounded-lg bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center">
