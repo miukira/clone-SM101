@@ -3,6 +3,9 @@ import { useState, useEffect, useCallback } from 'react'
 import * as api from '../services/api'
 import { useWebsite } from '../context/WebsiteContext'
 
+/** Dedup log lintas remount (React StrictMode dev). */
+let lastLotteryResultsLogKey = ''
+
 /**
  * Hook untuk get lottery results dari WebsiteContext
  * Returns lottery results with market, date, result
@@ -12,6 +15,11 @@ export function useLotteryResults() {
   
   useEffect(() => {
     if (lotteryResults && lotteryResults.length > 0) {
+      const logKey = JSON.stringify(
+        lotteryResults.map((x) => [x?.market ?? '', x?.date ?? '', x?.result ?? '']),
+      )
+      if (logKey === lastLotteryResultsLogKey) return
+      lastLotteryResultsLogKey = logKey
       console.log(`🎰 Lottery Results from Context: ${lotteryResults.length} item(s)`)
     }
   }, [lotteryResults])
