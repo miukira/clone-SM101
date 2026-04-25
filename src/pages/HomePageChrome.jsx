@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ProviderCard from '../components/ProviderCard'
 import FooterChrome from '../components/FooterChrome'
@@ -21,6 +22,7 @@ import {
   casinoProviders,
   fishingProviders,
 } from '../config/providers'
+import { getDateLocale, getNumberLocale } from '../i18n.js'
 import NotificationMarquee from '../components/NotificationMarquee'
 import ChromeAppHeader from '../components/ChromeAppHeader'
 import {
@@ -39,24 +41,44 @@ import {
 
 // Togel Results Data - Fallback static data
 const staticTogelResults = [
-  { market: 'SINGAPORE', day: 'Minggu', numbers: [3, 9, 2, 7], date: '01/03/2026' },
-  { market: 'SIDNEY', day: 'Minggu', numbers: [4, 6, 2, 0], date: '01/03/2026' },
-  { market: 'HONGKONG', day: 'Sabtu', numbers: [7, 3, 0, 0], date: '28/02/2026' },
-  { market: 'CAMBODIA', day: 'Minggu', numbers: [8, 1, 5, 3], date: '01/03/2026' },
-  { market: 'TAIWAN', day: 'Sabtu', numbers: [2, 7, 4, 9], date: '28/02/2026' },
+  { market: 'SINGAPORE', numbers: [3, 9, 2, 7], date: '01/03/2026' },
+  { market: 'SIDNEY', numbers: [4, 6, 2, 0], date: '01/03/2026' },
+  { market: 'HONGKONG', numbers: [7, 3, 0, 0], date: '28/02/2026' },
+  { market: 'CAMBODIA', numbers: [8, 1, 5, 3], date: '01/03/2026' },
+  { market: 'TAIWAN', numbers: [2, 7, 4, 9], date: '28/02/2026' },
 ]
+
+function parseDmyToDate(s) {
+  if (!s || typeof s !== 'string') return null
+  const p = s.split('/')
+  if (p.length !== 3) return null
+  const d = new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10))
+  return Number.isNaN(d.getTime()) ? null : d
+}
 
 // Transform API lottery results to display format
 const transformLotteryResults = (apiResults) => {
-  if (!apiResults || apiResults.length === 0) return staticTogelResults
-  
-  return apiResults.map(result => {
+  const loc = getDateLocale()
+  if (!apiResults || apiResults.length === 0) {
+    return staticTogelResults.map((r) => {
+      const dateObj = parseDmyToDate(r.date)
+      const dayName = dateObj
+        ? dateObj.toLocaleDateString(loc, { weekday: 'long' })
+        : ''
+      const dateStr = dateObj
+        ? dateObj.toLocaleDateString(loc, { day: '2-digit', month: '2-digit', year: 'numeric' })
+        : r.date
+      return { market: r.market, day: dayName, numbers: r.numbers, date: dateStr }
+    })
+  }
+
+  return apiResults.map((result) => {
     const marketKey = result.market?.toLowerCase()
     const displayInfo = MARKET_DISPLAY_NAMES[marketKey] || { name: result.market, day: '-' }
     const dateObj = result.date ? new Date(result.date) : new Date()
-    const dayName = dateObj.toLocaleDateString('id-ID', { weekday: 'long' })
-    const dateStr = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
-    
+    const dayName = dateObj.toLocaleDateString(loc, { weekday: 'long' })
+    const dateStr = dateObj.toLocaleDateString(loc, { day: '2-digit', month: '2-digit', year: 'numeric' })
+
     return {
       market: displayInfo.name?.toUpperCase() || result.market?.toUpperCase(),
       day: dayName,
@@ -66,27 +88,28 @@ const transformLotteryResults = (apiResults) => {
   })
 }
 
-// Header menu items (includes HOME, game categories, PROMOSI, REFERRAL)
-const headerMenuItems = [
-  { id: 'home', name: 'HOME', icon: HomeIconChrome, isPage: true, path: '/' },
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, providers: slotProviders },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, providers: casinoProviders },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
-  { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, isPage: true, path: '/promo' },
-  { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, isPage: true, path: '/referral' },
-]
-
-// Provider box categories (game categories only - no HOME, PROMOSI, REFERRAL)
-const categories = [
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, providers: slotProviders },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, providers: casinoProviders },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, providers: sportsProviders },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, providers: fishingProviders },
-]
+function buildHomeNav(t) {
+  return {
+    headerMenuItems: [
+      { id: 'home', name: t('nav.home'), icon: HomeIconChrome, isPage: true, path: '/' },
+      { id: 'slots', name: t('nav.slots'), icon: SlotsIconChrome, providers: slotProviders },
+      { id: 'casino', name: t('nav.casino'), icon: CasinoIconChrome, providers: casinoProviders },
+      { id: 'sports', name: t('nav.sports'), icon: SportsIconChrome, providers: sportsProviders },
+      { id: 'fishing', name: t('nav.fishing'), icon: FishingIconChrome, providers: fishingProviders },
+      { id: 'promosi', name: t('nav.promosi'), icon: PromoIconChrome, isPage: true, path: '/promo' },
+      { id: 'referral', name: t('nav.referral'), icon: ReferralIconChrome, isPage: true, path: '/referral' },
+    ],
+    categories: [
+      { id: 'slots', name: t('nav.slots'), icon: SlotsIconChrome, providers: slotProviders },
+      { id: 'casino', name: t('nav.casino'), icon: CasinoIconChrome, providers: casinoProviders },
+      { id: 'sports', name: t('nav.sports'), icon: SportsIconChrome, providers: sportsProviders },
+      { id: 'fishing', name: t('nav.fishing'), icon: FishingIconChrome, providers: fishingProviders },
+    ],
+  }
+}
 
 // Togel 4D Result Card Component - Larger Day & Date
-function TogelResultCard({ market, day, numbers, date, onBetClick }) {
+function TogelResultCard({ market, day, numbers, date, onBetClick, t }) {
   // Map display name to market ID for betting
   const getMarketId = (displayMarket) => {
     const marketMap = {
@@ -137,7 +160,7 @@ function TogelResultCard({ market, day, numbers, date, onBetClick }) {
           onClick={() => onBetClick && onBetClick(getMarketId(market))}
           className="w-full py-2.5 bg-gradient-to-b from-[#333] to-[#1a1a1a] border border-[#404040] rounded-lg text-[10px] font-bold text-[#808080] hover:text-[#C0C0C0] hover:border-[#505050] transition-all tracking-widest hover:scale-[1.02]"
         >
-          BET
+          {t('common.bet')}
         </button>
       </div>
     </div>
@@ -145,7 +168,7 @@ function TogelResultCard({ market, day, numbers, date, onBetClick }) {
 }
 
 // Category Tab Button with Hover Dropdown - DESKTOP ONLY
-function CategoryTabDesktop({ category, active, navigate, dropdownProvidersByCategory }) {
+function CategoryTabDesktop({ category, active, navigate, dropdownProvidersByCategory, t }) {
   const Icon = category.icon
   const apiList = dropdownProvidersByCategory?.[category.id]
   const fallback = category.providers || []
@@ -192,7 +215,7 @@ function CategoryTabDesktop({ category, active, navigate, dropdownProvidersByCat
                 <div className="flex items-center gap-3">
                   <Icon size={20} active={true} />
                   <h3 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                    {category.name} PROVIDERS
+                    {t('home.providersFor', { name: category.name })}
                   </h3>
                   <div className="w-16 h-0.5 bg-gradient-to-r from-[#C0C0C0] to-transparent"></div>
                 </div>
@@ -208,7 +231,7 @@ function CategoryTabDesktop({ category, active, navigate, dropdownProvidersByCat
                     onClick={() => navigate(`/providers/${category.id}`)}
                     className="ml-2 px-4 py-2 text-[10px] font-bold text-[#606060] hover:text-[#C0C0C0] tracking-wider transition-all"
                   >
-                    LIHAT SEMUA ({list.length}) →
+                    {t('home.viewAllWithCount', { count: list.length })}
                   </button>
                 </div>
               </div>
@@ -236,7 +259,14 @@ function CategoryTabDesktop({ category, active, navigate, dropdownProvidersByCat
   )
 }
 
-function HomeChromeDesktopNavRow({ activeCategory, setActiveCategory, navigate, dropdownProvidersByCategory }) {
+function HomeChromeDesktopNavRow({
+  headerMenuItems,
+  activeCategory,
+  setActiveCategory,
+  navigate,
+  dropdownProvidersByCategory,
+  t,
+}) {
   return (
     <div className="flex items-center justify-center gap-1 px-4 py-2 overflow-x-auto hide-scrollbar">
       {headerMenuItems.map((item) => (
@@ -246,6 +276,7 @@ function HomeChromeDesktopNavRow({ activeCategory, setActiveCategory, navigate, 
           active={activeCategory === item.id}
           navigate={navigate}
           dropdownProvidersByCategory={dropdownProvidersByCategory}
+          t={t}
         />
       ))}
     </div>
@@ -291,11 +322,12 @@ function openBannerLink(link, navigate) {
 
 /** Teks `config.about` dari API — sama sumber dengan footer */
 function HomeAboutBlurb() {
+  const { t } = useTranslation()
   const { about } = useWebsite()
   const text = about?.trim()
   if (!text) return null
   return (
-    <section className="mb-4 md:mb-6" aria-label="Tentang situs">
+    <section className="mb-4 md:mb-6" aria-label={t('home.aboutSite')}>
       <p className="text-[10px] md:text-xs text-[#909090] leading-relaxed border-l-2 border-[#fbbf24]/40 pl-3">
         {text}
       </p>
@@ -305,6 +337,7 @@ function HomeAboutBlurb() {
 
 // Promo Banner — `config.banner` dari GET /info; kosong → default `/banners/banner-1.webp` (CDN)
 function PromoBanner() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { banners: apiBanners, title: siteTitle, loading: websiteLoading, configAssetRev } =
     useWebsite()
@@ -385,14 +418,14 @@ function PromoBanner() {
               onClick={() => openBannerLink(banner.link, navigate)}
               className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] md:text-sm font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg tracking-wider"
             >
-              CLAIM SEKARANG
+              {t('home.claimNow')}
             </button>
             <button
               type="button"
               onClick={() => navigate('/promo')}
               className="px-4 md:px-5 lg:px-6 py-2 md:py-2.5 bg-white/10 backdrop-blur border border-white/20 rounded-lg text-white/80 text-[10px] md:text-sm font-bold hover:bg-white/20 transition-all tracking-wider hidden md:block"
             >
-              SYARAT & KETENTUAN
+              {t('home.termsAndConditions')}
             </button>
           </div>
         </div>
@@ -431,7 +464,7 @@ function PromoBanner() {
 }
 
 // Mobile Togel Result Card - Chrome Silver Style (matching desktop)
-function MobileTogelCard({ market, numbers, date, onBetClick }) {
+function MobileTogelCard({ market, numbers, date, onBetClick, t }) {
   // Map display name to market ID for betting
   const getMarketId = (displayMarket) => {
     const marketMap = {
@@ -479,7 +512,7 @@ function MobileTogelCard({ market, numbers, date, onBetClick }) {
           onClick={() => onBetClick && onBetClick(getMarketId(market))}
           className="w-full py-1 bg-gradient-to-b from-[#333] to-[#1a1a1a] border border-[#404040] rounded text-[7px] font-bold text-[#808080] tracking-wider hover:text-[#C0C0C0]"
         >
-          BET
+          {t('common.bet')}
         </button>
       </div>
     </div>
@@ -488,6 +521,8 @@ function MobileTogelCard({ market, numbers, date, onBetClick }) {
 
 // Jackpot Counter Component - Chrome Silver with Animation
 function JackpotCounter({ isMobile = false }) {
+  const { t } = useTranslation()
+  const numberLocale = getNumberLocale()
   const [jackpotValue, setJackpotValue] = useState(85185441217)
   
   // Animate jackpot number
@@ -498,7 +533,7 @@ function JackpotCounter({ isMobile = false }) {
     return () => clearInterval(interval)
   }, [])
   
-  const formattedJackpot = jackpotValue.toLocaleString('id-ID')
+  const formattedJackpot = jackpotValue.toLocaleString(numberLocale)
   
   return (
     <div className={`relative bg-gradient-to-r from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a] rounded-xl overflow-hidden themed-card ${isMobile ? '' : 'mb-6'}`}>
@@ -515,7 +550,7 @@ function JackpotCounter({ isMobile = false }) {
       
       <div className="relative z-10 py-3 md:py-4 px-4">
         <div className="text-center">
-          <span className="text-[9px] md:text-[10px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-[0.3em] block mb-1">JACKPOT</span>
+          <span className="text-[9px] md:text-[10px] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-[0.3em] block mb-1">{t('home.jackpot')}</span>
           <span className="text-xl md:text-2xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] animate-pulse-slow">
             {formattedJackpot}
           </span>
@@ -527,6 +562,7 @@ function JackpotCounter({ isMobile = false }) {
 
 // Mobile Provider Card - Compact Grid Style with Animation
 function MobileProviderCard({ provider }) {
+  const { t } = useTranslation()
   const [isHovered, setIsHovered] = useState(false)
   /** 0: API / default file; 1: paksa default; 2: 🎰 */
   const [heroTier, setHeroTier] = useState(0)
@@ -542,7 +578,7 @@ function MobileProviderCard({ provider }) {
   const heroImage = logoImage ?? characterImage
   const showCornerLogo =
     Boolean(logoImage && characterImage && logoImage !== characterImage)
-  const name = provider?.name || provider?.logoAlt || 'Provider'
+  const name = provider?.name || provider?.logoAlt || t('common.provider')
 
   useEffect(() => {
     setHeroTier(0)
@@ -579,7 +615,7 @@ function MobileProviderCard({ provider }) {
             ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' 
             : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
         }`}>
-          {isHot ? 'HOT' : 'NEW'}
+          {isHot ? t('common.hot') : t('common.new')}
         </div>
       )}
       
@@ -627,7 +663,7 @@ function MobileProviderCard({ provider }) {
             ? 'bg-gradient-to-b from-white via-[#E0E0E0] to-[#C0C0C0] text-black' 
             : 'bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] text-black'
         }`}>
-          PLAY NOW
+          {t('common.playNow')}
         </button>
       </div>
     </div>
@@ -636,6 +672,7 @@ function MobileProviderCard({ provider }) {
 
 // Bottom Navigation - Mobile Only
 function MobileBottomNav() {
+  const { t } = useTranslation()
   const { contact } = useWebsite()
   const [activeNav, setActiveNav] = useState('home')
   const [contactSheetOpen, setContactSheetOpen] = useState(false)
@@ -643,13 +680,16 @@ function MobileBottomNav() {
 
   const runContact = () => setContactSheetOpen(true)
 
-  const navItems = [
-    { id: 'home', icon: HomeIconChrome, label: 'HOME', path: '/' },
-    { id: 'promo', icon: PromoIconChrome, label: 'PROMO', path: '/promo' },
-    { id: 'livechat', icon: HelpIconChrome, label: 'LIVE CHAT', path: '#' },
-    { id: 'referral', icon: ReferralIconChrome, label: 'REFERRAL', path: '/referral' },
-    { id: 'contact', icon: AccountIconChrome, label: 'CONTACT', path: '#' },
-  ]
+  const navItems = useMemo(
+    () => [
+      { id: 'home', icon: HomeIconChrome, label: t('nav.home'), path: '/' },
+      { id: 'promo', icon: PromoIconChrome, label: t('nav.promo'), path: '/promo' },
+      { id: 'livechat', icon: HelpIconChrome, label: t('nav.liveChat'), path: '#' },
+      { id: 'referral', icon: ReferralIconChrome, label: t('nav.referral'), path: '/referral' },
+      { id: 'contact', icon: AccountIconChrome, label: t('nav.contact'), path: '#' },
+    ],
+    [t],
+  )
 
   return (
     <>
@@ -819,7 +859,9 @@ function MobileTogelSkeleton() {
 
 // ============ FULL PROVIDERS LIST PAGE ============
 function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) {
-  const cat = categories.find(c => c.id === category) || categories[0]
+  const { t } = useTranslation()
+  const { headerMenuItems, categories } = useMemo(() => buildHomeNav(t), [t])
+  const cat = categories.find((c) => c.id === category) || categories[0]
   const Icon = cat.icon
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
@@ -877,10 +919,12 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
         onBalanceRefresh={refreshBalance}
         desktopNav={
           <HomeChromeDesktopNavRow
+            headerMenuItems={headerMenuItems}
             activeCategory={category}
             setActiveCategory={() => {}}
             navigate={navigate}
             dropdownProvidersByCategory={dropdownProvidersByCategory}
+            t={t}
           />
         }
       />
@@ -899,10 +943,12 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
             <Icon size={28} active={true} />
             <div>
               <h1 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                {cat.name} PROVIDERS
+                {t('home.providersFor', { name: cat.name })}
               </h1>
               <p className="text-[11px] text-[#505050] tracking-wide mt-0.5">
-                {providersLoading ? 'Loading...' : `${categoryProviders.length} providers tersedia`}
+                {providersLoading
+                  ? t('common.loading')
+                  : t('home.providersCount', { count: categoryProviders.length })}
               </p>
             </div>
           </div>
@@ -933,7 +979,7 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
             {!providersLoading && Array.from({ length: Math.max(0, 8 - categoryProviders.length) }).map((_, i) => (
               <div key={`empty-${i}`} className="flex justify-center">
                 <div className="w-[280px] h-[180px] bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-[#1a1a1a] rounded-xl flex items-center justify-center">
-                  <span className="text-[11px] font-bold text-[#2a2a2a] tracking-widest">COMING SOON</span>
+                  <span className="text-[11px] font-bold text-[#2a2a2a] tracking-widest">{t('common.comingSoon')}</span>
                 </div>
               </div>
             ))}
@@ -955,10 +1001,12 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
             <Icon size={22} active={true} />
             <div>
               <h1 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                {cat.name} PROVIDERS
+                {t('home.providersFor', { name: cat.name })}
               </h1>
               <p className="text-[9px] text-[#505050] tracking-wide">
-                {providersLoading ? 'Loading...' : `${categoryProviders.length} providers`}
+                {providersLoading
+                  ? t('common.loading')
+                  : t('home.providersCountShort', { count: categoryProviders.length })}
               </p>
             </div>
           </div>
@@ -995,7 +1043,7 @@ function ProvidersListPage({ category, navigate, dropdownProvidersByCategory }) 
               ))
             ) : categoryProviders.length === 0 ? (
               <div className="col-span-2 py-8 text-center text-xs text-[#606060]">
-                Belum ada provider.
+                {t('home.noProviders')}
               </div>
             ) : (
               categoryProviders.map(provider => (
@@ -1037,6 +1085,9 @@ export default function HomePageChrome() {
   const [gameModalOpen, setGameModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
 
+  const { t } = useTranslation()
+  const { headerMenuItems, categories } = useMemo(() => buildHomeNav(t), [t])
+
   const { providersByCategory: dropdownProvidersByCategory } = useNavDropdownProviders()
 
   /** Grid kartu home: konteks kategori aktif — selaras kontrak Provider + transform (bukan slice dari snapshot nav) */
@@ -1054,7 +1105,10 @@ export default function HomePageChrome() {
       : categories.find((c) => c.id === providerBoxCategory)?.providers || []
   
   // Transform lottery results for display
-  const togelResults = transformLotteryResults(lotteryResults)
+  const togelResults = useMemo(
+    () => transformLotteryResults(lotteryResults),
+    [lotteryResults, t],
+  )
   
   const categoryScrollRef = useRef(null)
   
@@ -1131,10 +1185,12 @@ export default function HomePageChrome() {
         onBalanceRefresh={refreshBalance}
         desktopNav={
           <HomeChromeDesktopNavRow
+            headerMenuItems={headerMenuItems}
             activeCategory={headerCategory}
             setActiveCategory={setHeaderCategory}
             navigate={navigate}
             dropdownProvidersByCategory={dropdownProvidersByCategory}
+            t={t}
           />
         }
       />
@@ -1171,7 +1227,7 @@ export default function HomePageChrome() {
                 <LotteryIconChrome size={22} active={true} />
                 <div>
                   <h2 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                    TOGEL RESULT
+                    {t('home.togelResult')}
                   </h2>
                   <div className="w-10 h-0.5 bg-gradient-to-r from-[#C0C0C0] to-transparent mt-1"></div>
                 </div>
@@ -1189,6 +1245,7 @@ export default function HomePageChrome() {
                       key={i} 
                       {...result} 
                       onBetClick={(marketId) => navigate(`/togel/${marketId}`)}
+                      t={t}
                     />
                   ))
                 )}
@@ -1198,7 +1255,7 @@ export default function HomePageChrome() {
                 onClick={() => navigate('/togel')}
                 className="block w-full mt-4 py-3 bg-gradient-to-b from-[#1a1a1a] to-[#0d0d0d] border border-[#2a2a2a] rounded-xl text-[10px] font-bold text-[#505050] hover:text-[#C0C0C0] hover:border-[#404040] transition-all tracking-widest text-center cursor-pointer"
               >
-                LIHAT SEMUA PASARAN →
+                {t('home.viewAllMarkets')}
               </button>
             </aside>
 
@@ -1213,7 +1270,9 @@ export default function HomePageChrome() {
                   })()}
                   <div>
                     <h2 className="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                      {categories.find(c => c.id === providerBoxCategory)?.name} PROVIDERS
+                      {t('home.providersFor', {
+                        name: categories.find((c) => c.id === providerBoxCategory)?.name ?? '',
+                      })}
                     </h2>
                     <div className="w-10 h-0.5 bg-gradient-to-r from-[#C0C0C0] to-transparent mt-1"></div>
                   </div>
@@ -1223,7 +1282,7 @@ export default function HomePageChrome() {
                   onClick={() => navigate(`/providers/${providerBoxCategory}`)}
                   className="text-[10px] font-bold text-[#505050] hover:text-[#C0C0C0] tracking-wider transition-colors"
                 >
-                  LIHAT SEMUA →
+                  {t('home.viewAll')}
                 </button>
               </div>
 
@@ -1308,6 +1367,7 @@ export default function HomePageChrome() {
                     key={i} 
                     {...result} 
                     onBetClick={(marketId) => navigate(`/togel/${marketId}`)}
+                    t={t}
                   />
                 ))
               )}
@@ -1366,7 +1426,7 @@ export default function HomePageChrome() {
                 ))
               ) : activeProviders.length === 0 ? (
                 <div className="col-span-2 py-8 text-center text-xs text-[#606060]">
-                  Belum ada provider untuk kategori ini.
+                  {t('home.noProvidersCategory')}
                 </div>
               ) : (
                 activeProviders.map(provider => (

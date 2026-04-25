@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { 
   login, 
@@ -39,6 +40,7 @@ const LoadingSpinner = () => (
 )
 
 export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLoginSuccess }) {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState(initialTab)
   const [showPassword, setShowPassword] = useState(false)
@@ -159,7 +161,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
     try {
       const result = await login(loginForm.username, loginForm.password)
       setToken(result.token)
-      setSuccess('Login berhasil!')
+      setSuccess(t('auth.loginSuccess'))
       
       // Callback and wait for profile fetch
       if (onLoginSuccess) {
@@ -171,7 +173,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
         navigate('/member')
       }, 500)
     } catch (err) {
-      setError(err.data?.message || 'Login gagal. Silakan coba lagi.')
+      setError(err.data?.message || t('auth.loginFailed'))
     } finally {
       setLoading(false)
     }
@@ -183,32 +185,32 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
     
     // Validation
     if (registerForm.password !== registerForm.confirmPassword) {
-      setError('Password dan konfirmasi password tidak sama')
+      setError(t('auth.passMismatch'))
       return
     }
     
     if (registerForm.password.length < 3) {
-      setError('Password minimal 3 karakter')
+      setError(t('auth.passMin'))
       return
     }
     
     if (!registerForm.bank_name) {
-      setError('Silakan pilih bank')
+      setError(t('auth.pickBank'))
       return
     }
     
     if (validation.usernameAvailable === false) {
-      setError('Username sudah digunakan')
+      setError(t('auth.userTakenShort'))
       return
     }
     
     if (validation.phoneAvailable === false) {
-      setError('Nomor HP sudah terdaftar')
+      setError(t('auth.phoneTaken'))
       return
     }
     
     if (validation.bankAvailable === false) {
-      setError('Nomor rekening sudah terdaftar')
+      setError(t('auth.bankTaken'))
       return
     }
     
@@ -226,7 +228,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
       })
       
       setToken(result.token)
-      setSuccess('Registrasi berhasil!')
+      setSuccess(t('auth.registerSuccess'))
       
       if (onLoginSuccess) {
         await onLoginSuccess(result)
@@ -237,7 +239,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
         navigate('/member')
       }, 500)
     } catch (err) {
-      setError(err.data?.message || 'Registrasi gagal. Silakan coba lagi.')
+      setError(err.data?.message || t('auth.registerFailed'))
     } finally {
       setLoading(false)
     }
@@ -266,7 +268,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                   : 'text-[#808080] hover:text-white'
               }`}
             >
-              MASUK
+              {t('auth.masuk')}
             </button>
             <button
               onClick={() => setActiveTab('register')}
@@ -276,7 +278,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                   : 'text-[#808080] hover:text-white'
               }`}
             >
-              DAFTAR
+              {t('auth.daftar')}
             </button>
           </div>
           
@@ -307,26 +309,26 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
           {activeTab === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">USERNAME</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.username')}</label>
                 <input
                   type="text"
                   value={loginForm.username}
                   onChange={(e) => setLoginForm({ ...loginForm, username: e.target.value })}
                   className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white placeholder-[#505050] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                  placeholder="Masukkan username"
+                  placeholder={t('auth.placeholderUser')}
                   required
                 />
               </div>
               
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">PASSWORD</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.password')}</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={loginForm.password}
                     onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                     className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white placeholder-[#505050] focus:border-[#C0C0C0] focus:outline-none transition-colors pr-12"
-                    placeholder="Masukkan password"
+                    placeholder={t('auth.placeholderPass')}
                     required
                   />
                   <button
@@ -344,24 +346,24 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                 disabled={loading}
                 className="w-full py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-xl text-black font-bold tracking-wider hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? <LoadingSpinner /> : 'MASUK'}
+                {loading ? <LoadingSpinner /> : t('auth.masuk')}
               </button>
               
               <p className="text-center text-xs text-[#606060]">
-                Belum punya akun?{' '}
+                {t('auth.noAccount')}{' '}
                 <button
                   type="button"
                   onClick={() => setActiveTab('register')}
                   className="text-[#C0C0C0] hover:text-white transition-colors"
                 >
-                  Daftar sekarang
+                  {t('auth.registerNow')}
                 </button>
               </p>
               
               {/* Demo account hint */}
               <div className="mt-4 p-3 bg-[#1a1a1a] border border-[#333] rounded-lg">
                 <p className="text-xs text-[#606060] text-center">
-                  Demo: username <span className="text-[#C0C0C0]">user1</span> / password <span className="text-[#C0C0C0]">1234</span>
+                  {t('auth.demo', { u: 'user1', p: '1234' })}
                 </p>
               </div>
             </form>
@@ -372,7 +374,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Username */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">USERNAME</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.username')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -383,7 +385,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                       validation.usernameAvailable === false ? 'border-red-500' :
                       'border-[#333] focus:border-[#C0C0C0]'
                     }`}
-                    placeholder="Min. 4 karakter (huruf & angka)"
+                    placeholder={t('auth.placeholderUserReg')}
                     minLength={4}
                     required
                   />
@@ -396,20 +398,20 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                   )}
                 </div>
                 {validation.usernameAvailable === false && (
-                  <p className="text-xs text-red-400 mt-1">Username sudah digunakan</p>
+                  <p className="text-xs text-red-400 mt-1">{t('auth.userTaken')}</p>
                 )}
               </div>
               
               {/* Password */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">PASSWORD</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.password')}</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={registerForm.password}
                     onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                     className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white placeholder-[#505050] focus:border-[#C0C0C0] focus:outline-none transition-colors pr-12"
-                    placeholder="Min. 3 karakter"
+                    placeholder={t('auth.placeholderPassReg')}
                     minLength={3}
                     required
                   />
@@ -425,7 +427,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               
               {/* Confirm Password */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">KONFIRMASI PASSWORD</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.confirmPassword')}</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -436,7 +438,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                         ? 'border-red-500'
                         : 'border-[#333] focus:border-[#C0C0C0]'
                     }`}
-                    placeholder="Ulangi password"
+                    placeholder={t('auth.placeholderConfirm')}
                     required
                   />
                   <button
@@ -451,7 +453,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               
               {/* Phone */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">NOMOR HP</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.phone')}</label>
                 <div className="relative">
                   <input
                     type="tel"
@@ -462,7 +464,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                       validation.phoneAvailable === false ? 'border-red-500' :
                       'border-[#333] focus:border-[#C0C0C0]'
                     }`}
-                    placeholder="Contoh: 081234567890"
+                    placeholder={t('auth.placeholderPhone')}
                     minLength={10}
                     required
                   />
@@ -478,14 +480,14 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               
               {/* Bank Selection */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">NAMA BANK</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.bankName')}</label>
                 <select
                   value={registerForm.bank_name}
                   onChange={(e) => setRegisterForm({ ...registerForm, bank_name: e.target.value })}
                   className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white focus:border-[#C0C0C0] focus:outline-none transition-colors"
                   required
                 >
-                  <option value="">Pilih Bank / E-Wallet</option>
+                  <option value="">{t('auth.selectBank')}</option>
                   {bankOptions.map(bank => (
                     <option key={bank.value} value={bank.value}>{bank.label}</option>
                   ))}
@@ -494,20 +496,20 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               
               {/* Bank Account Name */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">NAMA REKENING</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.accountName')}</label>
                 <input
                   type="text"
                   value={registerForm.bank_account}
                   onChange={(e) => setRegisterForm({ ...registerForm, bank_account: e.target.value.toUpperCase() })}
                   className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white placeholder-[#505050] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                  placeholder="Nama sesuai rekening bank"
+                  placeholder={t('auth.placeholderBankAcc')}
                   required
                 />
               </div>
               
               {/* Bank Number */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">NOMOR REKENING</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.bankNumber')}</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -518,7 +520,7 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                       validation.bankAvailable === false ? 'border-red-500' :
                       'border-[#333] focus:border-[#C0C0C0]'
                     }`}
-                    placeholder="Nomor rekening bank / e-wallet"
+                    placeholder={t('auth.placeholderBankNo')}
                     minLength={10}
                     required
                   />
@@ -534,13 +536,13 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
               
               {/* Referral Code (Optional) */}
               <div>
-                <label className="block text-xs text-[#808080] mb-2 tracking-wider">KODE REFERRAL (OPSIONAL)</label>
+                <label className="block text-xs text-[#808080] mb-2 tracking-wider">{t('auth.referralOpt')}</label>
                 <input
                   type="text"
                   value={registerForm.referral}
                   onChange={(e) => setRegisterForm({ ...registerForm, referral: e.target.value })}
                   className="w-full px-4 py-3 bg-[#0a0a0a] border border-[#333] rounded-xl text-white placeholder-[#505050] focus:border-[#C0C0C0] focus:outline-none transition-colors"
-                  placeholder="Masukkan kode referral jika ada"
+                  placeholder={t('auth.placeholderRef')}
                 />
               </div>
               
@@ -549,17 +551,17 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
                 disabled={loading || validation.usernameAvailable === false || validation.phoneAvailable === false || validation.bankAvailable === false}
                 className="w-full py-3 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-xl text-black font-bold tracking-wider hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {loading ? <LoadingSpinner /> : 'DAFTAR'}
+                {loading ? <LoadingSpinner /> : t('auth.daftar')}
               </button>
               
               <p className="text-center text-xs text-[#606060]">
-                Sudah punya akun?{' '}
+                {t('auth.haveAccount')}{' '}
                 <button
                   type="button"
                   onClick={() => setActiveTab('login')}
                   className="text-[#C0C0C0] hover:text-white transition-colors"
                 >
-                  Masuk disini
+                  {t('auth.loginNow')}
                 </button>
               </p>
             </form>

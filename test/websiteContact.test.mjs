@@ -54,7 +54,7 @@ describe('websiteContact', () => {
     assert.equal(rows[2].href, 'https://x.com')
   })
 
-  it('getContactMenuItems: tiga kunci (whatsapp, telegram, testimoni)', () => {
+  it('getContactMenuItems: tiga kunci (whatsapp, telegram, testimoni) + labelKey i18n', () => {
     const m = getContactMenuItems({
       whatsapp: 'https://wa.me/1',
       telegram: '',
@@ -62,12 +62,12 @@ describe('websiteContact', () => {
     })
     assert.equal(m.length, 3)
     assert.equal(m[0].key, 'whatsapp')
-    assert.equal(m[0].label, 'WhatsApp')
+    assert.equal(m[0].labelKey, 'contact.whatsapp')
     assert.equal(m[0].href, 'https://wa.me/1')
     assert.equal(m[1].key, 'telegram')
     assert.equal(m[1].href, null)
     assert.equal(m[2].key, 'testimoni')
-    assert.equal(m[2].label, 'Testimoni')
+    assert.equal(m[2].labelKey, 'contact.testimoni')
     assert.equal(m[2].href, 'https://fbe.com')
   })
 })

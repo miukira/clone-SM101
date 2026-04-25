@@ -41,15 +41,15 @@ const ORDER = [
 
 /**
  * Tiga baris sesuai respon: whatsapp, telegram, testimoni.
- * @returns {{ id: string, key: 'whatsapp'|'telegram'|'testimoni', label: string, href: string|null, icon: 'wa'|'tg'|'testimoni' }[] }
+ * @returns {{ id, key, labelKey, href, icon }[]} `labelKey` — kunci i18n (t(labelKey))
  */
 export function getContactMenuItems(raw) {
   const c = raw && typeof raw === 'object' ? raw : {}
   const getHref = (key) => (c[key] == null ? null : extractContactUrl(c[key]))
   return [
-    { id: 'wa', key: 'whatsapp', label: 'WhatsApp', href: getHref('whatsapp'), icon: 'wa' },
-    { id: 'tg', key: 'telegram', label: 'Telegram', href: getHref('telegram'), icon: 'tg' },
-    { id: 'tm', key: 'testimoni', label: 'Testimoni', href: getHref('testimoni'), icon: 'testimoni' },
+    { id: 'wa', key: 'whatsapp', labelKey: 'contact.whatsapp', href: getHref('whatsapp'), icon: 'wa' },
+    { id: 'tg', key: 'telegram', labelKey: 'contact.telegram', href: getHref('telegram'), icon: 'tg' },
+    { id: 'tm', key: 'testimoni', labelKey: 'contact.testimoni', href: getHref('testimoni'), icon: 'testimoni' },
   ]
 }
 

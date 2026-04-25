@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import FooterChrome from '../components/FooterChrome'
 import { useAuth } from '../context/AuthContext'
 import { useWebsite } from '../context/WebsiteContext'
+import { getNumberLocale } from '../i18n.js'
 import {
   getBalance,
   getBankList,
@@ -172,6 +174,8 @@ function DepositContent({
   userBank,
   onRefreshBalance,
 }) {
+  const { t } = useTranslation()
+  const numberLocale = getNumberLocale()
   const [activeTab, setActiveTab] = useState('qris')
   const [selectedBank, setSelectedBank] = useState(null)
   const [amount, setAmount] = useState('')
@@ -181,12 +185,15 @@ function DepositContent({
   const [pending, setPending] = useState(() => readStoredPendingDeposit())
   const [statusHint, setStatusHint] = useState('')
 
-  const tabs = [
-    { id: 'qris', label: 'Qris Autopay' },
-    { id: 'bank', label: 'Bank Transfer' },
-    { id: 'ewallet', label: 'Ewallet Transfer' },
-    { id: 'pulsa', label: 'Pulsa' },
-  ]
+  const tabs = useMemo(
+    () => [
+      { id: 'qris', label: t('member.deposit.qris') },
+      { id: 'bank', label: t('member.deposit.bank') },
+      { id: 'ewallet', label: t('member.deposit.ewallet') },
+      { id: 'pulsa', label: t('member.deposit.pulsa') },
+    ],
+    [t],
+  )
 
   const minDeposit = (b) => Math.max(0, Number(b?.min_deposit) || 0)
 
@@ -247,16 +254,16 @@ function DepositContent({
           localStorage.removeItem(LS_PENDING_DEPOSIT)
           setPending(null)
           setStatusHint('')
-          setError('Deposit gagal atau dibatalkan.')
+          setError(t('member.deposit.depositFailed'))
         } else {
-          setStatusHint('Menunggu konfirmasi pembayaran…')
+          setStatusHint(t('member.deposit.waitingPay'))
         }
       } catch {
         if (!cancelled) {
           localStorage.removeItem(LS_PENDING_DEPOSIT)
           setPending(null)
           setStatusHint('')
-          setError('Tidak dapat memeriksa status deposit. Silakan coba lagi.')
+          setError(t('member.deposit.errCheck'))
         }
       }
     }
@@ -270,12 +277,12 @@ function DepositContent({
 
   const handleSubmit = async () => {
     if (!amount) {
-      setError('Masukkan jumlah')
+      setError(t('member.deposit.errAmount'))
       return
     }
     const n = parseInt(String(amount).trim(), 10)
     if (!Number.isFinite(n) || n <= 0) {
-      setError('Masukkan jumlah valid')
+      setError(t('member.deposit.errAmountValid'))
       return
     }
     if (tabFilteredBanks.length === 0) {
@@ -518,6 +525,8 @@ function DepositContent({
 }
 
 function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
+  const { t } = useTranslation()
+  const numberLocale = getNumberLocale()
   const [amount, setAmount] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -577,16 +586,16 @@ function WithdrawContent({ userBank, balance, onRefreshBalance, minWithdraw }) {
 
   const handleSubmit = async () => {
     if (!amount) {
-      setError('Masukkan jumlah penarikan')
+      setError(t('member.withdraw.errAmount'))
       return
     }
     const n = parseInt(String(amount).trim(), 10)
     if (!Number.isFinite(n) || n <= 0) {
-      setError('Masukkan jumlah valid')
+      setError(t('member.withdraw.errValid'))
       return
     }
     if (n < minW) {
-      setError(`Minimum penarikan IDR ${minW.toLocaleString('id-ID')}`)
+      setError(t('member.withdraw.minW', { amount: minW.toLocaleString(numberLocale) }))
       return
     }
     if (n > balanceNum) {
@@ -1019,6 +1028,8 @@ const FALLBACK_BANKS = [
 ]
 
 export default function MemberDashboardChrome() {
+  const { t } = useTranslation()
+  const numberLocale = getNumberLocale()
   const navigate = useNavigate()
   const { section } = useParams()
   const { user, logout, isAuthenticated, updateBalance } = useAuth()
@@ -1136,16 +1147,19 @@ export default function MemberDashboardChrome() {
     }
   }, [refreshBalance])
 
-  const menuItems = [
-    { id: 'deposit', label: 'DEPOSIT', icon: DepositIcon },
-    { id: 'withdraw', label: 'PENARIKAN', icon: WithdrawIcon },
-    { id: 'history', label: 'RIWAYAT', icon: HistoryIcon },
-    { id: 'referral', label: 'REFERRAL', icon: ReferralIcon },
-    { id: 'profile', label: 'PROFILE', icon: ProfileIcon },
-    { id: 'password', label: 'UBAH PASSWORD', icon: PasswordIcon },
-    { id: 'inbox', label: 'KOTAK MASUK', icon: InboxIcon },
-    { id: 'bank', label: 'REKENING BANK', icon: BankIcon },
-  ]
+  const menuItems = useMemo(
+    () => [
+      { id: 'deposit', label: t('member.menu.deposit'), icon: DepositIcon },
+      { id: 'withdraw', label: t('member.menu.withdraw'), icon: WithdrawIcon },
+      { id: 'history', label: t('member.menu.history'), icon: HistoryIcon },
+      { id: 'referral', label: t('member.menu.referral'), icon: ReferralIcon },
+      { id: 'profile', label: t('member.menu.profile'), icon: ProfileIcon },
+      { id: 'password', label: t('member.menu.password'), icon: PasswordIcon },
+      { id: 'inbox', label: t('member.menu.inbox'), icon: InboxIcon },
+      { id: 'bank', label: t('member.menu.bank'), icon: BankIcon },
+    ],
+    [t],
+  )
 
   const goToMemberSection = useCallback((id) => {
     navigate(`/member/${id}`)
@@ -1249,7 +1263,9 @@ export default function MemberDashboardChrome() {
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 text-[#808080] hover:bg-[#1a1a1a] hover:text-[#C0C0C0] whitespace-nowrap"
                 >
                   <Icon size={18} />
-                  <span className="text-xs font-bold tracking-wider">{item.name}</span>
+                  <span className="text-xs font-bold tracking-wider">
+                    {item.nameKey ? t(item.nameKey) : item.name}
+                  </span>
                 </button>
               )
             })}
@@ -1266,7 +1282,9 @@ export default function MemberDashboardChrome() {
                   className="flex items-center gap-1.5 px-3 md:px-4 py-2 md:py-2.5 rounded-lg transition-all duration-300 text-[#808080] hover:bg-[#1a1a1a] hover:text-[#C0C0C0] whitespace-nowrap touch-manipulation"
                 >
                   <Icon size={16} />
-                  <span className="text-[10px] md:text-xs font-bold tracking-wider">{item.name}</span>
+                  <span className="text-[10px] md:text-xs font-bold tracking-wider">
+                  {item.nameKey ? t(item.nameKey) : item.name}
+                </span>
                 </button>
               )
             })}
@@ -1318,15 +1336,15 @@ export default function MemberDashboardChrome() {
           <aside className="hidden lg:block w-52 flex-shrink-0 bg-[#0a0a0a] border-l border-[#1a1a1a] p-4">
             <div className="space-y-4">
               <div className="flex justify-between text-sm font-bold text-[#808080] themed-border-bottom pb-2">
-                <span>Wallet Type</span>
-                <span>Jumlah</span>
+                <span>{t('member.walletType')}</span>
+                <span>{t('common.amount')}</span>
               </div>
               <div className="flex justify-between items-center py-2 themed-border-bottom">
-                <span className="text-sm text-[#C0C0C0]">Dompet Utama</span>
-                <span className="text-sm text-[#808080]">IDR {balance?.toLocaleString() || '0'}</span>
+                <span className="text-sm text-[#C0C0C0]">{t('member.mainWallet')}</span>
+                <span className="text-sm text-[#808080]">IDR {balance != null ? Number(balance).toLocaleString(numberLocale) : '0'}</span>
               </div>
               <div className="flex justify-between items-center py-2 themed-border-bottom">
-                <span className="text-sm text-[#C0C0C0]">Rollover</span>
+                <span className="text-sm text-[#C0C0C0]">{t('member.rollover')}</span>
                 <span className="text-sm text-[#808080]">IDR 0</span>
               </div>
               <button
@@ -1343,7 +1361,7 @@ export default function MemberDashboardChrome() {
                 >
                   <RefreshIcon />
                 </span>
-                <span className="text-sm">Segarkan</span>
+                <span className="text-sm">{t('member.segarkan')}</span>
               </button>
             </div>
           </aside>
