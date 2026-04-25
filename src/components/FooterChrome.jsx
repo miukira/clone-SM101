@@ -12,6 +12,7 @@ import {
   fishingProviders,
 } from '../config/providers'
 import ChromeSiteBrand from './ChromeSiteBrand'
+import { dedupeFooterProvidersByBrandAndImage } from '../utils/footerProviderDedupe.js'
 
 /**
  * Game Providers di footer: data dari API (kategori slot/sports/casino/fishing), URL gambar
@@ -74,12 +75,22 @@ function useFooterGameProviders() {
       if (id == null) continue
       const key = String(id)
       const prev = m.get(key)
-      m.set(key, prev ? { ...prev, ...p } : p)
+      if (!prev) {
+        m.set(key, p)
+        continue
+      }
+      const merged = { ...prev, ...p }
+      // Simpan id slug string dari config (bukan 1015) supaya dedup antar kategori
+      // jili + jili-fishing → satu kunci di footerProviderDedupe.
+      if (typeof prev.id === 'string' && String(prev.id).trim() !== '' && (typeof p.id === 'number' || p.id == null)) {
+        merged.id = prev.id
+      }
+      m.set(key, merged)
     }
 
-    return Array.from(m.values()).sort((a, b) =>
-      (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }),
-    )
+    // Satu tile per brand: logoAlt + normalisasi label (bukan cuma display_name) + path gambar
+    // supaya JILI/Pragmatic tidak double antar kategori/override API.
+    return dedupeFooterProvidersByBrandAndImage(Array.from(m.values()))
   }, [slots, sports, casino, fishing])
 
   const loading = ls || lsp || lc || lf

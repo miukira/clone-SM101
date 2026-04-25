@@ -35,12 +35,9 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: true,
         },
-        // Path relatif /providers/... dari API → proxy ke target (opsional).
-        '/providers': {
-          target: proxyTarget,
-          changeOrigin: true,
-          secure: true,
-        },
+        // JANGAN proxy path `/providers/*` — itu dipakai route SPA (React) `/providers/:category`.
+        // Proksi ini membuat reload ke /providers/casino diarahkan ke host API → bukan index.html (tampil placeholder “It works!”, dsb).
+        // Jika butuh aset lewat host staging, set URL di API/CDN penuh atau atur path lain, bukan bercanda dengan rute app.
       },
     },
   }
