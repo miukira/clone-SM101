@@ -1,22 +1,44 @@
 /**
  * Public / CDN asset URLs — hasil akhir untuk <img src> biasanya absolute (https://...).
  *
- * Dev lokal tanpa CDN: jangan set VITE_PUBLIC_ASSET_BASE_URL — path "/foo/bar.png" dipakai sebagai
- * origin + path (mis. http://localhost:5173/foo/bar.png); file di aset/foo/bar.png (Vite publicDir).
+ * Vite publicDir: `public/` (flat + folder: banners, animated-brand, icons, popups; favicon dsb. di root).
+ * Dev: tanpa VITE_PUBLIC_ASSET_BASE_URL — path "/banners/foo.png" jadi http://localhost:5173/banners/foo.png
  *
- * Produksi/CDN: set VITE_PUBLIC_ASSET_BASE_URL (tanpa trailing slash), contoh https://cdn.example.com
+ * Produksi/CDN: set VITE_PUBLIC_ASSET_BASE_URL (tanpa trailing slash)
  *
- * Basis CDN dinamis (runtime): GET /website — optional `asset_base_url` | `cdn_base_url`
- * (setRuntimeAssetBaseUrl di WebsiteContext). Urutan: env build, lalu runtime, lalu origin.
+ * Basis CDN dinamis: GET /website — optional `asset_base_url` | `cdn_base_url` (setRuntimeAssetBaseUrl di WebsiteContext).
+ *
+ * `mapLegacyPublicPath` memetakan bentuk lama (/static/..., /internal/animated-brand/...) ke path sekarang.
  */
 
 const ASSET_EXT = /\.(webp|png|jpe?g|svg|gif|avif|ico)(\?.*)?$/i
+
+/** Path gambar kartu provider (sama dengan path respons API) — mirror: public/animated-brand/ */
+export const ANIMATED_BRAND_PATH_PREFIX = '/animated-brand/'
+
+/** Alias untuk baca kode: file disajikan di path yang sama */
+export const ANIMATED_BRAND_SERVED_PREFIX = '/animated-brand/'
 
 /** Basis CDN dari GET /website (tanpa trailing slash); kosong = belum di-set / pakai env/origin */
 let runtimePublicAssetBase = ''
 
 function trimSlash(s) {
   return s.replace(/\/$/, '')
+}
+
+/**
+ * Path lama (refactor /static, /internal) → path disajikan sekarang.
+ * Path kanon: /banners/..., /icons/..., /popups/..., /animated-brand/..., /favicon.svg, dll.
+ */
+export function mapLegacyPublicPath(path) {
+  if (path == null || path === '' || path === '/static' || path === '/internal') return path
+  if (path === '/static/' || path.startsWith('/static/')) {
+    return path.replace(/^\/static\//, '/')
+  }
+  if (path === '/internal/animated-brand' || path.startsWith('/internal/animated-brand/')) {
+    return path.replace(/^\/internal(?=\/animated-brand)/, '')
+  }
+  return path
 }
 
 /**
@@ -54,18 +76,15 @@ function resolveDynamicAssetBase() {
 
   if (runtimePublicAssetBase) return runtimePublicAssetBase
 
-  // Staging sering mengembalikan path relatif (/providers/...): pakai origin API bila tersedia.
   const apiAssetBase = toOriginBase(import.meta.env?.VITE_API_ASSET_BASE_URL)
   if (apiAssetBase) return apiAssetBase
   const apiBase = toOriginBase(import.meta.env?.VITE_API_BASE_URL)
   if (apiBase) return apiBase
-  // NOTE: Tidak pakai VITE_API_PROXY_TARGET untuk asset resolution
-  // karena proxy hanya untuk API calls, bukan untuk static assets
   return ''
 }
 
 /**
- * Hindari gambar/logo “nyangkut” di cache bila path URL sama tapi file di server diganti.
+ * Hindari gambar/logo "nyangkut" di cache bila path URL sama tapi file di server diganti.
  * Dipakai setelah GET /website sukses (satu revision per fetch).
  */
 export function withCacheBust(url, revision) {
@@ -82,7 +101,6 @@ function resolveProviderAssetBase() {
   const explicit = trimSlash(import.meta.env?.VITE_PROVIDER_IMAGE_BASE_URL || '')
   if (explicit) return explicit
 
-  // Ikuti host FE/CDN yang sama seperti aset publik aplikasi.
   const publicBase = trimSlash(import.meta.env?.VITE_PUBLIC_ASSET_BASE_URL || '')
   if (publicBase) return publicBase
 
@@ -94,12 +112,8 @@ function resolveProviderAssetBase() {
   return ''
 }
 
-/** Path prefix kartu provider di aset/ — jangan proxy ke API di Vite; file dari aset/animated-brand */
-export const ANIMATED_BRAND_PATH_PREFIX = '/animated-brand/'
-
 /**
- * Origin host API/staging yang sering mengembalikan URL absolut ke /animated-brand/…
- * padahal static tidak diserve (placeholder). Dipakai untuk rewrite ke origin FE.
+ * Origin host API sering URL absolut /animated-brand/... padahal aset disajikan dari FE.
  */
 function apiOriginsEligibleForAnimatedBrandRewrite() {
   const a = toOriginBase(import.meta.env?.VITE_API_BASE_URL)
@@ -111,7 +125,7 @@ function apiOriginsEligibleForAnimatedBrandRewrite() {
 }
 
 /**
- * https://api-host/animated-brand/slot/x.webp → same path di resolveProviderAssetBase() (dev: localhost + aset/).
+ * https://api/animated-brand/slot/x.webp → origin FE, path /animated-brand/... sama
  */
 function rewriteAnimatedBrandFromApiHosts(absoluteUrlString) {
   try {
@@ -119,7 +133,7 @@ function rewriteAnimatedBrandFromApiHosts(absoluteUrlString) {
     if (!u.pathname.startsWith(ANIMATED_BRAND_PATH_PREFIX)) return null
     const origins = apiOriginsEligibleForAnimatedBrandRewrite()
     if (!origins.includes(u.origin)) return null
-    const pathAndQuery = `${u.pathname}${u.search}`
+    const pathAndQuery = `${u.pathname}${u.search}${u.hash}`
     const base = resolveProviderAssetBase()
     if (base) return `${base}${pathAndQuery}`
     return pathAndQuery
@@ -129,12 +143,7 @@ function rewriteAnimatedBrandFromApiHosts(absoluteUrlString) {
 }
 
 /**
- * URL untuk gambar kartu provider:
- * - URL absolut (mis. CDN): dipakai apa adanya.
- * - Path relatif (/path/to/image.png): ke host FE/CDN, atau override via VITE_PROVIDER_IMAGE_BASE_URL.
- * - URL absolut ke origin VITE_API_BASE_URL atau VITE_API_ASSET_BASE_URL + path /animated-brand/...:
- *   di-rewrite ke origin FE (atau VITE_PROVIDER_IMAGE_BASE_URL), karena host API sering tidak
- *   menyajikan static (respons teks placeholder / text/plain) sementara file ada di aset/ build.
+ * URL gambar kartu provider — path relatif /animated-brand/... mengikuti host FE/CDN
  */
 export function providerAssetUrl(path) {
   if (path == null) return null
@@ -149,7 +158,8 @@ export function providerAssetUrl(path) {
     return trimmed
   }
 
-  const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  let normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  normalized = mapLegacyPublicPath(normalized)
   const base = resolveProviderAssetBase()
   if (base) return `${base}${normalized}`
   return normalized
@@ -162,7 +172,7 @@ export function publicAssetUrl(path) {
   if (trimmed === '') return null
   if (/^(https?:|data:|blob:)/i.test(trimmed)) return trimmed
 
-  const normalized = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+  const normalized = mapLegacyPublicPath(trimmed.startsWith('/') ? trimmed : `/${trimmed}`)
 
   const base = resolveDynamicAssetBase()
   if (base) return `${base}${normalized}`
