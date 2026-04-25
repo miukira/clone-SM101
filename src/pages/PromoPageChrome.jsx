@@ -1,5 +1,6 @@
 // PromoPageChrome.jsx - Promo page with Chrome theme
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import FooterChrome from '../components/FooterChrome'
 import { getPromo } from '../services/api'
@@ -31,18 +32,22 @@ const imageMap = {
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
+  const { t } = useTranslation()
   const { contact } = useWebsite()
   const [contactSheetOpen, setContactSheetOpen] = useState(false)
 
   const runContact = () => setContactSheetOpen(true)
 
-  const navItems = [
-    { id: 'home', icon: HomeIconChrome, label: 'HOME', path: '/' },
-    { id: 'promo', icon: PromoIconChrome, label: 'PROMO', path: '/promo' },
-    { id: 'livechat', icon: HelpIconChrome, label: 'LIVE CHAT', path: '#' },
-    { id: 'referral', icon: ReferralIconChrome, label: 'REFERRAL', path: '/referral' },
-    { id: 'contact', icon: AccountIconChrome, label: 'CONTACT', path: '#' },
-  ]
+  const navItems = useMemo(
+    () => [
+      { id: 'home', icon: HomeIconChrome, label: t('nav.home'), path: '/' },
+      { id: 'promo', icon: PromoIconChrome, label: t('nav.promo'), path: '/promo' },
+      { id: 'livechat', icon: HelpIconChrome, label: t('nav.liveChat'), path: '#' },
+      { id: 'referral', icon: ReferralIconChrome, label: t('nav.referral'), path: '/referral' },
+      { id: 'contact', icon: AccountIconChrome, label: t('nav.contact'), path: '#' },
+    ],
+    [t],
+  )
 
   return (
     <>
@@ -93,6 +98,18 @@ function MobileBottomNav({ navigate }) {
   )
 }
 
+function PromoClaimCta() {
+  const { t } = useTranslation()
+  return (
+    <button
+      type="button"
+      className="px-4 py-1.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-md"
+    >
+      {t('common.claim')}
+    </button>
+  )
+}
+
 // Promo Card Component
 function PromoCard({ promo }) {
   const tagColors = {
@@ -138,9 +155,7 @@ function PromoCard({ promo }) {
           <span className="text-[10px] text-[#404040]">
             {promo.dateStart} - {promo.dateEnd}
           </span>
-          <button className="px-4 py-1.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-md">
-            CLAIM
-          </button>
+          <PromoClaimCta />
         </div>
       </div>
     </div>
@@ -149,6 +164,7 @@ function PromoCard({ promo }) {
 
 // Main PromoPageChrome Component
 export default function PromoPageChrome() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
@@ -208,7 +224,7 @@ export default function PromoPageChrome() {
         setPromotions(mappedData)
       } catch (err) {
         console.error('Error fetching promotions:', err)
-        setError(err.data?.message || 'Failed to load promotions')
+        setError(err.data?.message || t('promo.loadError'))
         // Fallback ke empty array
         setPromotions([])
       } finally {
@@ -249,10 +265,10 @@ export default function PromoPageChrome() {
             <PromoIconChrome size={32} active={true} />
             <div>
               <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                PROMOSI
+                {t('promo.title')}
               </h1>
               <p className="text-xs text-[#505050] tracking-wide mt-1">
-                Dapatkan bonus dan promo menarik setiap hari
+                {t('promo.subtitle')}
               </p>
             </div>
           </div>
@@ -260,14 +276,17 @@ export default function PromoPageChrome() {
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-12">
-              <div className="text-white text-lg">Loading promotions...</div>
+              <div className="text-white text-lg">{t('promo.loading')}</div>
             </div>
           )}
 
           {/* Error State */}
           {error && !loading && (
             <div className="flex items-center justify-center py-12">
-              <div className="text-red-400 text-lg">Error: {error}</div>
+              <div className="text-red-400 text-lg">
+                {t('promo.errorPrefix')}
+                {error}
+              </div>
             </div>
           )}
 
@@ -280,7 +299,7 @@ export default function PromoPageChrome() {
                 ))
               ) : (
                 <div className="col-span-full text-center py-12">
-                  <p className="text-white/60">No promotions available</p>
+                  <p className="text-white/60">{t('promo.empty')}</p>
                 </div>
               )}
             </div>
@@ -295,21 +314,24 @@ export default function PromoPageChrome() {
           <div className="flex items-center gap-3 py-4">
             <PromoIconChrome size={24} active={true} />
             <h1 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-              PROMOSI
+              {t('promo.title')}
             </h1>
           </div>
           
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-12">
-              <div className="text-white text-sm">Loading promotions...</div>
+              <div className="text-white text-sm">{t('promo.loading')}</div>
             </div>
           )}
 
           {/* Error State */}
           {error && !loading && (
             <div className="flex items-center justify-center py-12">
-              <div className="text-red-400 text-sm">Error: {error}</div>
+              <div className="text-red-400 text-sm">
+                {t('promo.errorPrefix')}
+                {error}
+              </div>
             </div>
           )}
 
@@ -322,7 +344,7 @@ export default function PromoPageChrome() {
                 ))
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-white/60">No promotions available</p>
+                  <p className="text-white/60">{t('promo.empty')}</p>
                 </div>
               )}
             </div>

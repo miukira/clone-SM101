@@ -1,5 +1,6 @@
 // Modal untuk menampilkan daftar game dari provider
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { playGame, getToken } from '../services/api'
 import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
@@ -20,7 +21,7 @@ function LoadingSpinner() {
 
 // Game Card Component
 // Game schema dari Swagger: { id, name, image }
-function GameCard({ game, onPlay, isLoading }) {
+function GameCard({ game, onPlay, isLoading, tPlay, tLoad }) {
   const [imageLoaded, setImageLoaded] = useState(false)
   /** 0: game / default file; 1: paksa default; 2: placeholder 🎰 (ukuran medium) */
   const [heroTier, setHeroTier] = useState(0)
@@ -77,7 +78,7 @@ function GameCard({ game, onPlay, isLoading }) {
             disabled={isLoading}
             className="px-6 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-sm font-bold tracking-wider shadow-lg transform scale-90 group-hover:scale-100 transition-transform disabled:opacity-50"
           >
-            {isLoading ? 'Loading...' : 'PLAY NOW'}
+            {isLoading ? tLoad : tPlay}
           </button>
         </div>
       </div>
@@ -94,6 +95,7 @@ function GameCard({ game, onPlay, isLoading }) {
 
 // Main Modal Component
 export default function GameListModal({ isOpen, onClose, provider, onRequireAuth }) {
+  const { t } = useTranslation()
   const [playingGameId, setPlayingGameId] = useState(null)
   const { games, loading, error, refetch } = useGameList(provider?.provider_id)
 
@@ -108,7 +110,7 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
   const handlePlay = async (game) => {
     if (!getToken()) {
       onRequireAuth?.()
-      alert('Silakan login terlebih dahulu untuk bermain.')
+      alert(t('gameList.loginToPlay'))
       return
     }
     try {
@@ -127,9 +129,9 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
       const msg = err?.data?.message
       if (status === 401 || msg === 'please login' || msg === 'invalid token') {
         onRequireAuth?.()
-        alert('Sesi tidak valid atau Anda belum login. Silakan login kembali.')
+        alert(t('gameList.sessionInvalid'))
       } else {
-        alert(msg || 'Gagal memulai game. Silakan coba lagi.')
+        alert(msg || t('gameList.playFailed'))
       }
     } finally {
       setPlayingGameId(null)
@@ -180,10 +182,10 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
             )}
             <div>
               <h2 className="text-sm sm:text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                {provider?.name || 'Game List'}
+                {provider?.name || t('common.gameList')}
               </h2>
               <p className="text-[10px] sm:text-xs text-[#606060]">
-                {loading ? 'Loading...' : `${games.length} games tersedia`}
+                {loading ? t('common.loading') : t('gameList.gamesCount', { count: games.length })}
               </p>
             </div>
           </div>
@@ -206,12 +208,12 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <span className="text-4xl mb-4">😕</span>
-              <p className="text-[#808080] mb-4">Gagal memuat game list</p>
+              <p className="text-[#808080] mb-4">{t('gameList.loadFailed')}</p>
               <button
                 onClick={refetch}
                 className="px-4 py-2 bg-[#2a2a2a] border border-[#404040] rounded-lg text-xs font-bold text-[#C0C0C0] hover:bg-[#333] transition-all"
               >
-                Coba Lagi
+                {t('gameList.tryAgain')}
               </button>
             </div>
           ) : games.length === 0 ? (
@@ -219,7 +221,7 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
               <span className="text-3xl opacity-35 mb-4 select-none" aria-hidden>
                 🎰
               </span>
-              <p className="text-[#808080]">Belum ada game tersedia</p>
+              <p className="text-[#808080]">{t('gameList.noGames')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
@@ -229,6 +231,8 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
                   game={game}
                   onPlay={handlePlay}
                   isLoading={playingGameId === game.id}
+                  tPlay={t('common.playNow')}
+                  tLoad={t('common.loading')}
                 />
               ))}
             </div>
@@ -238,13 +242,13 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
         {/* Footer */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-t border-[#333] bg-[#111]">
           <p className="text-[10px] text-[#505050]">
-            Provider ID: {provider?.provider_id}
+            {t('gameList.providerId')}: {provider?.provider_id}
           </p>
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] border border-[#404040] rounded-lg text-xs font-bold text-[#808080] hover:text-[#C0C0C0] hover:border-[#505050] transition-all tracking-wider"
           >
-            TUTUP
+            {t('common.close')}
           </button>
         </div>
       </div>

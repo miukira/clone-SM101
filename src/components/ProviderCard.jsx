@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
@@ -21,6 +22,7 @@ export default function ProviderCard({
   onPlayClick = null,
   provider_id = null,
 }) {
+  const { t } = useTranslation()
   const [isHovered, setIsHovered] = useState(false)
   /** 0: API URL atau default file; 1: paksa default file (API gagal load); 2: placeholder 🎰 */
   const [heroTier, setHeroTier] = useState(0)
@@ -150,7 +152,7 @@ export default function ProviderCard({
                 className="provider-btn-chrome relative w-[min(100%,140px)] overflow-hidden rounded-[4px] border-t border-white/40 bg-gradient-to-b from-[#e0e0e0] via-[#c0c0c0] to-[#909090] px-3 py-2 text-center text-[11px] font-black tracking-[0.18em] text-black shadow-[0_2px_8px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.5)] transition-all duration-300 active:scale-95 touch-manipulation sm:py-[9px] sm:text-[12px] md:text-[13px] lg:py-[10px] lg:text-[14px] group-hover:scale-[1.03] group-hover:from-white group-hover:via-[#d0d0d0] group-hover:to-[#a0a0a0] group-hover:shadow-[0_4px_20px_rgba(192,192,192,0.25),inset_0_1px_0_rgba(255,255,255,0.6)]"
               >
                 <span className="pointer-events-none absolute -left-full top-0 h-full w-[60%] skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/40 to-transparent provider-btn-shine" />
-                PLAY NOW
+                {t('common.playNow')}
               </button>
             </div>
 

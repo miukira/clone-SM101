@@ -1,5 +1,6 @@
 // ReferralPageChrome.jsx - Referral page with Chrome theme
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import FooterChrome from '../components/FooterChrome'
 import { HomeIconChrome, PromoIconChrome, ReferralIconChrome, HelpIconChrome, AccountIconChrome } from '../components/IconsChrome'
@@ -17,18 +18,22 @@ const fallbackBanner = publicAssetUrl('/banners/banner-1.webp')
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
+  const { t } = useTranslation()
   const { contact } = useWebsite()
   const [contactSheetOpen, setContactSheetOpen] = useState(false)
 
   const runContact = () => setContactSheetOpen(true)
 
-  const navItems = [
-    { id: 'home', icon: HomeIconChrome, label: 'HOME', path: '/' },
-    { id: 'promo', icon: PromoIconChrome, label: 'PROMO', path: '/promo' },
-    { id: 'livechat', icon: HelpIconChrome, label: 'LIVE CHAT', path: '#' },
-    { id: 'referral', icon: ReferralIconChrome, label: 'REFERRAL', path: '/referral' },
-    { id: 'contact', icon: AccountIconChrome, label: 'CONTACT', path: '#' },
-  ]
+  const navItems = useMemo(
+    () => [
+      { id: 'home', icon: HomeIconChrome, label: t('nav.home'), path: '/' },
+      { id: 'promo', icon: PromoIconChrome, label: t('nav.promo'), path: '/promo' },
+      { id: 'livechat', icon: HelpIconChrome, label: t('nav.liveChat'), path: '#' },
+      { id: 'referral', icon: ReferralIconChrome, label: t('nav.referral'), path: '/referral' },
+      { id: 'contact', icon: AccountIconChrome, label: t('nav.contact'), path: '#' },
+    ],
+    [t],
+  )
 
   return (
     <>
@@ -81,6 +86,7 @@ function MobileBottomNav({ navigate }) {
 
 // Main ReferralPageChrome Component
 export default function ReferralPageChrome() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const { isAuthenticated, user, loginSuccess, logout, refreshBalance } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
@@ -109,7 +115,7 @@ export default function ReferralPageChrome() {
       .catch((err) => {
         if (cancelled) return
         console.error('Error fetching referral:', err)
-        setReferralError(err.data?.message || 'Gagal memuat informasi referral')
+        setReferralError(err.data?.message || t('referral.loadError'))
         setReferralImage(fallbackBanner)
         setReferralDescription('')
       })
@@ -153,7 +159,7 @@ export default function ReferralPageChrome() {
             </div>
             <div>
               <h1 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                REFERRAL
+                {t('referral.title')}
               </h1>
               {referralLoading && (
                 <p className="text-sm text-[#606060] mt-1 h-4 w-64 max-w-full bg-[#2a2a2a] rounded animate-pulse" />
@@ -177,7 +183,7 @@ export default function ReferralPageChrome() {
             ) : (
               <img
                 src={referralImage}
-                alt="Referral"
+                alt={t('referral.imageAlt')}
                 className="w-full h-auto"
                 onError={(e) => {
                   const t = e.target
@@ -206,7 +212,7 @@ export default function ReferralPageChrome() {
             </div>
             <div>
               <h1 className="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-[#E8E8E8] via-[#C0C0C0] to-[#808080] tracking-wider">
-                REFERRAL
+                {t('referral.title')}
               </h1>
               {referralLoading && (
                 <p className="text-xs text-[#606060] mt-0.5 h-3 w-40 bg-[#2a2a2a] rounded animate-pulse" />
@@ -226,7 +232,7 @@ export default function ReferralPageChrome() {
             ) : (
               <img
                 src={referralImage}
-                alt="Referral"
+                alt={t('referral.imageAlt')}
                 className="w-full h-auto"
                 onError={(e) => {
                   const t = e.target

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FaLightbulb } from 'react-icons/fa'
 import { useWebsite } from '../context/WebsiteContext'
 
@@ -15,23 +16,10 @@ function normalizeNotifications(raw) {
     .filter(Boolean)
 }
 
-const FALLBACK_CLASSIC_LINE =
-  'PUSATTOGEL – Agen Togel Online Terbaik Dan Terpercaya Masa Kini – Selamat Bergabung Dan Semoga Beruntung • RAIH KEMENANGAN ANDA BERSAMA PUSATTOGEL • PUSATTOGEL – Agen Togel Online Terbaik Dan Terpercaya Masa Kini – '
-
-const FALLBACK_CHROME_DESKTOP = [
-  '📢 PUSATTOGEL - Situs Togel Online Terpercaya & Terlengkap Se-Indonesia',
-  '🔥 Bayar LUNAS YOOO!!! Withdraw tanpa batas, proses tercepat',
-  '🎰 Tersedia ribuan permainan dari provider ternama dunia',
-  '💰 Bonus New Member 100% | Cashback Togel hingga 5%',
-  '⚡ Deposit & Withdraw 24 Jam Non-Stop',
-]
-
-const FALLBACK_CHROME_MOBILE = [
-  '📢 PUSATTOGEL - Situs Togel Online Terpercaya',
-  '🔥 Bayar LUNAS!!! Withdraw tanpa batas',
-  '💰 Bonus New Member 100%',
-  '⚡ Deposit & WD 24 Jam',
-]
+function applyBrand(lines, brand) {
+  if (!Array.isArray(lines)) return []
+  return lines.map((s) => String(s).replace(/\{\{brand\}\}/g, brand))
+}
 
 /**
  * Marquee teks dari GET /info → notification (array string OpenAPI).
@@ -39,6 +27,7 @@ const FALLBACK_CHROME_MOBILE = [
  * chrome-*: gaya HomePageChrome.
  */
 export default function NotificationMarquee({ variant = 'chrome-desktop' }) {
+  const { t, i18n } = useTranslation()
   const { notifications, title } = useWebsite()
   const brand = title || 'PUSATTOGEL'
 
@@ -47,15 +36,17 @@ export default function NotificationMarquee({ variant = 'chrome-desktop' }) {
     if (fromApi.length > 0) return fromApi
     if (variant === 'classic') return null
     if (variant === 'chrome-mobile') {
-      return FALLBACK_CHROME_MOBILE.map((s) => s.replace(/PUSATTOGEL/g, brand))
+      const raw = t('marquee.chromeMobile', { returnObjects: true })
+      return applyBrand(raw, brand)
     }
-    return FALLBACK_CHROME_DESKTOP.map((s) => s.replace(/PUSATTOGEL/g, brand))
-  }, [notifications, variant, brand])
+    const raw = t('marquee.chromeDesktop', { returnObjects: true })
+    return applyBrand(raw, brand)
+  }, [notifications, variant, brand, t, i18n.language])
 
   if (variant === 'classic') {
     const line = segments?.length
       ? segments.join(' • ')
-      : FALLBACK_CLASSIC_LINE.replace(/PUSATTOGEL/g, brand)
+      : t('marquee.classic', { brand })
     return (
       <div className="relative rounded-xl overflow-hidden">
         <div
@@ -96,6 +87,8 @@ export default function NotificationMarquee({ variant = 'chrome-desktop' }) {
   const textClass = isMobile
     ? 'text-[10px] text-[#808080] font-medium'
     : 'text-xs text-[#808080] font-medium tracking-wide'
+
+  if (!segments?.length) return null
 
   const loop = [...segments, ...segments]
 

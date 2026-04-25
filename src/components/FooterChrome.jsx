@@ -1,6 +1,7 @@
 // FooterChrome.jsx - Reusable footer component for Chrome theme
 
 import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { useWebsite } from '../context/WebsiteContext'
@@ -319,6 +320,7 @@ const bankItems = [
 ]
 
 export default function FooterChrome() {
+  const { t } = useTranslation()
   const { title } = useWebsite()
   const { providers: footerProviders, loading: footerProvidersLoading } = useFooterGameProviders()
 
@@ -333,7 +335,7 @@ export default function FooterChrome() {
               <circle cx="12" cy="12" r="3"/>
             </svg>
           </div>
-          <h3 className="text-sm font-bold text-[#C0C0C0] tracking-wider">Game Providers</h3>
+          <h3 className="text-sm font-bold text-[#C0C0C0] tracking-wider">{t('footer.gameProviders')}</h3>
         </div>
         
         <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-13 gap-2 sm:gap-3">
@@ -346,7 +348,7 @@ export default function FooterChrome() {
             ))
           ) : footerProviders.length === 0 ? (
             <p className="col-span-full text-center text-xs text-[#505050] py-4">
-              Belum ada data provider.
+              {t('footer.noProviders')}
             </p>
           ) : (
             footerProviders.map((p) => (
@@ -367,7 +369,7 @@ export default function FooterChrome() {
               <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
             </svg>
           </div>
-          <h3 className="text-sm font-bold text-[#C0C0C0] tracking-wider">Preferred Banks</h3>
+          <h3 className="text-sm font-bold text-[#C0C0C0] tracking-wider">{t('footer.preferredBanks')}</h3>
         </div>
         
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3">
@@ -392,7 +394,7 @@ export default function FooterChrome() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="#00bfff">
               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
             </svg>
-            <span className="text-xs text-[#606060]">Powered by</span>
+            <span className="text-xs text-[#606060]">{t('common.poweredBy')}</span>
           </div>
           
           <div className="flex items-center gap-3 min-w-0">
@@ -404,7 +406,7 @@ export default function FooterChrome() {
       {/* Copyright */}
       <div className="border-t border-[#1a1a1a] py-4 text-center">
         <p className="text-[10px] text-[#404040]">
-          © 2026 {title}. All Rights Reserved.
+          © 2026 {title}. {t('common.allRights')}
         </p>
       </div>
     </footer>

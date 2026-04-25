@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { FaWhatsapp, FaTelegramPlane } from 'react-icons/fa'
 import { MdChatBubbleOutline } from 'react-icons/md'
 import { getContactMenuItems, openExternalContactHref } from '../utils/websiteContact'
@@ -41,6 +42,7 @@ function iconPillClass(icon, has) {
  * URL hanya dari `contact`: whatsapp, telegram, testimoni. Baris tanpa URL nonaktif.
  */
 export default function ChromeContactSheet({ isOpen, onClose, contact = {} }) {
+  const { t } = useTranslation()
   if (!isOpen) return null
   const items = getContactMenuItems(contact)
 
@@ -51,15 +53,25 @@ export default function ChromeContactSheet({ isOpen, onClose, contact = {} }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[200] pointer-events-auto" role="dialog" aria-modal aria-label="Menu kontak">
-      <button type="button" className="absolute inset-0 bg-black/50" onClick={onClose} aria-label="Tutup" />
+    <div
+      className="fixed inset-0 z-[200] pointer-events-auto"
+      role="dialog"
+      aria-modal
+      aria-label={t('a11y.contactMenu')}
+    >
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50"
+        onClick={onClose}
+        aria-label={t('a11y.close')}
+      />
       <div className="absolute left-1/2 bottom-[4.5rem] z-10 w-[min(20rem,92vw)] -translate-x-1/2 max-md:max-w-[92vw] md:bottom-24">
         <div
           className="rounded-lg border border-[#3a3a3a] bg-[#2a2a2a] shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <p className="px-3 py-1.5 text-center text-[10px] font-bold tracking-wider text-[#808080] border-b border-[#333]">
-          CONTACT
+            {t('contact.title').toUpperCase()}
           </p>
           <ul className="max-h-[min(70vh,360px)] overflow-y-auto">
             {items.map((it) => {
@@ -85,7 +97,9 @@ export default function ChromeContactSheet({ isOpen, onClose, contact = {} }) {
                     >
                       <Icon name={it.icon} />
                     </span>
-                    <span className="min-w-0 text-[12px] font-medium leading-tight break-words">{it.label}</span>
+                    <span className="min-w-0 text-[12px] font-medium leading-tight break-words">
+                      {t(it.labelKey)}
+                    </span>
                   </button>
                 </li>
               )

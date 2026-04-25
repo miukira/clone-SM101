@@ -9,15 +9,15 @@ import {
 } from '../components/IconsChrome'
 
 /**
- * Item bar navigasi horizontal compact — sama dengan `headerMenuContent` di HomePageChrome
- * (kategori sebelum login), supaya setelah login / halaman Promosi/Referral tidak memuat daftar penuh.
+ * Bar navigasi horizontal compact — `nameKey` untuk i18n (namespace default).
+ * Sama maksud dengan `headerMenuItems` di HomePageChrome.
  */
 export const CHROME_COMPACT_HEADER_NAV = [
-  { id: 'home', name: 'HOME', icon: HomeIconChrome, path: '/' },
-  { id: 'slots', name: 'SLOTS', icon: SlotsIconChrome, path: '/providers/slots' },
-  { id: 'casino', name: 'CASINO', icon: CasinoIconChrome, path: '/providers/casino' },
-  { id: 'sports', name: 'SPORTS', icon: SportsIconChrome, path: '/providers/sports' },
-  { id: 'fishing', name: 'FISHING', icon: FishingIconChrome, path: '/providers/fishing' },
-  { id: 'promosi', name: 'PROMOSI', icon: PromoIconChrome, path: '/promo' },
-  { id: 'referral', name: 'REFERRAL', icon: ReferralIconChrome, path: '/referral' },
+  { id: 'home', nameKey: 'nav.home', icon: HomeIconChrome, path: '/' },
+  { id: 'slots', nameKey: 'nav.slots', icon: SlotsIconChrome, path: '/providers/slots' },
+  { id: 'casino', nameKey: 'nav.casino', icon: CasinoIconChrome, path: '/providers/casino' },
+  { id: 'sports', nameKey: 'nav.sports', icon: SportsIconChrome, path: '/providers/sports' },
+  { id: 'fishing', nameKey: 'nav.fishing', icon: FishingIconChrome, path: '/providers/fishing' },
+  { id: 'promosi', nameKey: 'nav.promosi', icon: PromoIconChrome, path: '/promo' },
+  { id: 'referral', nameKey: 'nav.referral', icon: ReferralIconChrome, path: '/referral' },
 ]

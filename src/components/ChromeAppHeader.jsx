@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import ChromeSiteBrand from './ChromeSiteBrand'
+import I18nLanguageSwitch from './I18nLanguageSwitch'
 import { getStoredPlayerBalance } from '../services/api'
+import { getNumberLocale } from '../i18n.js'
 
 /**
  * Desktop nav tabs for Promo / Referral (no provider mega-dropdown).
  */
 export function ChromeSimpleDesktopNav({ items, activeId, navigate }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-center gap-1 px-4 py-2 overflow-x-auto hide-scrollbar">
       {items.map((category) => {
@@ -30,7 +34,9 @@ export function ChromeSimpleDesktopNav({ items, activeId, navigate }) {
               <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shine" />
             )}
             <Icon size={18} active={active} />
-            <span className="tracking-wider relative z-10">{category.name}</span>
+            <span className="tracking-wider relative z-10">
+              {category.nameKey ? t(category.nameKey) : category.name}
+            </span>
           </button>
         )
       })}
@@ -55,6 +61,8 @@ export default function ChromeAppHeader({
   showQuickDeposit = false,
   onQuickDeposit = null,
 }) {
+  const { t } = useTranslation()
+  const numberLocale = getNumberLocale()
   const routerNavigate = useNavigate()
   const navigate = navigateProp || routerNavigate
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -90,7 +98,7 @@ export default function ChromeAppHeader({
   }
   const balanceStr =
     displayBalance != null && displayBalance !== undefined
-      ? Number(displayBalance).toLocaleString('id-ID')
+      ? Number(displayBalance).toLocaleString(numberLocale)
       : '0'
 
   return (
@@ -102,6 +110,7 @@ export default function ChromeAppHeader({
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <I18nLanguageSwitch />
             {isAuthenticated && user ? (
               <>
                 {showQuickDeposit && onQuickDeposit && (
@@ -110,7 +119,7 @@ export default function ChromeAppHeader({
                     onClick={onQuickDeposit}
                     className="hidden md:inline-flex items-center px-3 py-2 md:px-4 md:py-2 lg:px-5 lg:py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-[#1a1a1a] text-xs md:text-sm font-bold hover:from-[#F0F0F0] hover:to-[#B0B0B0] transition-all shadow-lg shrink-0"
                   >
-                    Deposit
+                    {t('header.deposit')}
                   </button>
                 )}
                 <div className="flex items-center gap-1 px-2 py-1 md:gap-1.5 md:px-3 md:py-1.5 bg-[#1a1a1a] border border-[#333] rounded-lg shrink-0 min-w-0">
@@ -122,7 +131,7 @@ export default function ChromeAppHeader({
                       onClick={handleBalanceRefreshClick}
                       disabled={refreshSpinning}
                       className="ml-0.5 p-1 text-[#606060] hover:text-[#C0C0C0] transition-colors rounded disabled:opacity-70 disabled:cursor-wait"
-                      title="Segarkan saldo"
+                      title={t('header.refreshBalance')}
                     >
                       <span
                         className={`inline-flex shrink-0 items-center justify-center origin-center ${
@@ -157,7 +166,7 @@ export default function ChromeAppHeader({
                       </span>
                     </div>
                     <span className="hidden md:inline text-[10px] md:text-xs font-bold tracking-wider">
-                      {user.username?.toUpperCase() || 'USER'}
+                        {user.username?.toUpperCase() || t('header.userFallback')}
                     </span>
                     <svg
                       className={`w-3 h-3 transition-transform ${showUserMenu ? 'rotate-180' : ''}`}
@@ -190,7 +199,7 @@ export default function ChromeAppHeader({
                               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                               <circle cx="12" cy="7" r="4" />
                             </svg>
-                            Profile
+                            {t('header.profile')}
                           </button>
                           <button
                             type="button"
@@ -203,7 +212,7 @@ export default function ChromeAppHeader({
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                             </svg>
-                            Deposit
+                            {t('header.deposit')}
                           </button>
                           <button
                             type="button"
@@ -217,7 +226,7 @@ export default function ChromeAppHeader({
                               <rect x="2" y="5" width="20" height="14" rx="2" />
                               <path d="M2 10h20" />
                             </svg>
-                            Withdraw
+                            {t('header.withdraw')}
                           </button>
                           <div className="border-t border-[#333] my-2" />
                           <button
@@ -231,7 +240,7 @@ export default function ChromeAppHeader({
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
                             </svg>
-                            Logout
+                            {t('header.logout')}
                           </button>
                         </div>
                       </div>
@@ -246,14 +255,14 @@ export default function ChromeAppHeader({
                   onClick={() => onOpenAuth('login')}
                   className="px-3 md:px-5 py-1.5 md:py-2.5 bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] border border-[#404040] rounded-lg text-[#C0C0C0] text-[10px] md:text-xs font-bold hover:from-[#3a3a3a] hover:to-[#2a2a2a] hover:border-[#505050] transition-all tracking-wider"
                 >
-                  MASUK
+                  {t('header.masuk')}
                 </button>
                 <button
                   type="button"
                   onClick={() => onOpenAuth('register')}
                   className="px-3 md:px-5 py-1.5 md:py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-black text-[10px] md:text-xs font-bold hover:from-white hover:to-[#B0B0B0] transition-all shadow-lg shadow-black/30 tracking-wider"
                 >
-                  DAFTAR
+                  {t('header.daftar')}
                 </button>
               </>
             )}
