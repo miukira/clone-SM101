@@ -7,9 +7,9 @@ import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
  */
 export function useNavDropdownProviders() {
   const slots = useProviderCategory('slots')
-  const sports = useProviderCategory('sports')
-  const casino = useProviderCategory('casino')
-  const fishing = useProviderCategory('fishing')
+  const sports = useProviderCategory('sports', { autoLoad: false })
+  const casino = useProviderCategory('casino', { autoLoad: false })
+  const fishing = useProviderCategory('fishing', { autoLoad: false })
 
   const providersByCategory = useMemo(
     () => ({

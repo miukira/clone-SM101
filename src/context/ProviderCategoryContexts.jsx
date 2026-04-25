@@ -1,7 +1,6 @@
-import { createContext, useContext, useMemo, useState, useEffect } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import {
   CATEGORY_IDS,
-  PROVIDER_NAV_PRIORITY_IDS,
   ensureProviderCategory,
   getCachedProviderCategorySnapshot,
 } from '../utils/providerCategoryApiCache.js'
@@ -15,36 +14,33 @@ function SingleCategoryProvider({ categoryId, children }) {
   const [providers, setProviders] = useState(() =>
     Array.isArray(initialSnap[categoryId]) ? initialSnap[categoryId] : [],
   )
-  const [loading, setLoading] = useState(() => !Array.isArray(initialSnap[categoryId]))
+  const [loading, setLoading] = useState(false)
+  const [loaded, setLoaded] = useState(() => Array.isArray(initialSnap[categoryId]))
   const [error, setError] = useState(null)
 
-  useEffect(() => {
-    let cancelled = false
+  const ensureLoaded = useCallback(async () => {
+    if (loaded || loading) return providers
     setError(null)
-
-    ;(async () => {
-      try {
-        if (!PROVIDER_NAV_PRIORITY_IDS.includes(categoryId)) {
-          await Promise.all(PROVIDER_NAV_PRIORITY_IDS.map((id) => ensureProviderCategory(id)))
-        }
-        const data = await ensureProviderCategory(categoryId)
-        if (!cancelled) setProviders(Array.isArray(data) ? data : [])
-      } catch (e) {
-        if (!cancelled) {
-          setError(e)
-          setProviders([])
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    })()
-
-    return () => {
-      cancelled = true
+    setLoading(true)
+    try {
+      const data = await ensureProviderCategory(categoryId)
+      const normalized = Array.isArray(data) ? data : []
+      setProviders(normalized)
+      setLoaded(true)
+      return normalized
+    } catch (e) {
+      setError(e)
+      setProviders([])
+      return []
+    } finally {
+      setLoading(false)
     }
-  }, [categoryId])
+  }, [categoryId, loaded, loading, providers])
 
-  const value = useMemo(() => ({ providers, loading, error }), [providers, loading, error])
+  const value = useMemo(
+    () => ({ providers, loading, loaded, error, ensureLoaded }),
+    [providers, loading, loaded, error, ensureLoaded],
+  )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
@@ -67,9 +63,10 @@ export function ProviderCategoriesProvider({ children }) {
 
 /**
  * @param {string} categoryId — salah satu dari CATEGORY_IDS (mis. 'slots', 'fishing')
+ * @param {{ autoLoad?: boolean }} [options] — default true; set false untuk baca cache/fallback tanpa trigger fetch
  * @returns {{ providers: Array, loading: boolean, error: Error|null }}
  */
-export function useProviderCategory(categoryId) {
+export function useProviderCategory(categoryId, options = undefined) {
   const Ctx = categoryContexts[categoryId]
   if (!Ctx) {
     throw new Error(`Unknown provider category: ${categoryId}`)
@@ -78,5 +75,12 @@ export function useProviderCategory(categoryId) {
   if (v === undefined) {
     throw new Error('useProviderCategory must be used within ProviderCategoriesProvider')
   }
-  return v
+  const autoLoad = options?.autoLoad !== false
+
+  useEffect(() => {
+    if (!autoLoad) return
+    v.ensureLoaded?.()
+  }, [autoLoad, v.ensureLoaded])
+
+  return { providers: v.providers, loading: v.loading, error: v.error }
 }

@@ -52,10 +52,10 @@ function FooterProviderThumb({ provider }) {
 }
 
 function useFooterGameProviders() {
-  const { providers: slots, loading: ls } = useProviderCategory('slots')
-  const { providers: sports, loading: lsp } = useProviderCategory('sports')
-  const { providers: casino, loading: lc } = useProviderCategory('casino')
-  const { providers: fishing, loading: lf } = useProviderCategory('fishing')
+  const { providers: slots, loading: ls } = useProviderCategory('slots', { autoLoad: false })
+  const { providers: sports, loading: lsp } = useProviderCategory('sports', { autoLoad: false })
+  const { providers: casino, loading: lc } = useProviderCategory('casino', { autoLoad: false })
+  const { providers: fishing, loading: lf } = useProviderCategory('fishing', { autoLoad: false })
 
   const merged = useMemo(() => {
     const m = new Map()

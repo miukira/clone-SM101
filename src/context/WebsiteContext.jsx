@@ -56,6 +56,12 @@ function runExternalScriptsFromConfig(scripts) {
   if (!scripts || !Array.isArray(scripts)) return
 
   if (VERBOSE) console.log('🔧 Executing external scripts from API...')
+  const scriptConsole = {
+    ...console,
+    // Jangan biarkan payload external_script mengotori console lewat console.log.
+    log: () => {},
+  }
+
   scripts.forEach((script, index) => {
     const jsContent = extractScriptContent(script)
     if (!jsContent) {
@@ -63,8 +69,8 @@ function runExternalScriptsFromConfig(scripts) {
       return
     }
     try {
-      const fn = new Function(jsContent)
-      fn()
+      const fn = new Function('console', jsContent)
+      fn(scriptConsole)
       if (VERBOSE) console.log(`✅ External script ${index + 1} executed`)
     } catch (err) {
       console.error(`❌ Error executing external script ${index + 1}:`, err)
