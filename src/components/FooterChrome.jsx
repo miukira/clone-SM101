@@ -5,6 +5,12 @@ import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { useWebsite } from '../context/WebsiteContext'
 import { useProviderCategory } from '../context/ProviderCategoryContexts.jsx'
+import {
+  slotProviders,
+  sportsProviders,
+  casinoProviders,
+  fishingProviders,
+} from '../config/providers'
 import ChromeSiteBrand from './ChromeSiteBrand'
 
 /**
@@ -53,12 +59,24 @@ function useFooterGameProviders() {
 
   const merged = useMemo(() => {
     const m = new Map()
-    for (const p of [...(slots || []), ...(sports || []), ...(casino || []), ...(fishing || [])]) {
+
+    // Seed from static config so footer stays complete even when API category is empty/partial.
+    for (const p of [...slotProviders, ...sportsProviders, ...casinoProviders, ...fishingProviders]) {
       const id = p?.provider_id ?? p?.id
       if (id == null) continue
       const key = String(id)
       if (!m.has(key)) m.set(key, p)
     }
+
+    // API takes precedence for latest names/images/badges.
+    for (const p of [...(slots || []), ...(sports || []), ...(casino || []), ...(fishing || [])]) {
+      const id = p?.provider_id ?? p?.id
+      if (id == null) continue
+      const key = String(id)
+      const prev = m.get(key)
+      m.set(key, prev ? { ...prev, ...p } : p)
+    }
+
     return Array.from(m.values()).sort((a, b) =>
       (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' }),
     )
