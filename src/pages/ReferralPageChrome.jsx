@@ -8,6 +8,8 @@ import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import AuthModal from '../components/AuthModal'
 import { useAuth } from '../context/AuthContext'
+import { useWebsite } from '../context/WebsiteContext'
+import ChromeContactSheet from '../components/ChromeContactSheet'
 import ChromeAppHeader, { ChromeSimpleDesktopNav } from '../components/ChromeAppHeader'
 import { CHROME_COMPACT_HEADER_NAV } from '../config/chromeCompactTopNav'
 
@@ -15,6 +17,11 @@ const fallbackBanner = publicAssetUrl('/banners/banner-1.webp')
 
 // Mobile Bottom Navigation
 function MobileBottomNav({ navigate }) {
+  const { contact } = useWebsite()
+  const [contactSheetOpen, setContactSheetOpen] = useState(false)
+
+  const runContact = () => setContactSheetOpen(true)
+
   const navItems = [
     { id: 'home', icon: HomeIconChrome, label: 'HOME', path: '/' },
     { id: 'promo', icon: PromoIconChrome, label: 'PROMO', path: '/promo' },
@@ -22,36 +29,53 @@ function MobileBottomNav({ navigate }) {
     { id: 'referral', icon: ReferralIconChrome, label: 'REFERRAL', path: '/referral' },
     { id: 'contact', icon: AccountIconChrome, label: 'CONTACT', path: '#' },
   ]
-  
+
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-[#0a0a0a] to-[#0d0d0d] border-t border-[#2a2a2a] py-2 px-2 z-50">
-      <div className="flex justify-around items-center max-w-md mx-auto">
-        {navItems.map(item => {
-          const Icon = item.icon
-          const isActive = item.id === 'referral'
-          return (
-            <button
-              key={item.id}
-              onClick={() => item.path !== '#' && navigate(item.path)}
-              className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 ${
-                isActive 
-                  ? 'bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] shadow-lg shadow-white/5' 
-                  : ''
-              }`}
-            >
-              {/* Glow effect for active */}
-              {isActive && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-transparent via-[#C0C0C0] to-transparent rounded-full blur-sm"></div>
-              )}
-              <Icon size={22} active={true} />
-              <span className={`text-[8px] font-bold tracking-wider ${isActive ? 'text-[#F0F0F0]' : 'text-[#C0C0C0]'}`}>
-                {item.label}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-    </nav>
+    <>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-[#0a0a0a] to-[#0d0d0d] border-t border-[#2a2a2a] py-2 px-2 z-50">
+        <div className="flex justify-around items-center max-w-md mx-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = item.id === 'referral'
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  if (item.id === 'contact') {
+                    runContact()
+                    return
+                  }
+                  if (item.path !== '#') navigate(item.path)
+                }}
+                className={`relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-300 ${
+                  isActive
+                    ? 'bg-gradient-to-b from-[#2a2a2a] to-[#1a1a1a] shadow-lg shadow-white/5'
+                    : ''
+                }`}
+              >
+                {isActive && (
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-transparent via-[#C0C0C0] to-transparent rounded-full blur-sm" />
+                )}
+                <Icon size={22} active={true} />
+                <span
+                  className={`text-[8px] font-bold tracking-wider ${
+                    isActive ? 'text-[#F0F0F0]' : 'text-[#C0C0C0]'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </nav>
+      <ChromeContactSheet
+        isOpen={contactSheetOpen}
+        onClose={() => setContactSheetOpen(false)}
+        contact={contact}
+      />
+    </>
   )
 }
 

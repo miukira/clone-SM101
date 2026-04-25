@@ -3,6 +3,7 @@ import { publicAssetUrl, withCacheBust, setRuntimeAssetBaseUrl } from '../utils/
 import { loadWebsitePublicBundle } from '../utils/websitePublicDataCache.js'
 import { syncWebsiteHeadMeta } from '../utils/websiteHeadMeta'
 import { DEFAULT_MIN_WITHDRAW } from '../constants/transactionLimits'
+import { normalizeContactLinks } from '../utils/websiteContact.js'
 
 const WebsiteContext = createContext()
 const VERBOSE = import.meta.env.VITE_API_VERBOSE === 'true'
@@ -175,6 +176,7 @@ export function WebsiteProvider({ children }) {
   const banners = config.banner || []
   const theme = config.theme || {}
   const contact = config.contact || {}
+  const contactLinks = useMemo(() => normalizeContactLinks(config.contact), [config.contact])
   const rawLogo = config.logo != null ? String(config.logo).trim() : ''
   const logo = withCacheBust(
     publicAssetUrl(rawLogo !== '' ? rawLogo : '/logo.png'),
@@ -211,6 +213,7 @@ export function WebsiteProvider({ children }) {
     banners,
     theme,
     contact,
+    contactLinks,
     logo,
     /** Naik setiap fetch website sukses — untuk cache-bust gambar promo */
     configAssetRev,

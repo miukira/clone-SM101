@@ -1,4 +1,5 @@
 import { getInfo, getWebsite, clearPublicGetResponseMemo } from '../services/api'
+import { WEBSITE_CONTACT_RESPONSE_DUMMY } from '../config/websiteContactDefaults.js'
 
 /**
  * Satu kali jaringan untuk GET /info + GET /website (baca publik).
@@ -34,12 +35,18 @@ export async function loadWebsitePublicBundle({ reset = false } = {}) {
   p = (async () => {
     try {
       const [infoData, configData] = await Promise.all([getInfo(), getWebsite()])
+      const raw = configData && typeof configData === 'object' ? configData : {}
+      const fromApi = raw.contact && typeof raw.contact === 'object' ? raw.contact : {}
+      const config = {
+        ...raw,
+        contact: { ...WEBSITE_CONTACT_RESPONSE_DUMMY, ...fromApi },
+      }
       const bundle = {
         notification: infoData?.notification || [],
         lottery_result: infoData?.lottery_result || [],
         withdraw_list: infoData?.withdraw_list || [],
         min_withdraw: infoData?.min_withdraw,
-        config: configData || {},
+        config,
       }
       if (gen === activeBundleGen) {
         cachedBundle = bundle
