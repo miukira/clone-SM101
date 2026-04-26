@@ -1,9 +1,9 @@
-// API Service — base path `/api/v1` selaras `openapi.yaml` `servers[0].url`.
+// API Service — base path `/api/v1` selaras `openapi2.yaml` `servers[0].url`.
 // Pemetaan utama (operationId / path): login→POST /login, register→POST /register,
 // getProfile→GET /profile, getInfo→GET /info, getWebsite→GET /website?domain=,
 // getSlotProviders→GET /slot, getFishProviders→GET /fish, getCasinoProviders→GET /casino,
 // getSportsbookProviders→GET /sportsbook, getGameList→GET /game-list, playGame→GET /play,
-// placeBet→POST /bet, getBetHistory→GET /bet-history, getMarketInfo→GET /market-info.
+// getLobby→GET /lobby(?provider_id=), placeBet→POST /bet, getBetHistory→GET /bet-history, getMarketInfo→GET /market-info.
 // Endpoint tambahan FE (respons Provider[] mengikuti components/schemas/Provider): GET /togel, /arcade, /crush, /esports, /poker, /cockfight.
 // Di OpenAPI, theme ada di WebsiteConfig.
 import { resolveAssetUrlsDeep } from '../utils/publicAssetUrl'
@@ -22,6 +22,9 @@ const API_BASE_URL = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, DEFAUL
 
 const IS_DEV = import.meta.env.DEV === true
 const VERBOSE_LOG = import.meta.env.VITE_API_VERBOSE === 'true'
+
+/** Status server / gateway → boleh fallback `GET /lobby` tanpa `provider_id` bila panggilan dengan query gagal. */
+const LOBBY_RETRYABLE_STATUS = new Set([500, 502, 503, 504])
 
 /** URL absolute yang dipakai `fetch` (bantu debug saat respons bukan JSON). */
 function resolveApiRequestUrlForLog(endpoint) {
@@ -126,6 +129,20 @@ function normalizeProfileResponse(data) {
     bank_number: bankNumber,
     bank_account: bankAccount,
   }
+}
+
+/**
+ * GET /lobby: respons valid bisa `lobby_url: ""` (staging) — 200 OK tanpa URL jelas;
+ * bila nanti terisi, FE redirect lewat `window.open` / route.
+ */
+function normalizeLobbyResponse(data) {
+  if (!data || typeof data !== 'object') return data
+  const raw = data.lobby_url ?? data.lobbyUrl
+  if (raw == null) {
+    return { ...data, lobby_url: '', lobbyUrl: '' }
+  }
+  const s = String(raw)
+  return { ...data, lobby_url: s, lobbyUrl: s }
 }
 
 // ============================================
@@ -431,6 +448,43 @@ export const playGame = (provider_id, game_id) => {
   return apiCall(
     `/play?provider_id=${encodeURIComponent(provider_id)}&game_id=${encodeURIComponent(game_id)}`,
   )
+}
+
+/**
+ * GET /lobby — butuh JWT (Bearer), respons { lobby_url } (boleh `""` di staging — tetap 200 OK).
+ * Klien mengirim `provider_id` (query) bila perlu; 5xx dengan query → sekali coba `GET /lobby` tanpa query.
+ * Redirect ke `lobby_url` hanya saat string tidak kosong (lihat `GameListModal` / caller).
+ */
+export const getLobby = async (provider_id) => {
+  const token = getToken()
+  if (!token) {
+    return Promise.reject({
+      status: 401,
+      data: { message: 'please login' },
+    })
+  }
+  const hasProvider =
+    provider_id != null && String(provider_id).trim() !== ''
+  const withQuery = hasProvider
+    ? `?provider_id=${encodeURIComponent(String(provider_id))}`
+    : ''
+  const path = `/lobby${withQuery}`
+
+  const fetchLobby = async (endpoint) => normalizeLobbyResponse(await apiCall(endpoint))
+
+  try {
+    return await fetchLobby(path)
+  } catch (e) {
+    if (hasProvider && LOBBY_RETRYABLE_STATUS.has(e?.status)) {
+      if (IS_DEV) {
+        console.warn(
+          `[getLobby] ${e?.status} on ${path} — retrying without provider_id (server may not support this id yet)`,
+        )
+      }
+      return await fetchLobby('/lobby')
+    }
+    throw e
+  }
 }
 
 // ============================================

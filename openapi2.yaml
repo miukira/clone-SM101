@@ -877,7 +877,58 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalError'
 
+  /lobby:
+    get:
+      tags:
+        - Game
+      summary: Get lobby URL
+      description: Get game lobby URL
+      operationId: getLobby
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lobby URL retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lobby_url:
+                    type: string
+                    format: uri
+                    example: https://lobby.providerdomain.com
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
   /slot:
+    get:
+      tags:
+        - Game
+      summary: Get slot providers
+      description: Retrieve list of active slot game providers
+      operationId: getSlotProviders
+      responses:
+        '200':
+          description: List of slot providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+  
+  /crush:
     get:
       tags:
         - Game
@@ -956,6 +1007,75 @@ paths:
       responses:
         '200':
           description: List of sportsbook providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /arcade:
+    get:
+      tags:
+        - Game
+      summary: Get slot providers
+      description: Retrieve list of active slot game providers
+      operationId: getSlotProviders
+      responses:
+        '200':
+          description: List of slot providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /poker:
+    get:
+      tags:
+        - Game
+      summary: Get slot providers
+      description: Retrieve list of active slot game providers
+      operationId: getSlotProviders
+      responses:
+        '200':
+          description: List of slot providers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+
+  /coockfight:
+    get:
+      tags:
+        - Game
+      summary: Get slot providers
+      description: Retrieve list of active slot game providers
+      operationId: getSlotProviders
+      responses:
+        '200':
+          description: List of slot providers
           content:
             application/json:
               schema:

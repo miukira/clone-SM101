@@ -10,6 +10,7 @@
     "build:staging": "vite build --mode staging",
     "lint": "eslint .",
     "test:unit": "node --test test/*.test.mjs",
+    "test:lobby-smoke": "LOBBY_SMOKE=1 node --test test/lobby-endpoint.test.mjs",
     "test:url-logic": "node --test test/public-asset-url.test.mjs test/provider-card-response.test.mjs test/resolve-api-base-url.test.mjs test/normalize-image-url.test.mjs",
     "test:contract": "playwright test e2e/home-providers.spec.mjs e2e/smoke.spec.mjs",
     "test:e2e": "playwright test",

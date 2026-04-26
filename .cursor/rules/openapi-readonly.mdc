@@ -1,10 +1,10 @@
 ---
-description: openapi.yaml must not be edited by the agent
+description: openapi2.yaml must not be edited by the agent
 alwaysApply: true
 ---
 
 # OpenAPI file is read-only
 
-Do **not** modify `openapi.yaml` in this project. Treat it as the frozen contract.
+Do **not** modify `openapi2.yaml` in this project. Treat it as the frozen API contract.
 
 If behavior or tests disagree with the spec, change **application code** or **tests**—never this YAML file unless the user explicitly overrides this rule in writing.
