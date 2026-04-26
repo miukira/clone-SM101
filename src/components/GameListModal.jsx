@@ -1,7 +1,7 @@
 // Modal untuk menampilkan daftar game dari provider
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { playGame, getToken } from '../services/api'
+import { playGame, getLobby, getToken } from '../services/api'
 import { providerAssetUrl } from '../utils/publicAssetUrl'
 import { normalizeImageUrl } from '../utils/normalizeImageUrl'
 import { DEFAULT_PROVIDER_CARD_IMAGE } from '../utils/defaultProviderImage.js'
@@ -97,12 +97,14 @@ function GameCard({ game, onPlay, isLoading, tPlay, tLoad }) {
 export default function GameListModal({ isOpen, onClose, provider, onRequireAuth }) {
   const { t } = useTranslation()
   const [playingGameId, setPlayingGameId] = useState(null)
+  const [openingLobby, setOpeningLobby] = useState(false)
   const { games, loading, error, refetch } = useGameList(provider?.provider_id)
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       setPlayingGameId(null)
+      setOpeningLobby(false)
     }
   }, [isOpen])
 
@@ -135,6 +137,36 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
       }
     } finally {
       setPlayingGameId(null)
+    }
+  }
+
+  const handleOpenLobby = async () => {
+    if (!getToken()) {
+      onRequireAuth?.()
+      alert(t('gameList.loginToPlay'))
+      return
+    }
+    try {
+      setOpeningLobby(true)
+      const response = await getLobby(provider?.provider_id)
+      const url = (response?.lobby_url ?? response?.lobbyUrl) ?? ''
+      const href = typeof url === 'string' ? url.trim() : ''
+      if (href) {
+        window.open(href, '_blank')
+      }
+      // 200 + lobby_url: "" di staging wajar — tidak alert; bila nanti terisi, redirect lewat klik lagi / polling
+    } catch (err) {
+      console.error('Failed to open lobby:', err)
+      const status = err?.status
+      const msg = err?.data?.message
+      if (status === 401 || msg === 'please login' || msg === 'invalid token') {
+        onRequireAuth?.()
+        alert(t('gameList.sessionInvalid'))
+      } else {
+        alert(msg || t('gameList.lobbyFailed'))
+      }
+    } finally {
+      setOpeningLobby(false)
     }
   }
 
@@ -206,22 +238,26 @@ export default function GameListModal({ isOpen, onClose, provider, onRequireAuth
           {loading ? (
             <LoadingSpinner />
           ) : error ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <span className="text-4xl mb-4">😕</span>
-              <p className="text-[#808080] mb-4">{t('gameList.loadFailed')}</p>
+            <div className="flex flex-col items-center justify-center py-12 px-2">
               <button
-                onClick={refetch}
-                className="px-4 py-2 bg-[#2a2a2a] border border-[#404040] rounded-lg text-xs font-bold text-[#C0C0C0] hover:bg-[#333] transition-all"
+                type="button"
+                onClick={handleOpenLobby}
+                disabled={openingLobby}
+                className="w-full sm:w-auto min-w-[200px] px-6 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-sm font-bold text-black tracking-wider shadow-lg hover:opacity-95 transition-all disabled:opacity-50"
               >
-                {t('gameList.tryAgain')}
+                {openingLobby ? t('common.loading') : t('gameList.openLobby')}
               </button>
             </div>
           ) : games.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <span className="text-3xl opacity-35 mb-4 select-none" aria-hidden>
-                🎰
-              </span>
-              <p className="text-[#808080]">{t('gameList.noGames')}</p>
+            <div className="flex flex-col items-center justify-center py-12 px-2">
+              <button
+                type="button"
+                onClick={handleOpenLobby}
+                disabled={openingLobby}
+                className="w-full sm:w-auto min-w-[200px] px-6 py-2.5 bg-gradient-to-b from-[#E0E0E0] via-[#C0C0C0] to-[#909090] rounded-lg text-sm font-bold text-black tracking-wider shadow-lg hover:opacity-95 transition-all disabled:opacity-50"
+              >
+                {openingLobby ? t('common.loading') : t('gameList.openLobby')}
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">

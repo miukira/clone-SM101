@@ -137,10 +137,15 @@
     "loadFailed": "Failed to load games",
     "tryAgain": "Try again",
     "noGames": "No games available yet",
+    "emptyLobbyTitle": "No games in the list",
+    "emptyLobbyLead": "This provider (e.g. casino) may use a lobby. Open the lobby to continue.",
     "providerId": "Provider ID",
     "loginToPlay": "Please log in to play.",
     "sessionInvalid": "Session invalid or you are not logged in. Please log in again.",
-    "playFailed": "Failed to start the game. Please try again."
+    "playFailed": "Failed to start the game. Please try again.",
+    "openLobby": "Open lobby",
+    "lobbyHint": "Some providers (e.g. casino) open via the lobby.",
+    "lobbyFailed": "Failed to open the lobby. Please try again."
   },
   "promo": {
     "title": "PROMOTIONS",

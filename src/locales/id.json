@@ -137,10 +137,15 @@
     "loadFailed": "Gagal memuat game",
     "tryAgain": "Coba lagi",
     "noGames": "Belum ada game tersedia",
+    "emptyLobbyTitle": "Daftar game kosong",
+    "emptyLobbyLead": "Provider ini (mis. kasino) memakai lobby. Buka lobby untuk melanjutkan.",
     "providerId": "ID Provider",
     "loginToPlay": "Silakan login terlebih dahulu untuk bermain.",
     "sessionInvalid": "Sesi tidak valid atau Anda belum login. Silakan login kembali.",
-    "playFailed": "Gagal memulai game. Silakan coba lagi."
+    "playFailed": "Gagal memulai game. Silakan coba lagi.",
+    "openLobby": "Buka Lobby",
+    "lobbyHint": "Beberapa provider (mis. kasino) membuka lewat lobby.",
+    "lobbyFailed": "Gagal membuka lobby. Silakan coba lagi."
   },
   "promo": {
     "title": "PROMOSI",

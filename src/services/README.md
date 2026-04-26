@@ -1,6 +1,6 @@
 # API Service Layer
 
-Service layer untuk integrasi dengan Backend API sesuai OpenAPI spec.
+Service layer untuk integrasi dengan Backend API sesuai kontrak `openapi2.yaml` di root project.
 
 ## Struktur Files
 
@@ -215,7 +215,7 @@ INSERT INTO website_config (config_key, config_value) VALUES
 
 ## API Endpoints - Response Format
 
-Semua response mengikuti format dari OpenAPI spec:
+Semua response mengikuti format dari `openapi2.yaml`:
 
 ### Auth
 | Endpoint | Method | Response |
@@ -341,7 +341,7 @@ Ketika backend MySQL ready:
 
 2. **Pastikan CORS di backend mengizinkan frontend domain**
 
-3. **Response format dari backend harus sesuai dengan OpenAPI spec**
+3. **Response format dari backend harus sesuai dengan `openapi2.yaml`**
 
 4. **Image fields:**
    - Jika menyimpan URL → return URL
@@ -356,4 +356,4 @@ Mock data structure sudah kompatibel dengan MySQL, seharusnya tidak perlu peruba
 
 ## Pengujian kontrak API
 
-Bandingkan perilaku klien `api.js` dengan `openapi.yaml` (review manual) atau uji alur E2E terhadap staging.
+Bandingkan perilaku klien `api.js` dengan `openapi2.yaml` (review manual) atau uji alur E2E terhadap staging.
