@@ -8,6 +8,46 @@ import {
   getStoredPlayerBalance,
 } from '../services/api'
 
+const LS_AUTH_USER = 'pusattogel-auth-user'
+
+function persistAuthSnapshot(user) {
+  if (typeof localStorage === 'undefined') return
+  const username = user?.username != null ? String(user.username).trim() : ''
+  const balance = user?.balance
+  const row = { username, balance }
+  try {
+    localStorage.setItem(LS_AUTH_USER, JSON.stringify(row))
+  } catch {
+    // ignore quota / serialization errors
+  }
+}
+
+function getStoredAuthSnapshot() {
+  if (typeof localStorage === 'undefined') return null
+  const raw = localStorage.getItem(LS_AUTH_USER)
+  if (!raw) return null
+  try {
+    const row = JSON.parse(raw)
+    if (!row || typeof row !== 'object') return null
+    const username = row.username != null ? String(row.username).trim() : ''
+    const balance = row.balance
+    return {
+      username: username || null,
+      balance:
+        balance != null && Number.isFinite(Number(balance))
+          ? Number(balance)
+          : getStoredPlayerBalance(),
+    }
+  } catch {
+    return null
+  }
+}
+
+function clearAuthSnapshot() {
+  if (typeof localStorage === 'undefined') return
+  localStorage.removeItem(LS_AUTH_USER)
+}
+
 function resolveUserBalance(profileOrLogin) {
   if (profileOrLogin?.balance != null && profileOrLogin?.balance !== undefined) {
     return profileOrLogin.balance
@@ -31,53 +71,37 @@ export function AuthProvider({ children }) {
   const checkAuth = async () => {
     const token = getToken()
     if (token) {
-      try {
-        // Get user profile — saldo selalu disamakan dengan server lalu di-cache ke localStorage
-        const profile = await getProfile()
-        const balance = resolveUserBalance(profile)
-        const userRow = balance !== undefined ? { ...profile, balance } : profile
-        setUser(userRow)
-        setIsAuthenticated(true)
-        if (userRow.balance != null) persistPlayerBalance(userRow.balance)
-      } catch (err) {
-        // Token invalid, clear it
-        removeToken()
-        setUser(null)
-        setIsAuthenticated(false)
-      }
+      // Tidak GET /profile otomatis lagi; hydrate dari localStorage saat token ada.
+      const cached = getStoredAuthSnapshot()
+      const fallbackBalance = getStoredPlayerBalance()
+      const userRow = cached
+        ? { username: cached.username, balance: cached.balance ?? fallbackBalance ?? 0 }
+        : fallbackBalance != null
+          ? { username: null, balance: fallbackBalance }
+          : null
+      setUser(userRow)
+      setIsAuthenticated(true)
     }
     setLoading(false)
   }
 
-  const loginSuccess = async (userData) => {
+  const loginSuccess = (userData) => {
     const balance = resolveUserBalance(userData)
-    setUser({
+    const userRow = {
       username: userData.username,
       balance,
       currency: userData.currency,
-      referral_code: userData.referral_code
-    })
+      referral_code: userData.referral_code,
+    }
+    setUser(userRow)
     setIsAuthenticated(true)
     if (balance != null) persistPlayerBalance(balance)
-
-    // Fetch full profile untuk mendapatkan data bank
-    try {
-      const profile = await getProfile()
-      const fullBalance = resolveUserBalance(profile)
-      setUser({
-        ...profile,
-        balance: fullBalance ?? balance,
-        currency: userData.currency,
-        referral_code: profile.referral_code || userData.referral_code,
-      })
-      if (fullBalance != null) persistPlayerBalance(fullBalance)
-    } catch {
-      // Jika gagal fetch profile, tetap gunakan data login
-    }
+    persistAuthSnapshot(userRow)
   }
 
   const logout = () => {
     removeToken()
+    clearAuthSnapshot()
     setUser(null)
     setIsAuthenticated(false)
   }
@@ -89,7 +113,12 @@ export function AuthProvider({ children }) {
       const b = data?.balance
       if (b == null || b === undefined) return
       persistPlayerBalance(b)
-      setUser((prev) => (prev ? { ...prev, balance: b } : null))
+      setUser((prev) => {
+        if (!prev) return null
+        const next = { ...prev, balance: b }
+        persistAuthSnapshot(next)
+        return next
+      })
     } catch (err) {
       console.error('Failed to refresh balance:', err)
     }
@@ -98,7 +127,12 @@ export function AuthProvider({ children }) {
   // Update balance directly (after bet, deposit, etc.)
   const updateBalance = (newBalance) => {
     if (newBalance != null) persistPlayerBalance(newBalance)
-    setUser(prev => prev ? { ...prev, balance: newBalance } : null)
+    setUser((prev) => {
+      if (!prev) return null
+      const next = { ...prev, balance: newBalance }
+      persistAuthSnapshot(next)
+      return next
+    })
     console.log(`💰 Balance updated: Rp ${newBalance?.toLocaleString()}`)
   }
 
@@ -109,6 +143,7 @@ export function AuthProvider({ children }) {
       const userRow = balance !== undefined ? { ...profile, balance } : profile
       setUser(userRow)
       if (userRow.balance != null) persistPlayerBalance(userRow.balance)
+      persistAuthSnapshot(userRow)
     } catch (err) {
       console.error('Failed to refresh profile:', err)
     }

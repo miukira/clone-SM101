@@ -309,6 +309,10 @@ export default function TogelBettingPage() {
   const bbfsByKind = useMemo(() => countBbfsByKind(bbfsExpansion.lines), [bbfsExpansion.lines])
 
   const positionOptions = betType === '3D' ? POSITIONS_3D : betType === '2D' ? POSITIONS_2D : []
+  const selectedMarketCard = useMemo(
+    () => MARKETS.find((m) => m.id === selectedMarket) ?? null,
+    [selectedMarket],
+  )
 
   useEffect(() => {
     if (betType === '4D' || betType === 'BBFS') {
@@ -497,17 +501,16 @@ export default function TogelBettingPage() {
 
         <section>
           <h2 className="text-sm font-bold text-[#505050] mb-3 tracking-widest">{t('togel.selectMarket')}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {MARKETS.map((market) => (
+          {selectedMarketCard && (
+            <div className="grid grid-cols-1 gap-3 max-w-sm">
               <MarketCard
-                key={market.id}
-                market={market}
-                isSelected={selectedMarket === market.id}
-                onClick={() => setSelectedMarket(market.id)}
-                marketInfo={selectedMarket === market.id ? marketInfo : null}
+                market={selectedMarketCard}
+                isSelected
+                onClick={() => setSelectedMarket(selectedMarketCard.id)}
+                marketInfo={marketInfo}
               />
-            ))}
-          </div>
+            </div>
+          )}
         </section>
 
         {marketLoading && (
