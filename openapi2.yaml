@@ -1451,6 +1451,9 @@ components:
       properties:
         title:
           type: string
+          example: situs paling gacor
+        name:
+          type: string
           example: website1
         about:
           type: string

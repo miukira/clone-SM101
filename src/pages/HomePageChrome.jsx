@@ -339,12 +339,12 @@ function HomeAboutBlurb() {
 function PromoBanner() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { banners: apiBanners, title: siteTitle, loading: websiteLoading, configAssetRev } =
+  const { banners: apiBanners, name: siteName, loading: websiteLoading, configAssetRev } =
     useWebsite()
 
   const slides = useMemo(
-    () => mapConfigBannersToPromoSlides(apiBanners, siteTitle, configAssetRev || null),
-    [apiBanners, siteTitle, configAssetRev],
+    () => mapConfigBannersToPromoSlides(apiBanners, siteName, configAssetRev || null),
+    [apiBanners, siteName, configAssetRev],
   )
 
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -1446,6 +1446,10 @@ export default function HomePageChrome() {
           
         </div>
       </main>
+
+      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8 pb-2">
+        <HomeAboutBlurb />
+      </div>
 
       {/* Footer */}
       <FooterChrome />

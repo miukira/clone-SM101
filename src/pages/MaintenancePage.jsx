@@ -5,7 +5,8 @@ import { getDateLocale } from '../i18n.js'
 
 export default function MaintenancePage() {
   const { t } = useTranslation()
-  const { maintenance, logo, title, contactLinks } = useWebsite()
+  const { maintenance, logo, title, name, contactLinks } = useWebsite()
+  const brandName = (name && String(name).trim()) || title
 
   // OpenAPI: estimated_time (format: "2026-01-01 17:30")
   const estimatedTime = maintenance.estimated_time
@@ -153,7 +154,7 @@ export default function MaintenancePage() {
 
         {/* Footer */}
         <p className="mt-8 text-xs text-[#404040]">
-          © 2026 {title}. {t('maintenance.footerRights')}
+          © 2026 {brandName}. {t('maintenance.footerRights')}
         </p>
       </div>
     </div>

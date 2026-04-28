@@ -51,6 +51,11 @@ describe('mapConfigBannersToPromoSlides', () => {
     assert.equal(slides[0].tag, '🎁 T')
   })
 
+  test('default titleLine2 memakai site name (bukan site title SEO)', () => {
+    const slides = mapConfigBannersToPromoSlides([{ id: 'seo-check', image: '/x.webp' }], 'website1')
+    assert.equal(slides[0].titleLine2, 'website1')
+  })
+
   test('ganti banner ke gambar lain (path public) — bukan fallback banner-1', () => {
     const slides = mapConfigBannersToPromoSlides(
       [{ id: 'promo-2', image: '/banners/banner-2.webp', link: '/togel' }],

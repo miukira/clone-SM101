@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import * as api from '../services/api'
 import { useWebsite } from '../context/WebsiteContext'
+import { useAuth } from '../context/AuthContext'
 
 /** Dedup log lintas remount (React StrictMode dev). */
 let lastLotteryResultsLogKey = ''
@@ -74,12 +75,18 @@ export function useMarketInfo(market, type = '4d') {
  * Hook untuk fetch bet history untuk market tertentu
  */
 export function useBetHistory(market) {
+  const { isAuthenticated } = useAuth()
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const fetchHistory = useCallback(async () => {
     if (!market) return
+    if (!isAuthenticated) {
+      setError(null)
+      setHistory([])
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -103,13 +110,16 @@ export function useBetHistory(market) {
     } finally {
       setLoading(false)
     }
-  }, [market])
+  }, [market, isAuthenticated])
 
   useEffect(() => {
-    if (market) {
+    if (market && isAuthenticated) {
       fetchHistory()
+    } else {
+      setError(null)
+      setHistory([])
     }
-  }, [market, fetchHistory])
+  }, [market, isAuthenticated, fetchHistory])
 
   return { history, loading, error, refetch: fetchHistory }
 }

@@ -7,6 +7,8 @@ import { normalizeContactLinks } from '../utils/websiteContact.js'
 
 const WebsiteContext = createContext()
 const VERBOSE = import.meta.env.VITE_API_VERBOSE === 'true'
+const DEFAULT_SITE_TITLE = 'situs paling gacor'
+const DEFAULT_SITE_NAME = 'website1'
 
 function updateFaviconFromConfig(faviconUrl, assetRev) {
   if (!faviconUrl || typeof document === 'undefined') return
@@ -139,7 +141,8 @@ export function WebsiteProvider({ children }) {
     if (!cfg || typeof cfg !== 'object') return undefined
 
     const rawTitle = cfg.title != null ? String(cfg.title).trim() : ''
-    document.title = rawTitle !== '' ? rawTitle : 'PUSATTOGEL'
+    const rawName = cfg.name != null ? String(cfg.name).trim() : ''
+    document.title = rawTitle || rawName || DEFAULT_SITE_TITLE
 
     if (cfg.favicon) {
       updateFaviconFromConfig(cfg.favicon, configAssetRev)
@@ -182,10 +185,14 @@ export function WebsiteProvider({ children }) {
     publicAssetUrl(rawLogo !== '' ? rawLogo : '/logo.png'),
     configAssetRev || null,
   )
+  const name =
+    (config.name != null && String(config.name).trim() !== ''
+      ? String(config.name).trim()
+      : null) || DEFAULT_SITE_NAME
   const title =
     (config.title != null && String(config.title).trim() !== ''
       ? String(config.title).trim()
-      : null) || 'PUSATTOGEL'
+      : null) || name || DEFAULT_SITE_TITLE
   const about = config.about || ''
 
   const rawMinWithdraw = websiteData?.min_withdraw
@@ -218,6 +225,7 @@ export function WebsiteProvider({ children }) {
     /** Naik setiap fetch website sukses — untuk cache-bust gambar promo */
     configAssetRev,
     title,
+    name,
     about,
     minWithdraw,
   }
