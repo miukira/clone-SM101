@@ -321,8 +321,9 @@ const bankItems = [
 
 export default function FooterChrome() {
   const { t } = useTranslation()
-  const { title } = useWebsite()
+  const { title, name } = useWebsite()
   const { providers: footerProviders, loading: footerProvidersLoading } = useFooterGameProviders()
+  const brandName = (name && String(name).trim()) || title
 
   return (
     <footer className="bg-[#0a0a0a] themed-border-top mt-8 relative z-10">
@@ -406,7 +407,7 @@ export default function FooterChrome() {
       {/* Copyright */}
       <div className="border-t border-[#1a1a1a] py-4 text-center">
         <p className="text-[10px] text-[#404040]">
-          © 2026 {title}. {t('common.allRights')}
+          © 2026 {brandName}. {t('common.allRights')}
         </p>
       </div>
     </footer>

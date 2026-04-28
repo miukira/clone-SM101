@@ -36,10 +36,18 @@ describe('WebsiteInfo — logo dari API (normalize /info)', () => {
 
   test('config.general.logo fills config.logo', () => {
     const out = normalizeWebsiteInfoResponse({
-      config: { general: { logo: '/from-general.png', title: 'T' } },
+      config: { general: { logo: '/from-general.png', title: 'T', name: 'website1' } },
     })
     assert.equal(out.config.logo, '/from-general.png')
     assert.equal(out.config.title, 'T')
+    assert.equal(out.config.name, 'website1')
+  })
+
+  test('name from root fills config.name when config empty', () => {
+    const out = normalizeWebsiteInfoResponse({
+      site_name: 'website1',
+    })
+    assert.equal(out.config.name, 'website1')
   })
 
   test('nested data.data when inner has config', () => {

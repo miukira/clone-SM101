@@ -12,12 +12,12 @@ import { publicAssetUrl } from '../utils/publicAssetUrl'
  */
 export default function PromoBannerChrome({ showTermsButton = true } = {}) {
   const navigate = useNavigate()
-  const { banners: apiBanners, title: siteTitle, loading: websiteLoading, configAssetRev } =
+  const { banners: apiBanners, name: siteName, loading: websiteLoading, configAssetRev } =
     useWebsite()
 
   const slides = useMemo(
-    () => mapConfigBannersToPromoSlides(apiBanners, siteTitle, configAssetRev || null),
-    [apiBanners, siteTitle, configAssetRev],
+    () => mapConfigBannersToPromoSlides(apiBanners, siteName, configAssetRev || null),
+    [apiBanners, siteName, configAssetRev],
   )
 
   const [currentSlide, setCurrentSlide] = useState(0)

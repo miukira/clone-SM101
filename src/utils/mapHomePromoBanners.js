@@ -16,10 +16,10 @@ const DEFAULT_CONFIG_BANNERS = [
  * Map satu array item banner API → slide PromoBanner (bukan fallback).
  * Item tanpa `image` valid di-skip.
  */
-function mapBannerItemsToSlides(apiBanners, siteTitle, assetRev) {
+function mapBannerItemsToSlides(apiBanners, siteName, assetRev) {
   if (!Array.isArray(apiBanners) || apiBanners.length === 0) return []
 
-  const brand = String(siteTitle || 'PROMO').slice(0, 80)
+  const brand = String(siteName || 'PROMO').slice(0, 80)
 
   return apiBanners
     .map((b, i) => {
@@ -59,8 +59,8 @@ function mapBannerItemsToSlides(apiBanners, siteTitle, assetRev) {
  * OpenAPI: { id, image } + optional link. Field opsional teks: title_line1, title_line2, description, tag, gradient.
  * Bila array kosong atau tidak ada satu pun gambar valid → pakai banner default `/banners/banner-1.webp` (CDN).
  */
-export function mapConfigBannersToPromoSlides(apiBanners, siteTitle = '', assetRev = null) {
-  const fromApi = mapBannerItemsToSlides(apiBanners, siteTitle, assetRev)
+export function mapConfigBannersToPromoSlides(apiBanners, siteName = '', assetRev = null) {
+  const fromApi = mapBannerItemsToSlides(apiBanners, siteName, assetRev)
   if (fromApi.length > 0) return fromApi
-  return mapBannerItemsToSlides(DEFAULT_CONFIG_BANNERS, siteTitle, assetRev)
+  return mapBannerItemsToSlides(DEFAULT_CONFIG_BANNERS, siteName, assetRev)
 }
