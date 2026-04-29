@@ -6,6 +6,8 @@ import { useAuth } from '../context/AuthContext'
 
 /** Dedup log lintas remount (React StrictMode dev). */
 let lastLotteryResultsLogKey = ''
+let lastMarketInfoLogKey = ''
+let lastMarketInfoLogAt = 0
 
 /**
  * Hook untuk get lottery results dari WebsiteContext
@@ -44,6 +46,27 @@ export function useMarketInfo(market, type = '4d') {
 
     try {
       const data = await api.getMarketInfo(market, type)
+      const logKey = JSON.stringify({
+        market: data.market || market,
+        type,
+        status: data.status,
+        prize4d: data.prize?.['4d'],
+        prize3d: data.prize?.['3d'],
+        prize2d: data.prize?.['2d'],
+        min_bet: data.min_bet,
+        bet_shortcut: data.bet_shortcut || [],
+        discount_percentage: data.discount_percentage,
+      })
+      const now = Date.now()
+      const isStrictModeDuplicate =
+        logKey === lastMarketInfoLogKey &&
+        now - lastMarketInfoLogAt < 1500
+      if (isStrictModeDuplicate) {
+        setMarketInfo(data)
+        return
+      }
+      lastMarketInfoLogKey = logKey
+      lastMarketInfoLogAt = now
       // Log market info lengkap sesuai Swagger MarketInfo schema
       console.log(`🎯 Market Info Response [${market.toUpperCase()}]:`)
       console.log(`   market: "${data.market || market}"`)
