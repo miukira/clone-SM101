@@ -117,6 +117,7 @@
     "passMismatch": "Password and confirmation do not match",
     "passMin": "Password must be at least 3 characters",
     "pickBank": "Please select a bank",
+    "ewalletMustStartWithZero": "E-wallet number must start with 0",
     "userTakenShort": "Username is already in use",
     "loginSuccess": "Logged in successfully!",
     "registerSuccess": "Registration successful!",
