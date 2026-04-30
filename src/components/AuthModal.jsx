@@ -11,6 +11,9 @@ import {
   getBankList
 } from '../services/api'
 
+/** Register: metode e-wallet memakai nomor HP — wajib diawali 0 (Indonesia). */
+const EWALLET_BANK_IDS = new Set(['gopay', 'dana', 'ovo', 'linkaja'])
+
 // Icons
 const CloseIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -136,22 +139,29 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
     }
   }, [registerForm.handphone])
 
-  // Check bank number availability (debounced)
+  // Check bank number availability (debounced); e-wallet wajib awalan 0
   useEffect(() => {
-    if (registerForm.bank_number.length >= 10) {
+    const { bank_name, bank_number } = registerForm
+    const isEw = EWALLET_BANK_IDS.has(bank_name)
+
+    if (isEw && bank_number.length > 0 && !bank_number.startsWith('0')) {
+      setValidation((v) => ({ ...v, bankAvailable: false }))
+      return
+    }
+
+    if (bank_number.length >= 10) {
       const timer = setTimeout(async () => {
         try {
-          const result = await checkBankNumber(registerForm.bank_number)
-          setValidation(v => ({ ...v, bankAvailable: result.available }))
+          const result = await checkBankNumber(bank_number)
+          setValidation((v) => ({ ...v, bankAvailable: result.available }))
         } catch {
           // ignore
         }
       }, 500)
       return () => clearTimeout(timer)
-    } else {
-      setValidation(v => ({ ...v, bankAvailable: null }))
     }
-  }, [registerForm.bank_number])
+    setValidation((v) => ({ ...v, bankAvailable: null }))
+  }, [registerForm.bank_number, registerForm.bank_name])
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -198,7 +208,15 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login', onLog
       setError(t('auth.pickBank'))
       return
     }
-    
+
+    if (EWALLET_BANK_IDS.has(registerForm.bank_name)) {
+      const num = registerForm.bank_number
+      if (num.length > 0 && !num.startsWith('0')) {
+        setError(t('auth.ewalletMustStartWithZero'))
+        return
+      }
+    }
+
     if (validation.usernameAvailable === false) {
       setError(t('auth.userTakenShort'))
       return

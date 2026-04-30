@@ -117,6 +117,7 @@
     "passMismatch": "Password dan konfirmasi password tidak sama",
     "passMin": "Password minimal 3 karakter",
     "pickBank": "Silakan pilih bank",
+    "ewalletMustStartWithZero": "Nomor e-wallet wajib diawali dengan 0",
     "userTakenShort": "Username sudah digunakan",
     "loginSuccess": "Login berhasil!",
     "registerSuccess": "Registrasi berhasil!",
