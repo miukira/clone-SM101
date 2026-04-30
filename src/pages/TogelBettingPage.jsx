@@ -662,11 +662,6 @@ export default function TogelBettingPage() {
                 `}
               >
                 <span className="font-black text-[#E8E8E8] block">{t('togel.useDiscLine1')}</span>
-                <span className="text-[10px] text-[#808080]">
-                  {discPct > 0
-                    ? t('togel.useDiscLine2Pct', { p: 100 - discPct })
-                    : t('togel.useDiscLine2None')}
-                </span>
               </button>
             </div>
           </section>
