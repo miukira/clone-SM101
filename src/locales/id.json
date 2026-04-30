@@ -36,7 +36,7 @@
     "fishing": "MANCING",
     "promosi": "PROMOSI",
     "promotion": "PROMOSI",
-    "referral": "RUJUKAN",
+    "referral": "REFERRAL",
     "promo": "PROMO",
     "liveChat": "LIVE CHAT",
     "contact": "KONTAK"
@@ -95,7 +95,7 @@
     "bankName": "NAMA BANK",
     "accountName": "NAMA REKENING",
     "bankNumber": "NOMOR REKENING / E-WALLET",
-    "referralOpt": "KODE RUJUKAN (OPSIONAL)",
+    "referralOpt": "REFERRAL CODE (OPTIONAL)",
     "placeholderUser": "Masukkan username",
     "placeholderPass": "Masukkan password",
     "placeholderUserReg": "Min. 4 karakter (huruf & angka)",
@@ -104,7 +104,7 @@
     "placeholderPhone": "Contoh: 081234567890",
     "placeholderBankAcc": "Nama sesuai rekening bank",
     "placeholderBankNo": "Nomor rekening bank / e-wallet",
-    "placeholderRef": "Masukkan kode rujukan jika ada",
+    "placeholderRef": "Masukkan kode referral jika ada",
     "selectBank": "Pilih bank / e-wallet",
     "noAccount": "Belum punya akun? ",
     "registerNow": "Daftar sekarang",
@@ -156,10 +156,10 @@
     "empty": "Tidak ada promosi"
   },
   "referral": {
-    "title": "RUJUKAN",
+    "title": "REFERRAL",
     "loadError": "Gagal memuat informasi referral",
     "imageAlt": "Referral",
-    "bonus10Body": "Dapatkan bonus referral sebesar 10% dari setiap deposit yang dilakukan oleh teman yang Anda referensikan. Ajak teman Anda untuk bergabung dan nikmati keuntungan bersama!"
+    "bonus10Body": "Dapatkan bonus referral 10% dari setiap deposit teman yang Anda ajak lewat referral. Undang teman untuk bergabung dan nikmati reward bersama!"
   },
   "locale": {
     "en": "EN",
@@ -170,7 +170,7 @@
       "deposit": "SETORAN",
       "withdraw": "PENARIKAN",
       "history": "RIWAYAT",
-      "referral": "RUJUKAN",
+      "referral": "REFERRAL",
       "profile": "PROFIL",
       "password": "UBAH PASSWORD",
       "inbox": "KOTAK MASUK",
@@ -281,7 +281,7 @@
     "typeLottery": "Lottery"
   },
   "referralPanel": {
-    "title": "Rujukan",
+    "title": "Referral",
     "dateFrom": "Rentang tanggal",
     "dateTo": "Sampai",
     "filter": "Filter",
@@ -292,7 +292,7 @@
     "thTurnover": "Turnover",
     "thWinLose": "Menang/kalah",
     "thCommission": "Komisi",
-    "loading": "Memuat data rujukan...",
+    "loading": "Memuat data referral...",
     "noData": "Tidak ada data downline"
   },
   "togelRules": {
